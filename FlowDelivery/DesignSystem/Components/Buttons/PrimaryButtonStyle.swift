@@ -1,21 +1,24 @@
 import SwiftUI
 
 struct PrimaryButtonStyle: ButtonStyle {
+    private let pressedOpacity = 0.8
+    private let pressedScale = 0.98
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.headline)
-            .foregroundStyle(.white)
+            .font(AppTypography.button)
+            .foregroundStyle(AppColor.onPrimary)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 50)
-            .padding(.horizontal, 16)
-            .background(.blue)
+            .frame(minHeight: AppSize.primaryButtonHeight)
+            .padding(.horizontal, AppSpacing.medium)
+            .background(AppColor.primary)
             .clipShape(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppRadius.medium)
             )
-            .opacity(configuration.isPressed ? 0.8 : 1)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .opacity(configuration.isPressed ? pressedOpacity : 1)
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
             .animation(
-                .easeOut(duration: 0.15),
+                .easeOut(duration: AppDuration.extraSmall),
                 value: configuration.isPressed
             )
     }
