@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 enum AppRadius {
     static let extraSmall: CGFloat = 4
     static let small: CGFloat = 8

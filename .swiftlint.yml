@@ -1,0 +1,40 @@
+included:
+  - FlowDelivery
+  - FlowDeliveryTests
+  - FlowDeliveryUITests
+
+excluded:
+  - .build
+  - build
+  - DerivedData
+
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - first_where
+  - redundant_nil_coalescing
+  - sorted_imports
+
+disabled_rules:
+  - todo
+
+line_length:
+  warning: 120
+  error: 150
+  ignores_comments: true
+  ignores_urls: true
+
+type_name:
+  min_length:
+    warning: 3
+    error: 2
+
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+
+trailing_whitespace:
+  ignores_empty_lines: true
+
+reporter: xcode
