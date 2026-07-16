@@ -2,17 +2,19 @@ import SwiftUI
 
 struct RootView: View {
     var body: some View {
-        VStack(spacing: 24) {
-            Text("FlowDelivery")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            Button("Começar") {
-                print("Primary button tapped")
+        NavigationStack {
+            VStack(spacing: 24) {
+                Text("FlowDelivery")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                
+                Button("Começar") {
+                }
+                .buttonStyle(PrimaryButtonStyle())
             }
-            .buttonStyle(PrimaryButtonStyle())
+            .padding(24)
+            .navigationTitle("FlowDelivery")
         }
-        .padding(24)
     }
 }
 
