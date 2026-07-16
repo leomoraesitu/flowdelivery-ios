@@ -8,8 +8,7 @@
 import XCTest
 
 final class FlowDeliveryUITestsLaunchTests: XCTestCase {
-
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
+    override static var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
 
@@ -18,7 +17,7 @@ final class FlowDeliveryUITestsLaunchTests: XCTestCase {
     }
 
     @MainActor
-    func testLaunch() throws {
+    func testLaunch() {
         let app = XCUIApplication()
         app.launch()
 

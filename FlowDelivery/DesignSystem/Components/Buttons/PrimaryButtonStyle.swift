@@ -3,7 +3,7 @@ import SwiftUI
 struct PrimaryButtonStyle: ButtonStyle {
     private let pressedOpacity = 0.8
     private let pressedScale = 0.98
-    
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.button)
