@@ -2,7 +2,6 @@ import Observation
 
 @Observable
 final class AppContainer {
-
     let sessionStore: SessionStore
 
     let rootViewModel: RootViewModel
@@ -12,7 +11,7 @@ final class AppContainer {
 
         self.sessionStore = sessionStore
 
-        self.rootViewModel = RootViewModel(
+        rootViewModel = RootViewModel(
             sessionStore: sessionStore
         )
     }
