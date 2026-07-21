@@ -10,12 +10,13 @@ import SwiftUI
 @main
 struct FlowDeliveryApp: App {
     @State
-    private var sessionStore = SessionStore()
+    private var container = AppContainer()
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(sessionStore)
+            RootView(viewModel: container.rootViewModel)
+                .environment(container)
+                .environment(container.sessionStore)
         }
     }
 }

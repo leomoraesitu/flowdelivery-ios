@@ -1,12 +1,7 @@
 import SwiftUI
 
 struct RootView: View {
-    @Environment(SessionStore.self)
-    private var sessionStore
-
-    private var viewModel: RootViewModel {
-        RootViewModel(sessionStore: sessionStore)
-    }
+    let viewModel: RootViewModel
 
     var body: some View {
         NavigationStack {
@@ -20,6 +15,7 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView()
-        .environment(SessionStore())
+    RootView(
+        viewModel: AppContainer().rootViewModel
+    )
 }
