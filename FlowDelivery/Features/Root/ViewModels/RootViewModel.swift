@@ -7,4 +7,8 @@ final class RootViewModel {
     init(sessionStore: SessionStore) {
         self.sessionStore = sessionStore
     }
+
+    var isLoggedIn: Bool {
+        sessionStore.isLoggedIn
+    }
 }
