@@ -1,16 +1,28 @@
 import SwiftUI
 
 struct SessionStateView: View {
-    @Binding
-    var isLoggedIn: Bool
+    @Environment(SessionStore.self)
+    private var sessionStore
 
     var body: some View {
         VStack(spacing: AppSpacing.large) {
-            Text(isLoggedIn ? "Home" : "Login")
-                .font(.title)
+            Text(
+                sessionStore.isLoggedIn
+                    ? "Usuário autenticado"
+                    : "Usuário não autenticado"
+            )
+            .font(.title)
 
-            Button("Alternar estado") {
-                isLoggedIn.toggle()
+            Button(
+                sessionStore.isLoggedIn
+                    ? "Sair"
+                    : "Entrar"
+            ) {
+                if sessionStore.isLoggedIn {
+                    sessionStore.logout()
+                } else {
+                    sessionStore.login()
+                }
             }
             .buttonStyle(PrimaryButtonStyle())
         }
@@ -18,8 +30,7 @@ struct SessionStateView: View {
 }
 
 #Preview {
-    @Previewable @State var isLoggedIn = false
-
-    SessionStateView(isLoggedIn: $isLoggedIn)
+    SessionStateView()
+        .environment(SessionStore())
         .padding(AppSpacing.large)
 }

@@ -1,12 +1,9 @@
 import SwiftUI
 
 struct RootView: View {
-    @State
-    private var isLoggedIn = false
-
     var body: some View {
         NavigationStack {
-            SessionStateView(isLoggedIn: $isLoggedIn)
+            SessionStateView()
                 .padding(AppSpacing.large)
                 .navigationTitle("FlowDelivery")
         }
@@ -15,4 +12,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .environment(SessionStore())
 }
