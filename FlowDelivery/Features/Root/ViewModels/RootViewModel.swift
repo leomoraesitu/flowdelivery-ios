@@ -11,4 +11,12 @@ final class RootViewModel {
     var isLoggedIn: Bool {
         sessionStore.isLoggedIn
     }
+
+    func authenticationButtonTapped() {
+        if sessionStore.isLoggedIn {
+            sessionStore.logout()
+        } else {
+            sessionStore.login()
+        }
+    }
 }
