@@ -19,9 +19,9 @@ final class RootViewModel {
 
     func authenticationButtonTapped() {
         if sessionStore.isLoggedIn {
-            sessionStore.logout()
+            authService.logout()
         } else {
-            sessionStore.login()
+            authService.login()
         }
     }
 }

@@ -9,7 +9,9 @@ final class AppContainer {
 
     init() {
         let sessionStore = SessionStore()
-        let authService = AuthService()
+        let authService = AuthService(
+            sessionStore: sessionStore
+        )
 
         self.sessionStore = sessionStore
         self.authService = authService
