@@ -26,7 +26,9 @@ struct SessionStateView: View {
 
 #Preview {
     let sessionStore = SessionStore()
+    let authRepository = FakeAuthRepository()
     let authService = AuthService(
+        repository: authRepository,
         sessionStore: sessionStore
     )
 

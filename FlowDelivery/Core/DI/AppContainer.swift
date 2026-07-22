@@ -9,7 +9,10 @@ final class AppContainer {
 
     init() {
         let sessionStore = SessionStore()
+        let authRepository = FakeAuthRepository()
+
         let authService = AuthService(
+            repository: authRepository,
             sessionStore: sessionStore
         )
 
