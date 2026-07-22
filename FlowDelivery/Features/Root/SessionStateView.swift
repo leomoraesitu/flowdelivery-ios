@@ -25,9 +25,15 @@ struct SessionStateView: View {
 }
 
 #Preview {
+    let sessionStore = SessionStore()
+    let authService = AuthService(
+        sessionStore: sessionStore
+    )
+
     SessionStateView(
         viewModel: RootViewModel(
-            sessionStore: SessionStore()
+            sessionStore: sessionStore,
+            authService: authService
         )
     )
     .padding(AppSpacing.large)

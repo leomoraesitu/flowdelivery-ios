@@ -1,9 +1,17 @@
 import Foundation
 
 final class AuthService {
-    func login() -> Bool {
-        true
+    private let sessionStore: SessionStore
+
+    init(sessionStore: SessionStore) {
+        self.sessionStore = sessionStore
     }
 
-    func logout() {}
+    func login() {
+        sessionStore.login()
+    }
+
+    func logout() {
+        sessionStore.logout()
+    }
 }
