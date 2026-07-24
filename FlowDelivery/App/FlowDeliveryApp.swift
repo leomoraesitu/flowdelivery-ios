@@ -17,6 +17,9 @@ struct FlowDeliveryApp: App {
             RootView(viewModel: container.rootViewModel)
                 .environment(container)
                 .environment(container.sessionStore)
+                .task {
+                    container.restoreSession()
+                }
         }
     }
 }
