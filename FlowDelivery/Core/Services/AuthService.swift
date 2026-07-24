@@ -1,5 +1,3 @@
-import Foundation
-
 final class AuthService {
     private let sessionStore: SessionStore
     private let repository: AuthRepository
@@ -26,5 +24,13 @@ final class AuthService {
         repository.logout()
 
         sessionStore.logout()
+    }
+
+    func restoreSession() {
+        guard let session = repository.restoreSession() else {
+            return
+        }
+
+        sessionStore.login(with: session)
     }
 }

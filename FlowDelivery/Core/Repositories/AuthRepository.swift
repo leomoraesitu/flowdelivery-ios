@@ -3,6 +3,7 @@ import Foundation
 protocol AuthRepository {
     func login() -> UserSession?
     func logout()
+    func restoreSession() -> UserSession?
 }
 
 final class FakeAuthRepository: AuthRepository {
@@ -13,4 +14,8 @@ final class FakeAuthRepository: AuthRepository {
     }
 
     func logout() {}
+
+    func restoreSession() -> UserSession? {
+        nil
+    }
 }
