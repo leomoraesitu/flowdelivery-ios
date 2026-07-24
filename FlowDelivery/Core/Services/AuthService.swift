@@ -13,9 +13,7 @@ final class AuthService {
     }
 
     func login() {
-        let authenticated = repository.login()
-
-        guard authenticated else {
+        guard let session = repository.login() else {
             return
         }
 
