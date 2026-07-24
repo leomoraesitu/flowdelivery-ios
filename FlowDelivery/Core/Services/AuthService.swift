@@ -17,7 +17,9 @@ final class AuthService {
             return
         }
 
-        sessionStore.login()
+        sessionStore.login(
+            with: session
+        )
     }
 
     func logout() {

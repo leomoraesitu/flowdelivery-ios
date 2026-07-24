@@ -2,13 +2,17 @@ import Observation
 
 @Observable
 final class SessionStore {
-    private(set) var isLoggedIn = false
+    private(set) var session: UserSession?
 
-    func login() {
-        isLoggedIn = true
+    var isLoggedIn: Bool {
+        session != nil
+    }
+
+    func login(with session: UserSession) {
+        self.session = session
     }
 
     func logout() {
-        isLoggedIn = false
+        session = nil
     }
 }
