@@ -1,13 +1,15 @@
 import Foundation
 
 protocol AuthRepository {
-    func login() -> Bool
+    func login() -> UserSession?
     func logout()
 }
 
 final class FakeAuthRepository: AuthRepository {
-    func login() -> Bool {
-        true
+    func login() -> UserSession? {
+        UserSession(
+            userID: UUID()
+        )
     }
 
     func logout() {}
