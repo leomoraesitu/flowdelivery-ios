@@ -7,6 +7,10 @@ final class AppContainer {
 
     let rootViewModel: RootViewModel
 
+    func restoreSession() {
+        authService.restoreSession()
+    }
+
     init() {
         let sessionStore = SessionStore()
         let authRepository = FakeAuthRepository()
