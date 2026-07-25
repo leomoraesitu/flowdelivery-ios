@@ -1,12 +1,15 @@
 final class AuthService {
     private let sessionStore: SessionStore
     private let repository: AuthRepository
+    private let tokenStore: TokenStore
 
     init(
         repository: AuthRepository,
+        tokenStore: TokenStore,
         sessionStore: SessionStore
     ) {
         self.repository = repository
+        self.tokenStore = tokenStore
         self.sessionStore = sessionStore
     }
 

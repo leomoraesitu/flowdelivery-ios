@@ -14,9 +14,11 @@ final class AppContainer {
     init() {
         let sessionStore = SessionStore()
         let authRepository = FakeAuthRepository()
+        let tokenStore = FakeTokenStore()
 
         let authService = AuthService(
             repository: authRepository,
+            tokenStore: tokenStore,
             sessionStore: sessionStore
         )
 
