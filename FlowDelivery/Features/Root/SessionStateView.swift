@@ -17,14 +17,14 @@ struct SessionStateView: View {
                     ? "Sair"
                     : "Entrar"
             ) {
-                do {
-                    try viewModel.authenticationButtonTapped()
-                } catch {
-                    // Tratamento temporário até a introdução do estado de erro na ViewModel.
-                }
+                viewModel.authenticationButtonTapped()
             }
-
             .buttonStyle(PrimaryButtonStyle())
+
+            if case let .error(error) = viewModel.authenticationState {
+                Text(error.message)
+                    .foregroundStyle(.red)
+            }
         }
     }
 }
