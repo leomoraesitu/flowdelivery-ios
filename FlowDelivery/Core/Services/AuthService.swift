@@ -17,7 +17,7 @@ final class AuthService {
         guard let session = repository.login() else {
             return
         }
-        tokenStore.save(
+        try? tokenStore.save(
             session.accessToken
         )
 
@@ -29,13 +29,13 @@ final class AuthService {
     func logout() {
         repository.logout()
 
-        tokenStore.delete()
+        try? tokenStore.delete()
 
         sessionStore.logout()
     }
 
     func restoreSession() {
-        guard let accessToken = tokenStore.load() else {
+        guard let accessToken = try? tokenStore.load() else {
             return
         }
 
