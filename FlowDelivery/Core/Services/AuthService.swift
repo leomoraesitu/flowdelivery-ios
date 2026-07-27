@@ -29,6 +29,8 @@ final class AuthService {
     func logout() {
         repository.logout()
 
+        tokenStore.delete()
+
         sessionStore.logout()
     }
 
