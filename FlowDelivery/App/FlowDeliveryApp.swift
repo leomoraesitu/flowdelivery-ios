@@ -18,7 +18,11 @@ struct FlowDeliveryApp: App {
                 .environment(container)
                 .environment(container.sessionStore)
                 .task {
-                    container.restoreSession()
+                    do {
+                        try container.restoreSession()
+                    } catch {
+                        // Tratamento temporário até a criação do AppStartupViewModel.
+                    }
                 }
         }
     }

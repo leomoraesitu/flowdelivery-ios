@@ -7,8 +7,8 @@ final class AppContainer {
 
     let rootViewModel: RootViewModel
 
-    func restoreSession() {
-        authService.restoreSession()
+    func restoreSession() throws {
+        try authService.restoreSession()
     }
 
     init() {
