@@ -17,11 +17,11 @@ final class RootViewModel {
         sessionStore.isLoggedIn
     }
 
-    func authenticationButtonTapped() {
+    func authenticationButtonTapped() throws {
         if sessionStore.isLoggedIn {
-            authService.logout()
+            try authService.logout()
         } else {
-            authService.login()
+            try authService.login()
         }
     }
 }

@@ -17,8 +17,13 @@ struct SessionStateView: View {
                     ? "Sair"
                     : "Entrar"
             ) {
-                viewModel.authenticationButtonTapped()
+                do {
+                    try viewModel.authenticationButtonTapped()
+                } catch {
+                    // Tratamento temporário até a introdução do estado de erro na ViewModel.
+                }
             }
+
             .buttonStyle(PrimaryButtonStyle())
         }
     }

@@ -13,11 +13,11 @@ final class AuthService {
         self.sessionStore = sessionStore
     }
 
-    func login() {
+    func login() throws {
         guard let session = repository.login() else {
             return
         }
-        try? tokenStore.save(
+        try tokenStore.save(
             session.accessToken
         )
 
@@ -26,16 +26,16 @@ final class AuthService {
         )
     }
 
-    func logout() {
+    func logout() throws {
         repository.logout()
 
-        try? tokenStore.delete()
+        try tokenStore.delete()
 
         sessionStore.logout()
     }
 
-    func restoreSession() {
-        guard let accessToken = try? tokenStore.load() else {
+    func restoreSession() throws {
+        guard let accessToken = try tokenStore.load() else {
             return
         }
 
