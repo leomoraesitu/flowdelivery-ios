@@ -9,7 +9,8 @@ protocol AuthRepository {
 final class FakeAuthRepository: AuthRepository {
     func login() -> UserSession? {
         UserSession(
-            userID: UUID()
+            userID: UUID(),
+            accessToken: UUID().uuidString
         )
     }
 
