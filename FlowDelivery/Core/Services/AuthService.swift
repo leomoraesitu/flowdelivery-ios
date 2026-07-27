@@ -35,7 +35,13 @@ final class AuthService {
     }
 
     func restoreSession() {
-        guard let session = repository.restoreSession() else {
+        guard let accessToken = tokenStore.load() else {
+            return
+        }
+
+        guard let session = repository.restoreSession(
+            accessToken: accessToken
+        ) else {
             return
         }
 
