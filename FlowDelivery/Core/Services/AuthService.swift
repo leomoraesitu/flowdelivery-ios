@@ -17,6 +17,9 @@ final class AuthService {
         guard let session = repository.login() else {
             return
         }
+        tokenStore.save(
+            session.accessToken
+        )
 
         sessionStore.login(
             with: session
@@ -34,6 +37,8 @@ final class AuthService {
             return
         }
 
-        sessionStore.login(with: session)
+        sessionStore.login(
+            with: session
+        )
     }
 }
