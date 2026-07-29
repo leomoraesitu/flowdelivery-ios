@@ -4,12 +4,7 @@ import Observation
 final class AppContainer {
     let sessionStore: SessionStore
     let authService: AuthService
-
     let rootViewModel: RootViewModel
-
-    func restoreSession() throws {
-        try authService.restoreSession()
-    }
 
     init() {
         let sessionStore = SessionStore()
@@ -24,9 +19,13 @@ final class AppContainer {
 
         self.sessionStore = sessionStore
         self.authService = authService
-        rootViewModel = RootViewModel(
+        self.rootViewModel = RootViewModel(
             sessionStore: sessionStore,
             authService: authService
         )
+    }
+
+    func restoreSession() throws {
+        try authService.restoreSession()
     }
 }
