@@ -19,7 +19,7 @@ final class AppContainer {
 
         self.sessionStore = sessionStore
         self.authService = authService
-        self.rootViewModel = RootViewModel(
+        rootViewModel = RootViewModel(
             sessionStore: sessionStore,
             authService: authService
         )
