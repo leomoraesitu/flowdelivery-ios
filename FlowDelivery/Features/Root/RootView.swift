@@ -14,15 +14,12 @@ struct RootView: View {
     @ViewBuilder
     private var content: some View {
         switch viewModel.rootState {
-        case .loading:
-            ProgressView()
-
         case .authenticated:
             ContentView()
 
         case .unauthenticated:
             SessionStateView(
-                viewModel: viewModel
+                viewModel: viewModel.authenticationViewModel
             )
         }
     }

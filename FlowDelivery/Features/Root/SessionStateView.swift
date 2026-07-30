@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SessionStateView: View {
-    let viewModel: RootViewModel
+    let viewModel: AuthenticationViewModel
 
     var body: some View {
         VStack(spacing: AppSpacing.large) {
@@ -40,7 +40,7 @@ struct SessionStateView: View {
     )
 
     SessionStateView(
-        viewModel: RootViewModel(
+        viewModel: AuthenticationViewModel(
             sessionStore: sessionStore,
             authService: authService
         )
