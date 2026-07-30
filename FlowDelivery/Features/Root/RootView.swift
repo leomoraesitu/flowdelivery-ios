@@ -5,11 +5,25 @@ struct RootView: View {
 
     var body: some View {
         NavigationStack {
+            content
+                .padding(AppSpacing.large)
+                .navigationTitle("FlowDelivery")
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.rootState {
+        case .loading:
+            ProgressView()
+
+        case .authenticated:
+            ContentView()
+
+        case .unauthenticated:
             SessionStateView(
                 viewModel: viewModel
             )
-            .padding(AppSpacing.large)
-            .navigationTitle("FlowDelivery")
         }
     }
 }

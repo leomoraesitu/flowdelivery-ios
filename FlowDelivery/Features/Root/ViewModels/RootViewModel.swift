@@ -7,6 +7,7 @@ final class RootViewModel {
     private let authService: AuthService
 
     private(set) var authenticationState: AuthenticationState
+    private(set) var rootState: RootState
 
     enum AuthenticationError: Equatable {
         case loginFailed
@@ -22,6 +23,12 @@ final class RootViewModel {
         case error(AuthenticationError)
     }
 
+    enum RootState: Equatable {
+        case loading
+        case authenticated
+        case unauthenticated
+    }
+
     init(
         sessionStore: SessionStore,
         authService: AuthService
@@ -30,6 +37,10 @@ final class RootViewModel {
         self.authService = authService
 
         authenticationState = sessionStore.isLoggedIn
+            ? .authenticated
+            : .unauthenticated
+
+        rootState = sessionStore.isLoggedIn
             ? .authenticated
             : .unauthenticated
     }
@@ -42,14 +53,17 @@ final class RootViewModel {
         let wasLoggedIn = sessionStore.isLoggedIn
 
         authenticationState = .loading
+        rootState = .loading
 
         do {
             if wasLoggedIn {
                 try authService.logout()
                 authenticationState = .unauthenticated
+                rootState = .unauthenticated
             } else {
                 try authService.login()
                 authenticationState = .authenticated
+                rootState = .authenticated
             }
         } catch {
             authenticationState = .error(
@@ -57,6 +71,9 @@ final class RootViewModel {
                     ? .logoutFailed
                     : .loginFailed
             )
+            rootState = wasLoggedIn
+                ? .authenticated
+                : .unauthenticated
         }
     }
 }
