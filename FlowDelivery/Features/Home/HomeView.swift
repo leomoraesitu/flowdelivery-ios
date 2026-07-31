@@ -23,6 +23,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView(
-        viewModel: HomeViewModel()
+        viewModel: HomeViewModel(repository: FakeRestaurantRepository())
     )
 }

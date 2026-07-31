@@ -6,6 +6,7 @@ final class AppContainer {
     let authService: AuthService
     let rootViewModel: RootViewModel
     let homeViewModel: HomeViewModel
+    let restaurantRepository: RestaurantRepository
 
     init() {
         let sessionStore = SessionStore()
@@ -24,7 +25,10 @@ final class AppContainer {
             sessionStore: sessionStore,
             authService: authService
         )
-        homeViewModel = HomeViewModel()
+        restaurantRepository = FakeRestaurantRepository()
+        homeViewModel = HomeViewModel(
+            repository: restaurantRepository
+        )
     }
 
     func restoreSession() throws {
