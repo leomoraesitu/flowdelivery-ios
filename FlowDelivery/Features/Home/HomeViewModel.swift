@@ -15,11 +15,24 @@ final class HomeViewModel {
     enum HomeState: Equatable {
         case loading
         case loaded([Restaurant])
+        case error(HomeError)
+    }
+
+    enum HomeError: Equatable {
+        case loadFailed
     }
 
     func load() async {
-        state = .loaded(
-            await repository.fetchRestaurants()
-        )
+        state = .loading
+
+        do {
+            let restaurants =
+                try await repository.fetchRestaurants()
+
+            state = .loaded(restaurants)
+
+        } catch {
+            state = .error(.loadFailed)
+        }
     }
 }

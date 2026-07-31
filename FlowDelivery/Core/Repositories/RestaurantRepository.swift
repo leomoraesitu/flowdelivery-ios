@@ -1,3 +1,3 @@
 protocol RestaurantRepository {
-    func fetchRestaurants() async -> [Restaurant]
+    func fetchRestaurants() async throws -> [Restaurant]
 }
