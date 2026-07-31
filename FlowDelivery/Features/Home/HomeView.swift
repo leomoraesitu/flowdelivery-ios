@@ -16,7 +16,7 @@ struct HomeView: View {
             }
         }
         .task {
-            viewModel.load()
+            await viewModel.load()
         }
     }
 }

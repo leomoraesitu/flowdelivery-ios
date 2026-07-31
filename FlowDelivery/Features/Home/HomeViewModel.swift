@@ -1,5 +1,6 @@
 import Observation
 
+@MainActor
 @Observable
 final class HomeViewModel {
     private(set) var state: HomeState = .loading
@@ -16,9 +17,9 @@ final class HomeViewModel {
         case loaded([Restaurant])
     }
 
-    func load() {
+    func load() async {
         state = .loaded(
-            repository.fetchRestaurants()
+            await repository.fetchRestaurants()
         )
     }
 }
