@@ -2,17 +2,19 @@ import SwiftUI
 
 struct HomeView: View {
     let viewModel: HomeViewModel
+
     var body: some View {
-        VStack {
+        Group {
             switch viewModel.state {
             case .loading:
                 ProgressView()
 
-            case .loaded:
-                Text("Home")
+            case let .loaded(restaurants):
+                List(restaurants) { restaurant in
+                    Text(restaurant.name)
+                }
             }
         }
-        .padding()
         .task {
             viewModel.load()
         }

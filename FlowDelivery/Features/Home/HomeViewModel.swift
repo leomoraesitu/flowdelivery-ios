@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 @Observable
@@ -6,10 +7,19 @@ final class HomeViewModel {
 
     enum HomeState: Equatable {
         case loading
-        case loaded
+        case loaded([Restaurant])
     }
 
     func load() {
-        state = .loaded
+        state = .loaded([
+            Restaurant(
+                id: UUID(),
+                name: "Pizzaria Itália"
+            ),
+            Restaurant(
+                id: UUID(),
+                name: "Burger House"
+            )
+        ])
     }
 }
