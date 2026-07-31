@@ -25,7 +25,8 @@ struct FlowDeliveryApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(
-                viewModel: container.rootViewModel
+                viewModel: container.rootViewModel,
+                homeViewModel: container.homeViewModel
             )
             .environment(container)
             .environment(container.sessionStore)

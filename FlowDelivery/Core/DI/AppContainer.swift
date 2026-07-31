@@ -5,6 +5,7 @@ final class AppContainer {
     let sessionStore: SessionStore
     let authService: AuthService
     let rootViewModel: RootViewModel
+    let homeViewModel: HomeViewModel
 
     init() {
         let sessionStore = SessionStore()
@@ -23,6 +24,7 @@ final class AppContainer {
             sessionStore: sessionStore,
             authService: authService
         )
+        homeViewModel = HomeViewModel()
     }
 
     func restoreSession() throws {
