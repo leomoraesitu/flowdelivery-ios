@@ -1,7 +1,7 @@
 import Foundation
 
 struct FakeRestaurantRepository: RestaurantRepository {
-    func fetchRestaurants() -> [Restaurant] {
+    func fetchRestaurants() async -> [Restaurant] {
         [
             Restaurant(
                 id: UUID(),
