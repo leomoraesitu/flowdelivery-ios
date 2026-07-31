@@ -1,17 +1,26 @@
 import SwiftUI
 
 struct HomeView: View {
+    let viewModel: HomeViewModel
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            switch viewModel.state {
+            case .loading:
+                ProgressView()
+
+            case .loaded:
+                Text("Home")
+            }
         }
         .padding()
+        .task {
+            viewModel.load()
+        }
     }
 }
 
 #Preview {
-    HomeView()
+    HomeView(
+        viewModel: HomeViewModel()
+    )
 }
