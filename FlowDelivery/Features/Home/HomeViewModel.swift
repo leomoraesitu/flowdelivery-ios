@@ -1,9 +1,15 @@
-import Foundation
 import Observation
 
 @Observable
 final class HomeViewModel {
     private(set) var state: HomeState = .loading
+    private let repository: RestaurantRepository
+
+    init(
+        repository: RestaurantRepository
+    ) {
+        self.repository = repository
+    }
 
     enum HomeState: Equatable {
         case loading
@@ -11,15 +17,8 @@ final class HomeViewModel {
     }
 
     func load() {
-        state = .loaded([
-            Restaurant(
-                id: UUID(),
-                name: "Pizzaria Itália"
-            ),
-            Restaurant(
-                id: UUID(),
-                name: "Burger House"
-            )
-        ])
+        state = .loaded(
+            repository.fetchRestaurants()
+        )
     }
 }
