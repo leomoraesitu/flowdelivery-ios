@@ -15,10 +15,10 @@ struct RootView: View {
     private var content: some View {
         switch viewModel.rootState {
         case .authenticated:
-            ContentView()
+            HomeView()
 
         case .unauthenticated:
-            SessionStateView(
+            AuthenticationView(
                 viewModel: viewModel.authenticationViewModel
             )
         }
