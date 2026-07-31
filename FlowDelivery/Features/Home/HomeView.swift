@@ -13,6 +13,9 @@ struct HomeView: View {
                 List(restaurants) { restaurant in
                     Text(restaurant.name)
                 }
+
+            case let .error(error):
+                Text(error.message)
             }
         }
         .task {
@@ -21,8 +24,19 @@ struct HomeView: View {
     }
 }
 
+extension HomeViewModel.HomeError {
+    var message: LocalizedStringKey {
+        switch self {
+        case .loadFailed:
+            "Não foi possível carregar os restaurantes."
+        }
+    }
+}
+
 #Preview {
     HomeView(
-        viewModel: HomeViewModel(repository: FakeRestaurantRepository())
+        viewModel: HomeViewModel(
+            repository: FakeRestaurantRepository()
+        )
     )
 }
