@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SessionStateView: View {
+struct AuthenticationView: View {
     let viewModel: AuthenticationViewModel
 
     var body: some View {
@@ -39,7 +39,7 @@ struct SessionStateView: View {
         sessionStore: sessionStore
     )
 
-    SessionStateView(
+    AuthenticationView(
         viewModel: AuthenticationViewModel(
             sessionStore: sessionStore,
             authService: authService

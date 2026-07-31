@@ -1,13 +1,6 @@
-//
-//  ContentView.swift
-//  FlowDelivery
-//
-//  Created by Leonardo de Moraes Souza on 14/07/26.
-//
-
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +13,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    HomeView()
 }
