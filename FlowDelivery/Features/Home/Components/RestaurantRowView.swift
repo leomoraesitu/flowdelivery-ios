@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct RestaurantRowView: View {
-    let restaurant: Restaurant
+    let model: RestaurantRowModel
 
     var body: some View {
         HStack(alignment: .top, spacing: AppSpacing.medium) {
-            AsyncImage(url: restaurant.imageURL) { phase in
+            AsyncImage(url: model.imageURL) { phase in
                 switch phase {
                 case .empty:
                     ProgressView()
@@ -19,7 +19,7 @@ struct RestaurantRowView: View {
                     Image(systemName: "photo")
                         .resizable()
                         .scaledToFit()
-                        .padding(20)
+                        .padding(AppSpacing.large)
                         .foregroundStyle(.secondary)
 
                 @unknown default:
@@ -34,26 +34,23 @@ struct RestaurantRowView: View {
             .clipShape(RoundedRectangle(cornerRadius: AppCornerRadius.medium))
 
             VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                Text(restaurant.name)
+                Text(model.title)
                     .font(.headline)
 
                 HStack {
                     Label(
-                        restaurant.rating.formatted(
-                            .number.precision(.fractionLength(1))
-                        ),
+                        model.rating,
                         systemImage: "star.fill"
                     )
 
                     Spacer()
 
-                    Text("\(restaurant.deliveryTime) min")
+                    Text(model.deliveryTime)
 
                     Spacer()
 
                     Text(
-                        restaurant.deliveryFee,
-                        format: .currency(code: "BRL")
+                        model.deliveryFee
                     )
                 }
                 .font(.caption)
@@ -66,15 +63,17 @@ struct RestaurantRowView: View {
 
 #Preview {
     RestaurantRowView(
-        restaurant: Restaurant(
-            id: UUID(),
-            name: "Pizzaria Itália",
-            imageURL: URL(
-                string: "https://picsum.photos/120"
-            ),
-            rating: 4.8,
-            deliveryTime: 30,
-            deliveryFee: Decimal(string: "5.99")!
+        model: RestaurantRowModel(
+            restaurant: Restaurant(
+                id: UUID(),
+                name: "Pizzaria Itália",
+                imageURL: URL(
+                    string: "https://picsum.photos/120"
+                ),
+                rating: 4.8,
+                deliveryTime: 30,
+                deliveryFee: Decimal(string: "5.99")!
+            )
         )
     )
 }
