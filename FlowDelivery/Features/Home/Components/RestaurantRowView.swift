@@ -4,31 +4,58 @@ struct RestaurantRowView: View {
     let restaurant: Restaurant
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(restaurant.name)
-                .font(.headline)
+        HStack(alignment: .top, spacing: 12) {
+            AsyncImage(url: restaurant.imageURL) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
 
-            HStack {
-                Label(
-                    restaurant.rating.formatted(
-                        .number.precision(.fractionLength(1))
-                    ),
-                    systemImage: "star.fill"
-                )
+                case let .success(image):
+                    image
+                        .resizable()
+                        .scaledToFill()
 
-                Spacer()
+                case .failure:
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(20)
+                        .foregroundStyle(.secondary)
 
-                Text("\(restaurant.deliveryTime) min")
-
-                Spacer()
-
-                Text(
-                    restaurant.deliveryFee,
-                    format: .currency(code: "BRL")
-                )
+                @unknown default:
+                    EmptyView()
+                }
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .frame(width: 72, height: 72)
+            .background(.quaternary)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(restaurant.name)
+                    .font(.headline)
+
+                HStack {
+                    Label(
+                        restaurant.rating.formatted(
+                            .number.precision(.fractionLength(1))
+                        ),
+                        systemImage: "star.fill"
+                    )
+
+                    Spacer()
+
+                    Text("\(restaurant.deliveryTime) min")
+
+                    Spacer()
+
+                    Text(
+                        restaurant.deliveryFee,
+                        format: .currency(code: "BRL")
+                    )
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
         }
         .padding(.vertical, 8)
     }
@@ -39,6 +66,9 @@ struct RestaurantRowView: View {
         restaurant: Restaurant(
             id: UUID(),
             name: "Pizzaria Itália",
+            imageURL: URL(
+                string: "https://picsum.photos/120"
+            ),
             rating: 4.8,
             deliveryTime: 30,
             deliveryFee: Decimal(string: "5.99")!
