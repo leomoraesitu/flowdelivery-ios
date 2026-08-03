@@ -12,7 +12,9 @@ struct HomeView: View {
             case let .loaded(restaurants):
                 List(restaurants) { restaurant in
                     RestaurantRowView(
-                        restaurant: restaurant
+                        model: RestaurantRowModel(
+                            restaurant: restaurant
+                        )
                     )
                 }
                 .refreshable {
