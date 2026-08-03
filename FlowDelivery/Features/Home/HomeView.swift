@@ -13,6 +13,9 @@ struct HomeView: View {
                 List(restaurants) { restaurant in
                     Text(restaurant.name)
                 }
+                .refreshable {
+                    await viewModel.load()
+                }
 
             case let .error(error):
                 ContentUnavailableView {
@@ -37,7 +40,7 @@ struct HomeView: View {
             }
         }
         .task {
-            await viewModel.load()
+            await viewModel.loadIfNeeded()
         }
     }
 }
