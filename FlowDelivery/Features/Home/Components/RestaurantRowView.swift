@@ -4,7 +4,7 @@ struct RestaurantRowView: View {
     let restaurant: Restaurant
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: AppSpacing.medium) {
             AsyncImage(url: restaurant.imageURL) { phase in
                 switch phase {
                 case .empty:
@@ -26,11 +26,14 @@ struct RestaurantRowView: View {
                     EmptyView()
                 }
             }
-            .frame(width: 72, height: 72)
+            .frame(
+                width: AppIconSize.restaurantImage,
+                height: AppIconSize.restaurantImage
+            )
             .background(.quaternary)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: AppCornerRadius.medium))
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                 Text(restaurant.name)
                     .font(.headline)
 
@@ -57,7 +60,7 @@ struct RestaurantRowView: View {
                 .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, AppSpacing.small)
     }
 }
 
