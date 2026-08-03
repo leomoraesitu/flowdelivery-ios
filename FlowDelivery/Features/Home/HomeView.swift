@@ -9,12 +9,10 @@ struct HomeView: View {
             case .loading:
                 ProgressView()
 
-            case let .loaded(restaurants):
-                List(restaurants) { restaurant in
+            case let .loaded(content):
+                List(content.restaurants) { restaurant in
                     RestaurantRowView(
-                        model: RestaurantRowModel(
-                            restaurant: restaurant
-                        )
+                        model: restaurant
                     )
                 }
                 .refreshable {
