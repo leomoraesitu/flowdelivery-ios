@@ -16,6 +16,12 @@ struct HomeView: View {
 
             case let .error(error):
                 Text(error.message)
+
+            case .empty:
+                ContentUnavailableView(
+                    "Nenhum restaurante encontrado",
+                    systemImage: "fork.knife.circle"
+                )
             }
         }
         .task {
@@ -38,5 +44,15 @@ extension HomeViewModel.HomeError {
         viewModel: HomeViewModel(
             repository: FakeRestaurantRepository()
         )
+    )
+}
+
+#Preview("Empty") {
+    let viewModel = HomeViewModel(
+        repository: EmptyRestaurantRepository()
+    )
+
+    HomeView(
+        viewModel: viewModel
     )
 }

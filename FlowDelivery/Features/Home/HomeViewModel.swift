@@ -15,6 +15,7 @@ final class HomeViewModel {
     enum HomeState: Equatable {
         case loading
         case loaded([Restaurant])
+        case empty
         case error(HomeError)
     }
 
@@ -29,7 +30,11 @@ final class HomeViewModel {
             let restaurants =
                 try await repository.fetchRestaurants()
 
-            state = .loaded(restaurants)
+            if restaurants.isEmpty {
+                state = .empty
+            } else {
+                state = .loaded(restaurants)
+            }
 
         } catch {
             state = .error(.loadFailed)
