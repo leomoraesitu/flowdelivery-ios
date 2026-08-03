@@ -15,7 +15,19 @@ struct HomeView: View {
                 }
 
             case let .error(error):
-                Text(error.message)
+                ContentUnavailableView {
+                    Label(
+                        error.message,
+                        systemImage: "wifi.exclamationmark"
+                    )
+
+                } actions: {
+                    Button("Tentar novamente") {
+                        Task {
+                            await viewModel.load()
+                        }
+                    }
+                }
 
             case .empty:
                 ContentUnavailableView(
@@ -51,6 +63,17 @@ extension HomeViewModel.HomeError {
     let viewModel = HomeViewModel(
         repository: EmptyRestaurantRepository()
     )
+
+    HomeView(
+        viewModel: viewModel
+    )
+}
+
+#Preview("Error") {
+    let viewModel =
+        HomeViewModel(
+            repository: FailingRestaurantRepository()
+        )
 
     HomeView(
         viewModel: viewModel
