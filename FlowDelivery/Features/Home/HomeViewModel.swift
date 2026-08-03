@@ -16,7 +16,7 @@ final class HomeViewModel {
 
     enum HomeState: Equatable {
         case loading
-        case loaded([Restaurant])
+        case loaded(HomeContent)
         case empty
         case error(HomeError)
     }
@@ -35,7 +35,14 @@ final class HomeViewModel {
             if restaurants.isEmpty {
                 state = .empty
             } else {
-                state = .loaded(restaurants)
+                state = .loaded(
+                    HomeContent(
+                        restaurants:
+                        restaurants.map(
+                            RestaurantRowModel.init
+                        )
+                    )
+                )
             }
 
         } catch {
