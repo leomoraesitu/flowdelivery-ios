@@ -9,11 +9,11 @@ struct PrimaryButtonStyle: ButtonStyle {
             .font(AppTypography.button)
             .foregroundStyle(AppColor.onPrimary)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: AppSize.primaryButtonHeight)
+            .frame(minHeight: AppComponentSize.primaryButtonHeight)
             .padding(.horizontal, AppSpacing.medium)
             .background(AppColor.primary)
             .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.medium)
+                RoundedRectangle(cornerRadius: AppCornerRadius.medium)
             )
             .opacity(configuration.isPressed ? pressedOpacity : 1)
             .scaleEffect(configuration.isPressed ? pressedScale : 1)

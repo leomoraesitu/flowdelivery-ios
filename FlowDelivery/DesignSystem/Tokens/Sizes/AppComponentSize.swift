@@ -1,5 +1,5 @@
 import SwiftUI
 
-enum AppSize {
+enum AppComponentSize {
     static let primaryButtonHeight: CGFloat = 50
 }
