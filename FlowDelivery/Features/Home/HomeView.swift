@@ -11,7 +11,9 @@ struct HomeView: View {
 
             case let .loaded(restaurants):
                 List(restaurants) { restaurant in
-                    Text(restaurant.name)
+                    RestaurantRowView(
+                        restaurant: restaurant
+                    )
                 }
                 .refreshable {
                     await viewModel.load()
