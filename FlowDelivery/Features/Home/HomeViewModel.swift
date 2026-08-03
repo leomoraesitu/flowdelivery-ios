@@ -6,6 +6,8 @@ final class HomeViewModel {
     private(set) var state: HomeState = .loading
     private let repository: RestaurantRepository
 
+    private var hasLoaded = false
+
     init(
         repository: RestaurantRepository
     ) {
@@ -39,5 +41,12 @@ final class HomeViewModel {
         } catch {
             state = .error(.loadFailed)
         }
+    }
+
+    func loadIfNeeded() async {
+        guard !hasLoaded else { return }
+
+        hasLoaded = true
+        await load()
     }
 }
