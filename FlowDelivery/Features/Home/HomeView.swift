@@ -11,9 +11,13 @@ struct HomeView: View {
 
             case let .loaded(content):
                 List(content.restaurants) { restaurant in
-                    RestaurantRowView(
-                        model: restaurant
-                    )
+                    NavigationLink {
+                        RestaurantDetailsView()
+                    } label: {
+                        RestaurantRowView(
+                            model: restaurant
+                        )
+                    }
                 }
                 .refreshable {
                     await viewModel.load()
@@ -25,7 +29,6 @@ struct HomeView: View {
                         error.message,
                         systemImage: "wifi.exclamationmark"
                     )
-
                 } actions: {
                     Button("Tentar novamente") {
                         Task {
@@ -75,8 +78,7 @@ extension HomeViewModel.HomeError {
 }
 
 #Preview("Error") {
-    let viewModel =
-        HomeViewModel(
+    let viewModel = HomeViewModel(
             repository: FailingRestaurantRepository()
         )
 
