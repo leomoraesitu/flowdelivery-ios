@@ -12,7 +12,9 @@ struct HomeView: View {
             case let .loaded(content):
                 List(content.restaurants) { restaurant in
                     NavigationLink {
-                        RestaurantDetailsView()
+                        RestaurantDetailsView(
+                            restaurantID: restaurant.id
+                        )
                     } label: {
                         RestaurantRowView(
                             model: restaurant
@@ -79,8 +81,8 @@ extension HomeViewModel.HomeError {
 
 #Preview("Error") {
     let viewModel = HomeViewModel(
-            repository: FailingRestaurantRepository()
-        )
+        repository: FailingRestaurantRepository()
+    )
 
     HomeView(
         viewModel: viewModel
