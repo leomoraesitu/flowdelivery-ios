@@ -13,7 +13,9 @@ final class RestaurantDetailsViewModel {
 
     enum RestaurantDetailsState: Equatable {
         case loading
-        case loaded(Restaurant)
+        case loaded(
+            RestaurantDetailsContent
+        )
         case error(RestaurantDetailsError)
     }
 
@@ -37,7 +39,11 @@ final class RestaurantDetailsViewModel {
                 id: restaurantID
             )
 
-            state = .loaded(restaurant)
+            state = .loaded(
+                RestaurantDetailsContent(
+                    restaurant: restaurant
+                )
+            )
         } catch {
             state = .error(.loadFailed)
         }
