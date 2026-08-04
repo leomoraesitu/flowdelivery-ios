@@ -1,18 +1,47 @@
 import SwiftUI
 
 struct RestaurantDetailsView: View {
-    let restaurantID: UUID
+    let viewModel: RestaurantDetailsViewModel
 
     var body: some View {
-        Text(restaurantID.uuidString)
-            .navigationTitle("Restaurant")
+        Group {
+            switch viewModel.state {
+            case .loading:
+                ProgressView()
+                ProgressView()
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity
+                    )
+
+            case let .loaded(restaurant):
+                Text(restaurant.name)
+
+            case let .error(error):
+                ContentUnavailableView {
+                    Label(
+                        "Não foi possível carregar o restaurante",
+                        systemImage: "wifi.exclamationmark"
+                    )
+                } description: {
+                    Text(error.message)
+                }
+            }
+        }
+        .task {
+            await viewModel.load()
+        }
+        .navigationTitle("Restaurant")
     }
 }
 
 #Preview {
     NavigationStack {
         RestaurantDetailsView(
-            restaurantID: UUID()
+            viewModel: RestaurantDetailsViewModel(
+                restaurantID: UUID(),
+                repository: FakeRestaurantDetailsRepository()
+            )
         )
     }
 }
