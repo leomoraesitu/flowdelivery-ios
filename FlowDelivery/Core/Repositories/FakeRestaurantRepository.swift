@@ -11,7 +11,8 @@ struct FakeRestaurantRepository: RestaurantRepository {
                 ),
                 rating: 4.8,
                 deliveryTime: 30,
-                deliveryFee: Decimal(string: "5.99")!
+                deliveryFee: Decimal(string: "5.99")!,
+                menu: []
             ),
             Restaurant(
                 id: UUID(),
@@ -21,7 +22,8 @@ struct FakeRestaurantRepository: RestaurantRepository {
                 ),
                 rating: 4.5,
                 deliveryTime: 20,
-                deliveryFee: Decimal(string: "3.99")!
+                deliveryFee: Decimal(string: "3.99")!,
+                menu: []
             )
         ]
     }

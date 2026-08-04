@@ -7,4 +7,5 @@ struct Restaurant: Identifiable, Equatable {
     let rating: Double
     let deliveryTime: Int
     let deliveryFee: Decimal
+    let menu: [MenuItem]
 }
