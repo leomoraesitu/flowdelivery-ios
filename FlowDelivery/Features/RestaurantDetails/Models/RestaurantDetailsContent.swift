@@ -10,6 +10,8 @@ struct RestaurantDetailsContent: Equatable {
     let deliveryTime: String
 
     let deliveryFee: String
+
+    let menu: [MenuItemContent]
 }
 
 extension RestaurantDetailsContent {
@@ -31,5 +33,9 @@ extension RestaurantDetailsContent {
             restaurant.deliveryFee.formatted(
                 .currency(code: "BRL")
             )
+
+        menu = restaurant.menu.map {
+            MenuItemContent(menuItem: $0)
+        }
     }
 }
