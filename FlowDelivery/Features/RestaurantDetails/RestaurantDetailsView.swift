@@ -1,14 +1,18 @@
 import SwiftUI
 
 struct RestaurantDetailsView: View {
+    let restaurantID: UUID
+
     var body: some View {
-        Text("Restaurant Details")
+        Text(restaurantID.uuidString)
             .navigationTitle("Restaurant")
     }
 }
 
 #Preview {
     NavigationStack {
-        RestaurantDetailsView()
+        RestaurantDetailsView(
+            restaurantID: UUID()
+        )
     }
 }
