@@ -4,34 +4,93 @@ struct RestaurantDetailsView: View {
     let viewModel: RestaurantDetailsViewModel
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .loading:
-                ProgressView()
-                ProgressView()
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: .infinity
-                    )
+        content
+            .task {
+                await viewModel.load()
+            }
+            .navigationTitle("Restaurant")
+    }
 
-            case let .loaded(restaurant):
-                Text(restaurant.name)
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.state {
+        case .loading:
+            ProgressView()
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
 
-            case let .error(error):
-                ContentUnavailableView {
-                    Label(
-                        "Não foi possível carregar o restaurante",
-                        systemImage: "wifi.exclamationmark"
-                    )
-                } description: {
-                    Text(error.message)
-                }
+        case let .loaded(content):
+            loadedContent(content)
+
+        case let .error(error):
+            ContentUnavailableView {
+                Label(
+                    "Não foi possível carregar o restaurante",
+                    systemImage: "wifi.exclamationmark"
+                )
+            } description: {
+                Text(error.message)
             }
         }
-        .task {
-            await viewModel.load()
+    }
+
+    private func loadedContent(
+        _ content: RestaurantDetailsContent
+    ) -> some View {
+        VStack(
+            spacing: AppSpacing.large
+        ) {
+            AsyncImage(
+                url: content.imageURL
+            ) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+
+                case let .success(image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+
+                case .failure:
+                    Image(systemName: "photo")
+
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            .frame(
+                width: 200,
+                height: 200
+            )
+            .clipShape(
+                RoundedRectangle(
+                    cornerRadius: AppCornerRadius.large
+                )
+            )
+
+            Text(content.title)
+
+            HStack {
+                Label(
+                    content.rating,
+                    systemImage: "star.fill"
+                )
+
+                Spacer()
+
+                Text(content.deliveryTime)
+
+                Spacer()
+
+                Text(content.deliveryFee)
+            }
+
+            .foregroundStyle(.secondary)
         }
-        .navigationTitle("Restaurant")
+        .padding(AppSpacing.large)
     }
 }
 
