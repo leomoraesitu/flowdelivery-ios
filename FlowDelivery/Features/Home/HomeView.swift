@@ -13,7 +13,10 @@ struct HomeView: View {
                 List(content.restaurants) { restaurant in
                     NavigationLink {
                         RestaurantDetailsView(
-                            restaurantID: restaurant.id
+                            viewModel: RestaurantDetailsViewModel(
+                                restaurantID: restaurant.id,
+                                repository: FakeRestaurantDetailsRepository()
+                            )
                         )
                     } label: {
                         RestaurantRowView(
