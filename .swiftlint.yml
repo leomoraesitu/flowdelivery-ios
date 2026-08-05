@@ -1,40 +1,31 @@
 included:
   - FlowDelivery
-  - FlowDeliveryTests
-  - FlowDeliveryUITests
 
 excluded:
+  - Pods
   - .build
-  - build
   - DerivedData
 
 opt_in_rules:
   - empty_count
+  - closure_spacing
   - explicit_init
   - first_where
+  - modifier_order
   - redundant_nil_coalescing
   - sorted_imports
+  - vertical_parameter_alignment_on_call
 
 disabled_rules:
   - todo
+  - trailing_whitespace
 
 line_length:
   warning: 120
   error: 150
-  ignores_comments: true
-  ignores_urls: true
 
-type_name:
-  min_length:
-    warning: 3
-    error: 2
+type_body_length:
+  warning: 300
 
-identifier_name:
-  min_length:
-    warning: 2
-    error: 1
-
-trailing_whitespace:
-  ignores_empty_lines: true
-
-reporter: xcode
+file_length:
+  warning: 500
