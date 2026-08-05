@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -euo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🪝 Pre-commit Quality Check"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+[[ -x ./Scripts/format-check.sh ]] || {
+    echo "❌ Scripts/format-check.sh não encontrado ou sem permissão de execução."
+    exit 1
+}
+
+[[ -x ./Scripts/lint.sh ]] || {
+    echo "❌ Scripts/lint.sh não encontrado ou sem permissão de execução."
+    exit 1
+}
+
+./Scripts/format-check.sh
+./Scripts/lint.sh
+
+echo ""
+echo "✅ Pre-commit aprovado."

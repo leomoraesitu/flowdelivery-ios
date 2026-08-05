@@ -1,7 +1,22 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-echo "🔍 Running SwiftLint..."
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
 
-swiftlint
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+if ! command -v swiftlint >/dev/null 2>&1; then
+    echo "❌ SwiftLint não está instalado."
+    echo "Execute: brew install swiftlint"
+    exit 1
+fi
+
+echo "🔍 Executando SwiftLint..."
+
+swiftlint lint \
+    --strict \
+    --config "$ROOT_DIR/.swiftlint.yml"
+
+echo "✅ SwiftLint aprovado."

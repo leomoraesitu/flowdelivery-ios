@@ -13,8 +13,8 @@ if ! command -v swiftformat >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "🎨 Executando SwiftFormat..."
+echo "🔎 Verificando formatação..."
 
-swiftformat .
+swiftformat --lint .
 
-echo "✅ Formatação concluída."
+echo "✅ Formatação válida."

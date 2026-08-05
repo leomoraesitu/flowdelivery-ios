@@ -17,6 +17,71 @@ This repository contains the native iOS version of FlowDelivery, developed as a 
 - Swift Testing
 - XCTest
 
+## Quality Tools
+
+### Requirements
+
+```bash
+brew install swiftformat
+brew install swiftlint
+```
+
+### Enable versioned Git hooks
+
+After cloning the repository, run:
+
+```bash
+git config core.hooksPath .git-hooks
+chmod +x .git-hooks/*
+chmod +x Scripts/*.sh
+```
+
+### Available commands
+
+```bash
+./Scripts/format.sh
+./Scripts/format-check.sh
+./Scripts/lint.sh
+./Scripts/build.sh
+./Scripts/test.sh
+./Scripts/quality.sh
+```
+
+### Development workflow
+
+Before committing:
+
+```bash
+./Scripts/format.sh
+./Scripts/lint.sh
+```
+
+Before pushing or opening a Pull Request:
+
+```bash
+./Scripts/quality.sh
+```
+
+To use another simulator:
+
+```bash
+SIMULATOR_NAME="iPhone 16 Pro" ./Scripts/test.sh
+```
+
+```text
+Pre-commit:
+- format check
+- lint
+
+Before PR:
+- format
+- lint
+- build
+- unit tests
+```
+
+---
+
 ## Related Project
 
 The original cross-platform Flutter implementation is available at:
