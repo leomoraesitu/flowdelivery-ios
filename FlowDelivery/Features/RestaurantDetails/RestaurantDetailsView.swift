@@ -22,10 +22,22 @@ struct RestaurantDetailsView: View {
                 )
 
         case let .loaded(content):
-            RestaurantDetailsHeaderView(
-                content: content
-            )
-            .padding(AppSpacing.large)
+            ScrollView {
+                VStack(
+                    spacing: AppSpacing.large
+                ) {
+                    RestaurantDetailsHeaderView(
+                        content: content
+                    )
+
+                    Divider()
+
+                    RestaurantMenuView(
+                        menu: content.menu
+                    )
+                }
+                .padding(AppSpacing.large)
+            }
 
         case let .error(error):
             ContentUnavailableView {
