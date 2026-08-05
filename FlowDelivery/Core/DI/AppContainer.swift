@@ -3,6 +3,7 @@ import Observation
 @Observable
 final class AppContainer {
     let sessionStore: SessionStore
+    let cartStore: CartStore
     let authService: AuthService
     let rootViewModel: RootViewModel
     let homeViewModel: HomeViewModel
@@ -10,6 +11,7 @@ final class AppContainer {
 
     init() {
         let sessionStore = SessionStore()
+        let cartStore = CartStore()
         let authRepository = FakeAuthRepository()
         let tokenStore = FakeTokenStore()
 
@@ -20,6 +22,7 @@ final class AppContainer {
         )
 
         self.sessionStore = sessionStore
+        self.cartStore = cartStore
         self.authService = authService
         rootViewModel = RootViewModel(
             sessionStore: sessionStore,
