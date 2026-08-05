@@ -1,18 +1,20 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-echo "🎨 Formatting..."
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚦 FlowDelivery Quality Gate"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
 ./Scripts/format.sh
-
-echo "🔍 Linting..."
 ./Scripts/lint.sh
-
-echo "🏗️ Building..."
-
-xcodebuild \
--scheme FlowDelivery \
--destination 'platform=iOS Simulator,name=iPhone 17'
+./Scripts/build.sh
+./Scripts/test.sh
 
 echo ""
-echo "✅ Quality Gate Passed"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ Quality Gate aprovado"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
