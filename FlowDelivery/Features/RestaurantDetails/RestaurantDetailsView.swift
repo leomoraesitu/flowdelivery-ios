@@ -33,7 +33,9 @@ struct RestaurantDetailsView: View {
                     Divider()
 
                     RestaurantMenuView(
-                        menu: content.menu
+                        menu: content.menu,
+                        onAdd: { _ in
+                        }
                     )
                 }
                 .padding(AppSpacing.large)

@@ -3,6 +3,8 @@ import SwiftUI
 struct MenuItemRowView: View {
     let content: MenuItemContent
 
+    let onAdd: () -> Void
+
     var body: some View {
         HStack(
             spacing: AppSpacing.medium
@@ -57,6 +59,14 @@ struct MenuItemRowView: View {
             }
 
             Spacer()
+
+            Button {
+                onAdd()
+
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+            }
         }
         .padding(.vertical, AppSpacing.small)
     }
@@ -72,6 +82,7 @@ struct MenuItemRowView: View {
                 price: Decimal(string: "49.90")!,
                 imageURL: URL(string: "https://picsum.photos/120")
             )
-        )
+        ),
+        onAdd: {}
     )
 }
