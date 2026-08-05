@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RestaurantMenuView: View {
     let menu: [MenuItemContent]
+    let onAdd: (MenuItemContent) -> Void
 
     var body: some View {
         LazyVStack(
@@ -10,7 +11,10 @@ struct RestaurantMenuView: View {
         ) {
             ForEach(menu) { item in
                 MenuItemRowView(
-                    content: item
+                    content: item,
+                    onAdd: {
+                        onAdd(item)
+                    }
                 )
             }
         }
@@ -38,6 +42,7 @@ struct RestaurantMenuView: View {
                     imageURL: nil
                 )
             )
-        ]
+        ],
+        onAdd: { _ in }
     )
 }
