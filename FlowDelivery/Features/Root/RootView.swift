@@ -3,6 +3,7 @@ import SwiftUI
 struct RootView: View {
     let viewModel: RootViewModel
     let homeViewModel: HomeViewModel
+    let appContainer: AppContainer
 
     var body: some View {
         NavigationStack {
@@ -17,7 +18,8 @@ struct RootView: View {
         switch viewModel.rootState {
         case .authenticated:
             HomeView(
-                viewModel: homeViewModel
+                viewModel: homeViewModel,
+                appContainer: appContainer
             )
 
         case .unauthenticated:
@@ -33,6 +35,7 @@ struct RootView: View {
 
     RootView(
         viewModel: container.rootViewModel,
-        homeViewModel: container.homeViewModel
+        homeViewModel: container.homeViewModel,
+        appContainer: container
     )
 }

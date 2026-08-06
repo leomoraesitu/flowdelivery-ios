@@ -10,6 +10,7 @@ final class RestaurantDetailsViewModel {
     let restaurantID: UUID
 
     private let repository: RestaurantDetailsRepository
+    private let cartStore: CartStore
 
     enum RestaurantDetailsState: Equatable {
         case loading
@@ -25,10 +26,12 @@ final class RestaurantDetailsViewModel {
 
     init(
         restaurantID: UUID,
-        repository: RestaurantDetailsRepository
+        repository: RestaurantDetailsRepository,
+        cartStore: CartStore
     ) {
         self.restaurantID = restaurantID
         self.repository = repository
+        self.cartStore = cartStore
     }
 
     func load() async {
@@ -47,6 +50,17 @@ final class RestaurantDetailsViewModel {
         } catch {
             state = .error(.loadFailed)
         }
+    }
+
+    func addToCart(
+        item: MenuItemContent
+    ) {
+        guard case let .loaded(content) = state,
+              let menuItem = content.menuItem(id: item.id)
+        else {
+            return
+        }
+        cartStore.add(menuItem)
     }
 }
 
