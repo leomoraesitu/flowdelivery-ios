@@ -6,4 +6,5 @@ enum AppTypography {
     static let title: Font = .title
     static let headline: Font = .headline
     static let bodyBold: Font = .body.bold()
+    static let caption: Font = .caption
 }

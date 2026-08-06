@@ -14,9 +14,10 @@ struct HomeView: View {
                 List(content.restaurants) { restaurant in
                     NavigationLink {
                         RestaurantDetailsView(
-                            viewModel: appContainer.makeRestaurantDetailsViewModel(
-                                restaurantID: restaurant.id
-                            )
+                            viewModel: appContainer
+                                .makeRestaurantDetailsViewModel(
+                                    restaurantID: restaurant.id
+                                )
                         )
                     } label: {
                         RestaurantRowView(
@@ -46,6 +47,15 @@ struct HomeView: View {
                 ContentUnavailableView(
                     "Nenhum restaurante encontrado",
                     systemImage: "fork.knife.circle"
+                )
+            }
+        }
+        .toolbar {
+            ToolbarItem(
+                placement: .topBarTrailing
+            ) {
+                CartBadgeView(
+                    itemCount: appContainer.cartStore.itemCount
                 )
             }
         }
@@ -79,7 +89,6 @@ extension HomeViewModel.HomeError {
     let viewModel = HomeViewModel(
         repository: EmptyRestaurantRepository()
     )
-
     HomeView(
         viewModel: viewModel,
         appContainer: container
