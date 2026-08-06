@@ -1,5 +1,7 @@
+import Foundation
 import Observation
 
+@MainActor
 @Observable
 final class AppContainer {
     let sessionStore: SessionStore
@@ -14,6 +16,7 @@ final class AppContainer {
         let cartStore = CartStore()
         let authRepository = FakeAuthRepository()
         let tokenStore = FakeTokenStore()
+        let restaurantRepository = FakeRestaurantRepository()
 
         let authService = AuthService(
             repository: authRepository,
@@ -24,13 +27,25 @@ final class AppContainer {
         self.sessionStore = sessionStore
         self.cartStore = cartStore
         self.authService = authService
+        self.restaurantRepository = restaurantRepository
+
         rootViewModel = RootViewModel(
             sessionStore: sessionStore,
             authService: authService
         )
-        restaurantRepository = FakeRestaurantRepository()
+
         homeViewModel = HomeViewModel(
             repository: restaurantRepository
+        )
+    }
+
+    func makeRestaurantDetailsViewModel(
+        restaurantID: UUID
+    ) -> RestaurantDetailsViewModel {
+        RestaurantDetailsViewModel(
+            restaurantID: restaurantID,
+            repository: FakeRestaurantDetailsRepository(),
+            cartStore: cartStore
         )
     }
 

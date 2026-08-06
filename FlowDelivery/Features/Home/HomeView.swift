@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     let viewModel: HomeViewModel
+    let appContainer: AppContainer
 
     var body: some View {
         Group {
@@ -13,9 +14,8 @@ struct HomeView: View {
                 List(content.restaurants) { restaurant in
                     NavigationLink {
                         RestaurantDetailsView(
-                            viewModel: RestaurantDetailsViewModel(
-                                restaurantID: restaurant.id,
-                                repository: FakeRestaurantDetailsRepository()
+                            viewModel: appContainer.makeRestaurantDetailsViewModel(
+                                restaurantID: restaurant.id
                             )
                         )
                     } label: {
@@ -65,29 +65,35 @@ extension HomeViewModel.HomeError {
 }
 
 #Preview {
+    let container = AppContainer()
     HomeView(
         viewModel: HomeViewModel(
             repository: FakeRestaurantRepository()
-        )
+        ),
+        appContainer: container
     )
 }
 
 #Preview("Empty") {
+    let container = AppContainer()
     let viewModel = HomeViewModel(
         repository: EmptyRestaurantRepository()
     )
 
     HomeView(
-        viewModel: viewModel
+        viewModel: viewModel,
+        appContainer: container
     )
 }
 
 #Preview("Error") {
+    let container = AppContainer()
     let viewModel = HomeViewModel(
         repository: FailingRestaurantRepository()
     )
 
     HomeView(
-        viewModel: viewModel
+        viewModel: viewModel,
+        appContainer: container
     )
 }

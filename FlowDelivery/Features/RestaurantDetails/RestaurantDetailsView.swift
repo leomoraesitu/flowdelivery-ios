@@ -34,7 +34,10 @@ struct RestaurantDetailsView: View {
 
                     RestaurantMenuView(
                         menu: content.menu,
-                        onAdd: { _ in
+                        onAdd: { item in
+                            viewModel.addToCart(
+                                item: item
+                            )
                         }
                     )
                 }
@@ -59,7 +62,8 @@ struct RestaurantDetailsView: View {
         RestaurantDetailsView(
             viewModel: RestaurantDetailsViewModel(
                 restaurantID: UUID(),
-                repository: FakeRestaurantDetailsRepository()
+                repository: FakeRestaurantDetailsRepository(),
+                cartStore: CartStore()
             )
         )
     }
