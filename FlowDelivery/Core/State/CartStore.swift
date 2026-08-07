@@ -59,4 +59,18 @@ final class CartStore {
 
         items[index].quantity -= 1
     }
+
+    func remove(
+        itemID: UUID
+    ) {
+        guard let index = items.firstIndex(
+            where: { $0.id == itemID }
+        ) else {
+            return
+        }
+
+        items.remove(
+            at: index
+        )
+    }
 }

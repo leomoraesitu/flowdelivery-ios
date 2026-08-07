@@ -30,6 +30,23 @@ struct CartView: View {
                             )
                         }
                     )
+                    .swipeActions(
+                        edge: .trailing,
+                        allowsFullSwipe: false
+                    ) {
+                        Button(
+                            role: .destructive
+                        ) {
+                            viewModel.removeItem(
+                                itemID: item.id
+                            )
+                        } label: {
+                            Label(
+                                "Remover",
+                                systemImage: "trash"
+                            )
+                        }
+                    }
                 }
                 .listStyle(.plain)
             }
