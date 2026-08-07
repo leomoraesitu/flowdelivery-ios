@@ -18,7 +18,17 @@ struct CartView: View {
             case let .loaded(items):
                 List(items) { item in
                     CartItemRowView(
-                        content: item
+                        content: item,
+                        onDecrement: {
+                            viewModel.decrementQuantity(
+                                itemID: item.id
+                            )
+                        },
+                        onIncrement: {
+                            viewModel.incrementQuantity(
+                                itemID: item.id
+                            )
+                        }
                     )
                 }
                 .listStyle(.plain)

@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 @MainActor
@@ -28,5 +29,21 @@ final class CartViewModel {
         }
 
         return .loaded(items)
+    }
+
+    func incrementQuantity(
+        itemID: UUID
+    ) {
+        cartStore.incrementQuantity(
+            itemID: itemID
+        )
+    }
+
+    func decrementQuantity(
+        itemID: UUID
+    ) {
+        cartStore.decrementQuantity(
+            itemID: itemID
+        )
     }
 }
