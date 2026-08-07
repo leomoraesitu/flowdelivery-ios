@@ -15,8 +15,8 @@ struct CartView: View {
                     )
                 )
 
-            case let .loaded(items):
-                List(items) { item in
+            case let .loaded(content):
+                List(content.items) { item in
                     CartItemRowView(
                         content: item,
                         onDecrement: {
@@ -49,6 +49,14 @@ struct CartView: View {
                     }
                 }
                 .listStyle(.plain)
+                .safeAreaInset(
+                    edge: .bottom,
+                    spacing: .zero
+                ) {
+                    CartSummaryView(
+                        total: content.total
+                    )
+                }
             }
         }
         .navigationTitle("Carrinho")
