@@ -46,4 +46,12 @@ final class CartViewModel {
             itemID: itemID
         )
     }
+
+    func removeItem(
+        itemID: UUID
+    ) {
+        cartStore.remove(
+            itemID: itemID
+        )
+    }
 }
