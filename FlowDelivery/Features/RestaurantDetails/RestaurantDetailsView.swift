@@ -1,7 +1,16 @@
 import SwiftUI
 
 struct RestaurantDetailsView: View {
-    let viewModel: RestaurantDetailsViewModel
+    @State
+    private var viewModel: RestaurantDetailsViewModel
+
+    init(
+        viewModel: RestaurantDetailsViewModel
+    ) {
+        _viewModel = State(
+            initialValue: viewModel
+        )
+    }
 
     var body: some View {
         content

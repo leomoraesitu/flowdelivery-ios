@@ -70,7 +70,10 @@ struct HomeView: View {
                 placement: .topBarTrailing
             ) {
                 NavigationLink {
-                    CartView()
+                    CartView(
+                        viewModel: appContainer
+                            .makeCartViewModel()
+                    )
                 } label: {
                     CartBadgeView(
                         itemCount: appContainer.cartStore.itemCount
