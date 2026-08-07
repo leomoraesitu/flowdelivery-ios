@@ -1,6 +1,11 @@
 import Foundation
 
 struct FakeRestaurantDetailsRepository: RestaurantDetailsRepository {
+    private enum MenuItemID {
+        static let margherita = UUID()
+        static let calabresa = UUID()
+    }
+
     func fetchRestaurant(
         id: UUID
     ) async throws -> Restaurant {
@@ -15,14 +20,14 @@ struct FakeRestaurantDetailsRepository: RestaurantDetailsRepository {
             deliveryFee: Decimal(string: "5.99")!,
             menu: [
                 MenuItem(
-                    id: UUID(),
+                    id: MenuItemID.margherita,
                     name: "Pizza Margherita",
                     description: "Molho de tomate, mussarela e manjericão.",
                     price: Decimal(string: "49.90")!,
                     imageURL: nil
                 ),
                 MenuItem(
-                    id: UUID(),
+                    id: MenuItemID.calabresa,
                     name: "Pizza Calabresa",
                     description: "Calabresa, cebola e mussarela.",
                     price: Decimal(string: "54.90")!,
