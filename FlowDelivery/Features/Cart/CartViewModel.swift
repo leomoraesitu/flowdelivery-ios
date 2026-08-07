@@ -55,4 +55,8 @@ final class CartViewModel {
             itemID: itemID
         )
     }
+
+    func clearCart() {
+        cartStore.clear()
+    }
 }

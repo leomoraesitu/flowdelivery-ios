@@ -73,4 +73,8 @@ final class CartStore {
             at: index
         )
     }
+
+    func clear() {
+        items.removeAll()
+    }
 }
