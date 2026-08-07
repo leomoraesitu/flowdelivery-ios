@@ -8,7 +8,7 @@ final class CartViewModel {
 
     enum CartState: Equatable {
         case empty
-        case loaded([CartItemContent])
+        case loaded(CartContent)
     }
 
     init(
@@ -18,17 +18,18 @@ final class CartViewModel {
     }
 
     var state: CartState {
-        let items = cartStore.items.map {
-            CartItemContent(
-                cartItem: $0
-            )
-        }
+        let items = cartStore.items
 
         guard !items.isEmpty else {
             return .empty
         }
 
-        return .loaded(items)
+        return .loaded(
+            CartContent(
+                cartItems: items,
+                total: cartStore.total
+            )
+        )
     }
 
     func incrementQuantity(
