@@ -4,6 +4,21 @@ struct HomeView: View {
     let viewModel: HomeViewModel
     let appContainer: AppContainer
 
+    private var cartAccessibilityValue: String {
+        let itemCount = appContainer.cartStore.itemCount
+
+        switch itemCount {
+        case 0:
+            return "Vazio"
+
+        case 1:
+            return "1 item"
+
+        default:
+            return "\(itemCount) itens"
+        }
+    }
+
     var body: some View {
         Group {
             switch viewModel.state {
@@ -54,8 +69,16 @@ struct HomeView: View {
             ToolbarItem(
                 placement: .topBarTrailing
             ) {
-                CartBadgeView(
-                    itemCount: appContainer.cartStore.itemCount
+                NavigationLink {
+                    CartView()
+                } label: {
+                    CartBadgeView(
+                        itemCount: appContainer.cartStore.itemCount
+                    )
+                }
+                .accessibilityLabel("Carrinho")
+                .accessibilityValue(
+                    Text(cartAccessibilityValue)
                 )
             }
         }
