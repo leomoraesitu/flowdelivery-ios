@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct CartView: View {
+    @State
+    private var isClearCartConfirmationPresented = false
+
     let viewModel: CartViewModel
 
     var body: some View {
@@ -61,6 +64,41 @@ struct CartView: View {
         }
         .navigationTitle("Carrinho")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(
+                placement: .topBarTrailing
+            ) {
+                if case .loaded = viewModel.state {
+                    Button(
+                        "Limpar",
+                        role: .destructive
+                    ) {
+                        isClearCartConfirmationPresented = true
+                    }
+                }
+            }
+        }
+        .confirmationDialog(
+            "Limpar carrinho?",
+            isPresented: $isClearCartConfirmationPresented,
+            titleVisibility: .visible
+        ) {
+            Button(
+                "Limpar carrinho",
+                role: .destructive
+            ) {
+                viewModel.clearCart()
+            }
+
+            Button(
+                "Cancelar",
+                role: .cancel
+            ) {}
+        } message: {
+            Text(
+                "Todos os itens e suas quantidades serão removidos."
+            )
+        }
     }
 }
 
