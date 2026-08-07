@@ -33,4 +33,30 @@ final class CartStore {
 
         items[index].quantity += 1
     }
+
+    func incrementQuantity(
+        itemID: UUID
+    ) {
+        guard let index = items.firstIndex(
+            where: { $0.id == itemID }
+        ) else {
+            return
+        }
+
+        items[index].quantity += 1
+    }
+
+    func decrementQuantity(
+        itemID: UUID
+    ) {
+        guard let index = items.firstIndex(
+            where: { $0.id == itemID }
+        ),
+            items[index].quantity > 1
+        else {
+            return
+        }
+
+        items[index].quantity -= 1
+    }
 }

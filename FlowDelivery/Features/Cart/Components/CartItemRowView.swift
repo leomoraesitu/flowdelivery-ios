@@ -2,6 +2,8 @@ import SwiftUI
 
 struct CartItemRowView: View {
     let content: CartItemContent
+    let onDecrement: () -> Void
+    let onIncrement: () -> Void
 
     var body: some View {
         HStack(
@@ -19,9 +21,11 @@ struct CartItemRowView: View {
                     .font(AppTypography.body)
                     .foregroundStyle(.secondary)
 
-                Text("Quantidade: \(content.quantity)")
-                    .font(AppTypography.body)
-                    .foregroundStyle(.secondary)
+                CartQuantityControlView(
+                    quantity: content.quantity,
+                    onDecrement: onDecrement,
+                    onIncrement: onIncrement
+                )
             }
 
             Spacer()
@@ -50,7 +54,9 @@ struct CartItemRowView: View {
             unitPrice: "R$ 49,90",
             quantity: 2,
             subtotal: "R$ 99,80"
-        )
+        ),
+        onDecrement: {},
+        onIncrement: {}
     )
     .padding()
 }
