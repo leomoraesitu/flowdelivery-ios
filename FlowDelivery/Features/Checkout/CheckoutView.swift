@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct CheckoutView: View {
-    let viewModel: CheckoutViewModel
+    @Bindable
+    var viewModel: CheckoutViewModel
     var body: some View {
         Group {
             switch viewModel.state {
@@ -33,8 +34,22 @@ struct CheckoutView: View {
                                 .font(AppTypography.bodyBold)
                         }
                     }
+
+                    Section(
+                        "Endereço de entrega"
+                    ) {
+                        TextField(
+                            "Rua, número e complemento",
+                            text: $viewModel.deliveryAddress,
+                            axis: .vertical
+                        )
+                        .textContentType(.fullStreetAddress)
+                        .textInputAutocapitalization(.words)
+                        .lineLimit(2 ... 3)
+                    }
                 }
                 .listStyle(.insetGrouped)
+                .scrollDismissesKeyboard(.interactively)
             }
         }
         .navigationTitle("Finalizar pedido")
@@ -66,11 +81,16 @@ struct CheckoutView: View {
     cartStore.add(menuItem)
     cartStore.add(menuItem)
 
+    let checkoutViewModel = CheckoutViewModel(
+        cartStore: cartStore
+    )
+
+    checkoutViewModel.deliveryAddress =
+        "Avenida Paulista, 1000, Bela Vista"
+
     return NavigationStack {
         CheckoutView(
-            viewModel: CheckoutViewModel(
-                cartStore: cartStore
-            )
+            viewModel: checkoutViewModel
         )
     }
 }
