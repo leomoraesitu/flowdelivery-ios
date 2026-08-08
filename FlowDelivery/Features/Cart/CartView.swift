@@ -8,6 +8,7 @@ struct CartView: View {
     private var isCheckoutPresented = false
 
     let viewModel: CartViewModel
+    let checkoutViewModel: CheckoutViewModel
 
     var body: some View {
         Group {
@@ -108,16 +109,23 @@ struct CartView: View {
         .navigationDestination(
             isPresented: $isCheckoutPresented
         ) {
-            CheckoutView()
+            CheckoutView(
+                viewModel: checkoutViewModel
+            )
         }
     }
 }
 
 #Preview("Empty") {
+    let cartStore = CartStore()
+
     NavigationStack {
         CartView(
             viewModel: CartViewModel(
-                cartStore: CartStore()
+                cartStore: cartStore
+            ),
+            checkoutViewModel: CheckoutViewModel(
+                cartStore: cartStore
             )
         )
     }
@@ -140,6 +148,9 @@ struct CartView: View {
     return NavigationStack {
         CartView(
             viewModel: CartViewModel(
+                cartStore: cartStore
+            ),
+            checkoutViewModel: CheckoutViewModel(
                 cartStore: cartStore
             )
         )
