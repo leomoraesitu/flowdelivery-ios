@@ -4,6 +4,9 @@ struct CartView: View {
     @State
     private var isClearCartConfirmationPresented = false
 
+    @State
+    private var isCheckoutPresented = false
+
     let viewModel: CartViewModel
 
     var body: some View {
@@ -57,7 +60,10 @@ struct CartView: View {
                     spacing: .zero
                 ) {
                     CartSummaryView(
-                        total: content.total
+                        total: content.total,
+                        onCheckout: {
+                            isCheckoutPresented = true
+                        }
                     )
                 }
             }
@@ -98,6 +104,11 @@ struct CartView: View {
             Text(
                 "Todos os itens e suas quantidades serão removidos."
             )
+        }
+        .navigationDestination(
+            isPresented: $isCheckoutPresented
+        ) {
+            CheckoutView()
         }
     }
 }

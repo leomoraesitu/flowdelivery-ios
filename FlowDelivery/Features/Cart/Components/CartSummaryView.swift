@@ -2,20 +2,36 @@ import SwiftUI
 
 struct CartSummaryView: View {
     let total: String
+    let onCheckout: () -> Void
 
     var body: some View {
-        HStack(
-            alignment: .firstTextBaseline,
-            spacing: AppSpacing.medium
+        VStack(
+            spacing: AppSpacing.large
         ) {
-            Text("Total")
-                .font(AppTypography.bodyBold)
+            HStack(
+                alignment: .firstTextBaseline,
+                spacing: AppSpacing.medium
+            ) {
+                Text("Total")
+                    .font(AppTypography.bodyBold)
 
-            Spacer()
+                Spacer()
 
-            Text(total)
-                .font(AppTypography.headline)
-                .monospacedDigit()
+                Text(total)
+                    .font(AppTypography.headline)
+                    .monospacedDigit()
+            }
+            .accessibilityElement(
+                children: .combine
+            )
+
+            Button(
+                "Finalizar pedido",
+                action: onCheckout
+            )
+            .buttonStyle(
+                PrimaryButtonStyle()
+            )
         }
         .padding(AppSpacing.large)
         .frame(maxWidth: .infinity)
@@ -25,14 +41,12 @@ struct CartSummaryView: View {
         ) {
             Divider()
         }
-        .accessibilityElement(
-            children: .combine
-        )
     }
 }
 
 #Preview {
     CartSummaryView(
-        total: "R$ 154,70"
+        total: "R$ 154,70",
+        onCheckout: {}
     )
 }
