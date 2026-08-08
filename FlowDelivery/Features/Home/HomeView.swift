@@ -72,7 +72,9 @@ struct HomeView: View {
                 NavigationLink {
                     CartView(
                         viewModel: appContainer
-                            .makeCartViewModel()
+                            .makeCartViewModel(),
+                        checkoutViewModel: appContainer
+                            .makeCheckoutViewModel()
                     )
                 } label: {
                     CartBadgeView(

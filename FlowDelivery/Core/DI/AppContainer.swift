@@ -58,4 +58,10 @@ final class AppContainer {
             cartStore: cartStore
         )
     }
+
+    func makeCheckoutViewModel() -> CheckoutViewModel {
+        CheckoutViewModel(
+            cartStore: cartStore
+        )
+    }
 }
