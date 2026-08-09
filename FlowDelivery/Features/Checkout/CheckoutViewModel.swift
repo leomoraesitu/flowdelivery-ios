@@ -5,6 +5,8 @@ import Observation
 final class CheckoutViewModel {
     private let cartStore: CartStore
 
+    var deliveryAddress = ""
+
     enum CheckoutState: Equatable {
         case empty
         case loaded(CheckoutContent)
