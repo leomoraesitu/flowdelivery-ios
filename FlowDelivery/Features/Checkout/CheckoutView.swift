@@ -47,6 +47,26 @@ struct CheckoutView: View {
                         .textInputAutocapitalization(.words)
                         .lineLimit(2 ... 3)
                     }
+                    Section(
+                        "Pagamento"
+                    ) {
+                        Picker(
+                            "Forma de pagamento",
+                            selection: $viewModel.paymentMethod
+                        ) {
+                            Text("Selecione")
+                                .tag(PaymentMethod?.none)
+
+                            ForEach(PaymentMethod.allCases) { paymentMethod in
+                                Label(
+                                    paymentMethod.title,
+                                    systemImage: paymentMethod.systemImage
+                                )
+                                .tag(paymentMethod)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
                 }
                 .listStyle(.insetGrouped)
                 .scrollDismissesKeyboard(.interactively)
@@ -87,6 +107,8 @@ struct CheckoutView: View {
 
     checkoutViewModel.deliveryAddress =
         "Avenida Paulista, 1000, Bela Vista"
+
+    checkoutViewModel.paymentMethod = .pix
 
     return NavigationStack {
         CheckoutView(

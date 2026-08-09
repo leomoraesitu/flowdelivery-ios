@@ -6,6 +6,7 @@ final class CheckoutViewModel {
     private let cartStore: CartStore
 
     var deliveryAddress = ""
+    var paymentMethod: PaymentMethod?
 
     enum CheckoutState: Equatable {
         case empty
