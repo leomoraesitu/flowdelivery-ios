@@ -7,99 +7,110 @@ struct CheckoutView: View {
     @State
     private var isOrderConfirmationPresented = false
 
+    @State
+    private var isOrderCompleted = false
+
     @Bindable
     var viewModel: CheckoutViewModel
     var body: some View {
         Group {
-            switch viewModel.state {
-            case .empty:
-                ContentUnavailableView(
-                    "Checkout indisponível",
-                    systemImage: "cart",
-                    description: Text(
-                        "Adicione itens ao carrinho para continuar."
-                    )
+            if isOrderCompleted {
+                OrderSuccessView(
+                    onContinue: {
+                        dismiss()
+                    }
                 )
-
-            case let .loaded(content):
-                List {
-                    Section(
-                        "Resumo do pedido"
-                    ) {
-                        LabeledContent(
-                            "Itens",
-                            value: content.itemCount
+            } else {
+                switch viewModel.state {
+                case .empty:
+                    ContentUnavailableView(
+                        "Checkout indisponível",
+                        systemImage: "cart",
+                        description: Text(
+                            "Adicione itens ao carrinho para continuar."
                         )
+                    )
 
-                        LabeledContent {
-                            Text(content.total)
-                                .font(AppTypography.bodyBold)
-                                .monospacedDigit()
-                        } label: {
-                            Text("Total")
-                                .font(AppTypography.bodyBold)
-                        }
-                    }
-
-                    Section(
-                        "Endereço de entrega"
-                    ) {
-                        TextField(
-                            "Rua, número e complemento",
-                            text: $viewModel.deliveryAddress,
-                            axis: .vertical
-                        )
-                        .textContentType(.fullStreetAddress)
-                        .textInputAutocapitalization(.words)
-                        .lineLimit(2 ... 3)
-                    }
-                    Section(
-                        "Pagamento"
-                    ) {
-                        Picker(
-                            "Forma de pagamento",
-                            selection: $viewModel.paymentMethod
+                case let .loaded(content):
+                    List {
+                        Section(
+                            "Resumo do pedido"
                         ) {
-                            Text("Selecione")
-                                .tag(PaymentMethod?.none)
+                            LabeledContent(
+                                "Itens",
+                                value: content.itemCount
+                            )
 
-                            ForEach(PaymentMethod.allCases) { paymentMethod in
-                                Label(
-                                    paymentMethod.title,
-                                    systemImage: paymentMethod.systemImage
-                                )
-                                .tag(paymentMethod)
+                            LabeledContent {
+                                Text(content.total)
+                                    .font(AppTypography.bodyBold)
+                                    .monospacedDigit()
+                            } label: {
+                                Text("Total")
+                                    .font(AppTypography.bodyBold)
                             }
                         }
-                        .pickerStyle(.menu)
-                    }
-                }
-                .listStyle(.insetGrouped)
-                .scrollDismissesKeyboard(.interactively)
-                .safeAreaInset(
-                    edge: .bottom,
-                    spacing: .zero
-                ) {
-                    VStack(spacing: .zero) {
-                        Button(
-                            "Confirmar pedido"
+
+                        Section(
+                            "Endereço de entrega"
                         ) {
-                            isOrderConfirmationPresented = true
+                            TextField(
+                                "Rua, número e complemento",
+                                text: $viewModel.deliveryAddress,
+                                axis: .vertical
+                            )
+                            .textContentType(.fullStreetAddress)
+                            .textInputAutocapitalization(.words)
+                            .lineLimit(2 ... 3)
                         }
-                        .buttonStyle(
-                            PrimaryButtonStyle()
-                        )
-                        .disabled(
-                            !viewModel.canConfirmOrder
-                        )
+                        Section(
+                            "Pagamento"
+                        ) {
+                            Picker(
+                                "Forma de pagamento",
+                                selection: $viewModel.paymentMethod
+                            ) {
+                                Text("Selecione")
+                                    .tag(PaymentMethod?.none)
+
+                                ForEach(PaymentMethod.allCases) { paymentMethod in
+                                    Label(
+                                        paymentMethod.title,
+                                        systemImage: paymentMethod.systemImage
+                                    )
+                                    .tag(paymentMethod)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
                     }
-                    .padding(AppSpacing.large)
-                    .frame(maxWidth: .infinity)
-                    .background(.regularMaterial)
-                    .overlay(
-                        alignment: .top
+                    .listStyle(.insetGrouped)
+                    .scrollDismissesKeyboard(.interactively)
+                    .safeAreaInset(
+                        edge: .bottom,
+                        spacing: .zero
                     ) {
-                        Divider()
+                        VStack(spacing: .zero) {
+                            Button(
+                                "Confirmar pedido"
+                            ) {
+                                isOrderConfirmationPresented = true
+                            }
+                            .buttonStyle(
+                                PrimaryButtonStyle()
+                            )
+                            .disabled(
+                                !viewModel.canConfirmOrder
+                            )
+                        }
+                        .padding(AppSpacing.large)
+                        .frame(maxWidth: .infinity)
+                        .background(.regularMaterial)
+                        .overlay(
+                            alignment: .top
+                        ) {
+                            Divider()
+                        }
                     }
                 }
             }
@@ -123,7 +134,7 @@ struct CheckoutView: View {
                     return
                 }
 
-                dismiss()
+                isOrderCompleted = true
             }
         } message: {
             Text(
