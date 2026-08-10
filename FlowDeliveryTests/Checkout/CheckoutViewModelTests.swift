@@ -66,6 +66,34 @@ struct CheckoutViewModelTests {
         #expect(!sut.canConfirmOrder)
     }
 
+    @Test("Preserves checkout after an order creation failure")
+    @MainActor
+    func confirmOrderPreservesCheckoutAfterCreationFailure() async {
+        let cartStore = makeCartStore()
+        let expectedItems = cartStore.items
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: FailingOrderRepository()
+        )
+
+        sut.deliveryAddress =
+            "Avenida Paulista, 1000, Bela Vista"
+
+        sut.paymentMethod = .pix
+
+        let didConfirm = await sut.confirmOrder()
+
+        #expect(!didConfirm)
+        #expect(cartStore.items == expectedItems)
+        #expect(
+            sut.deliveryAddress ==
+                "Avenida Paulista, 1000, Bela Vista"
+        )
+        #expect(sut.paymentMethod == .pix)
+        #expect(sut.canConfirmOrder)
+    }
+
     @MainActor
     private func makeCartStore() -> CartStore {
         let cartStore = CartStore()
