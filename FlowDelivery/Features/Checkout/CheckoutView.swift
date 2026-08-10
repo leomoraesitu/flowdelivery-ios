@@ -70,6 +70,31 @@ struct CheckoutView: View {
                 }
                 .listStyle(.insetGrouped)
                 .scrollDismissesKeyboard(.interactively)
+                .safeAreaInset(
+                    edge: .bottom,
+                    spacing: .zero
+                ) {
+                    VStack(spacing: .zero) {
+                        Button(
+                            "Confirmar pedido",
+                            action: {}
+                        )
+                        .buttonStyle(
+                            PrimaryButtonStyle()
+                        )
+                        .disabled(
+                            !viewModel.canConfirmOrder
+                        )
+                    }
+                    .padding(AppSpacing.large)
+                    .frame(maxWidth: .infinity)
+                    .background(.regularMaterial)
+                    .overlay(
+                        alignment: .top
+                    ) {
+                        Divider()
+                    }
+                }
             }
         }
         .navigationTitle("Finalizar pedido")
