@@ -42,4 +42,17 @@ final class CheckoutViewModel {
             )
         )
     }
+
+    func confirmOrder() -> Bool {
+        guard canConfirmOrder else {
+            return false
+        }
+
+        cartStore.clear()
+
+        deliveryAddress = ""
+        paymentMethod = nil
+
+        return true
+    }
 }
