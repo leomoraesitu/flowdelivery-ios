@@ -130,11 +130,13 @@ struct CheckoutView: View {
                 "Fazer pedido",
                 role: .confirm
             ) {
-                guard viewModel.confirmOrder() else {
-                    return
-                }
+                Task {
+                    guard await viewModel.confirmOrder() else {
+                        return
+                    }
 
-                isOrderCompleted = true
+                    isOrderCompleted = true
+                }
             }
         } message: {
             Text(

@@ -46,8 +46,30 @@ final class CheckoutViewModel {
         )
     }
 
-    func confirmOrder() -> Bool {
-        guard canConfirmOrder else {
+    func confirmOrder() async -> Bool {
+        guard canConfirmOrder,
+              let selectedPaymentMethod = paymentMethod
+        else {
+            return false
+        }
+
+        let normalizedAddress = deliveryAddress.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        let order = Order(
+            id: UUID(),
+            items: cartStore.items,
+            deliveryAddress: normalizedAddress,
+            paymentMethod: selectedPaymentMethod,
+            createdAt: .now
+        )
+
+        do {
+            try await orderRepository.createOrder(
+                order
+            )
+        } catch {
             return false
         }
 
