@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 @MainActor
@@ -7,6 +8,16 @@ final class CheckoutViewModel {
 
     var deliveryAddress = ""
     var paymentMethod: PaymentMethod?
+
+    var canConfirmOrder: Bool {
+        let normalizedAddress = deliveryAddress.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        return !normalizedAddress.isEmpty &&
+            paymentMethod != nil &&
+            cartStore.itemCount > 0
+    }
 
     enum CheckoutState: Equatable {
         case empty
