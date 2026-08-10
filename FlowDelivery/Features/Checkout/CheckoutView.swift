@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct CheckoutView: View {
+    @State
+    private var isOrderConfirmationPresented = false
+
     @Bindable
     var viewModel: CheckoutViewModel
     var body: some View {
@@ -76,9 +79,10 @@ struct CheckoutView: View {
                 ) {
                     VStack(spacing: .zero) {
                         Button(
-                            "Confirmar pedido",
-                            action: {}
-                        )
+                            "Confirmar pedido"
+                        ) {
+                            isOrderConfirmationPresented = true
+                        }
                         .buttonStyle(
                             PrimaryButtonStyle()
                         )
@@ -99,6 +103,24 @@ struct CheckoutView: View {
         }
         .navigationTitle("Finalizar pedido")
         .navigationBarTitleDisplayMode(.inline)
+        .alert(
+            "Confirmar pedido?",
+            isPresented: $isOrderConfirmationPresented
+        ) {
+            Button(
+                "Cancelar",
+                role: .cancel
+            ) {}
+
+            Button(
+                "Fazer pedido",
+                role: .confirm
+            ) {}
+        } message: {
+            Text(
+                "Confira o endereço e a forma de pagamento antes de continuar."
+            )
+        }
     }
 }
 
