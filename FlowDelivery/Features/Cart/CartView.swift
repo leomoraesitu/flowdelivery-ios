@@ -125,7 +125,8 @@ struct CartView: View {
                 cartStore: cartStore
             ),
             checkoutViewModel: CheckoutViewModel(
-                cartStore: cartStore
+                cartStore: cartStore,
+                orderRepository: FakeOrderRepository()
             )
         )
     }
@@ -151,7 +152,8 @@ struct CartView: View {
                 cartStore: cartStore
             ),
             checkoutViewModel: CheckoutViewModel(
-                cartStore: cartStore
+                cartStore: cartStore,
+                orderRepository: FakeOrderRepository()
             )
         )
     }

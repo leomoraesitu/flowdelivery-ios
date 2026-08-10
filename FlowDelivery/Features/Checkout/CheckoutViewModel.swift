@@ -5,6 +5,7 @@ import Observation
 @Observable
 final class CheckoutViewModel {
     private let cartStore: CartStore
+    private let orderRepository: OrderRepository
 
     var deliveryAddress = ""
     var paymentMethod: PaymentMethod?
@@ -25,9 +26,11 @@ final class CheckoutViewModel {
     }
 
     init(
-        cartStore: CartStore
+        cartStore: CartStore,
+        orderRepository: OrderRepository
     ) {
         self.cartStore = cartStore
+        self.orderRepository = orderRepository
     }
 
     var state: CheckoutState {
