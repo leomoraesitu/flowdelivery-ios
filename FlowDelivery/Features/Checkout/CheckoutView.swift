@@ -148,7 +148,8 @@ struct CheckoutView: View {
     NavigationStack {
         CheckoutView(
             viewModel: CheckoutViewModel(
-                cartStore: CartStore()
+                cartStore: CartStore(),
+                orderRepository: FakeOrderRepository()
             )
         )
     }
@@ -169,7 +170,8 @@ struct CheckoutView: View {
     cartStore.add(menuItem)
 
     let checkoutViewModel = CheckoutViewModel(
-        cartStore: cartStore
+        cartStore: cartStore,
+        orderRepository: FakeOrderRepository()
     )
 
     checkoutViewModel.deliveryAddress =

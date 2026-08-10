@@ -9,7 +9,8 @@ struct CheckoutViewModelTests {
         let cartStore = makeCartStore()
 
         let sut = CheckoutViewModel(
-            cartStore: cartStore
+            cartStore: cartStore,
+            orderRepository: FakeOrderRepository()
         )
 
         sut.deliveryAddress =
@@ -32,7 +33,8 @@ struct CheckoutViewModelTests {
         let cartStore = makeCartStore()
 
         let sut = CheckoutViewModel(
-            cartStore: cartStore
+            cartStore: cartStore,
+            orderRepository: FakeOrderRepository()
         )
 
         sut.deliveryAddress =

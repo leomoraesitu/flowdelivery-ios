@@ -10,6 +10,7 @@ final class AppContainer {
     let rootViewModel: RootViewModel
     let homeViewModel: HomeViewModel
     let restaurantRepository: RestaurantRepository
+    let orderRepository: OrderRepository
 
     init() {
         let sessionStore = SessionStore()
@@ -17,6 +18,7 @@ final class AppContainer {
         let authRepository = FakeAuthRepository()
         let tokenStore = FakeTokenStore()
         let restaurantRepository = FakeRestaurantRepository()
+        let orderRepository = FakeOrderRepository()
 
         let authService = AuthService(
             repository: authRepository,
@@ -28,6 +30,7 @@ final class AppContainer {
         self.cartStore = cartStore
         self.authService = authService
         self.restaurantRepository = restaurantRepository
+        self.orderRepository = orderRepository
 
         rootViewModel = RootViewModel(
             sessionStore: sessionStore,
@@ -61,7 +64,8 @@ final class AppContainer {
 
     func makeCheckoutViewModel() -> CheckoutViewModel {
         CheckoutViewModel(
-            cartStore: cartStore
+            cartStore: cartStore,
+            orderRepository: orderRepository
         )
     }
 }
