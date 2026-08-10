@@ -1,13 +1,3 @@
-enum PaymentMethod: CaseIterable, Identifiable {
-    case creditCard
-    case pix
-    case cash
-
-    var id: Self {
-        self
-    }
-}
-
 extension PaymentMethod {
     var title: String {
         switch self {
