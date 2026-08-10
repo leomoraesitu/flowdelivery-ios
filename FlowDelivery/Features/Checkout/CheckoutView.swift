@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct CheckoutView: View {
+    @Environment(\.dismiss)
+    private var dismiss
+
     @State
     private var isOrderConfirmationPresented = false
 
@@ -115,7 +118,13 @@ struct CheckoutView: View {
             Button(
                 "Fazer pedido",
                 role: .confirm
-            ) {}
+            ) {
+                guard viewModel.confirmOrder() else {
+                    return
+                }
+
+                dismiss()
+            }
         } message: {
             Text(
                 "Confira o endereço e a forma de pagamento antes de continuar."
