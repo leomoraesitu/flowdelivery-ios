@@ -143,6 +143,18 @@ struct CheckoutView: View {
                 "Confira o endereço e a forma de pagamento antes de continuar."
             )
         }
+        .alert(
+            "Não foi possível fazer o pedido",
+            isPresented: $viewModel.isOrderCreationErrorPresented,
+            presenting: viewModel.orderCreationError
+        ) { _ in
+            Button(
+                "OK",
+                role: .cancel
+            ) {}
+        } message: { error in
+            Text(error.message)
+        }
     }
 }
 

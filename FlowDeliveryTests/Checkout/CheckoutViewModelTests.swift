@@ -27,6 +27,7 @@ struct CheckoutViewModelTests {
                 "Avenida Paulista, 1000, Bela Vista"
         )
         #expect(sut.paymentMethod == nil)
+        #expect(sut.orderCreationError == nil)
     }
 
     @Test("Creates order and clears checkout after valid confirmation")
@@ -64,6 +65,7 @@ struct CheckoutViewModelTests {
         #expect(sut.deliveryAddress.isEmpty)
         #expect(sut.paymentMethod == nil)
         #expect(!sut.canConfirmOrder)
+        #expect(sut.orderCreationError == nil)
     }
 
     @Test("Preserves checkout after an order creation failure")
@@ -85,6 +87,8 @@ struct CheckoutViewModelTests {
         let didConfirm = await sut.confirmOrder()
 
         #expect(!didConfirm)
+        #expect(sut.orderCreationError == .failed)
+        #expect(sut.isOrderCreationErrorPresented)
         #expect(cartStore.items == expectedItems)
         #expect(
             sut.deliveryAddress ==
@@ -92,6 +96,11 @@ struct CheckoutViewModelTests {
         )
         #expect(sut.paymentMethod == .pix)
         #expect(sut.canConfirmOrder)
+
+        sut.isOrderCreationErrorPresented = false
+
+        #expect(sut.orderCreationError == nil)
+        #expect(!sut.isOrderCreationErrorPresented)
     }
 
     @MainActor
