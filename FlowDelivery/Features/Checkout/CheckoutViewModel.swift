@@ -10,6 +10,19 @@ final class CheckoutViewModel {
     var deliveryAddress = ""
     var paymentMethod: PaymentMethod?
 
+    private(set) var orderCreationError: OrderCreationError?
+
+    var isOrderCreationErrorPresented: Bool {
+        get {
+            orderCreationError != nil
+        }
+        set {
+            if !newValue {
+                orderCreationError = nil
+            }
+        }
+    }
+
     var canConfirmOrder: Bool {
         let normalizedAddress = deliveryAddress.trimmingCharacters(
             in: .whitespacesAndNewlines
@@ -23,6 +36,17 @@ final class CheckoutViewModel {
     enum CheckoutState: Equatable {
         case empty
         case loaded(CheckoutContent)
+    }
+
+    enum OrderCreationError: Equatable {
+        case failed
+
+        var message: String {
+            switch self {
+            case .failed:
+                "Não foi possível concluir o pedido. Tente novamente."
+            }
+        }
     }
 
     init(
@@ -47,6 +71,8 @@ final class CheckoutViewModel {
     }
 
     func confirmOrder() async -> Bool {
+        orderCreationError = nil
+
         guard canConfirmOrder,
               let selectedPaymentMethod = paymentMethod
         else {
@@ -70,6 +96,8 @@ final class CheckoutViewModel {
                 order
             )
         } catch {
+            orderCreationError = .failed
+
             return false
         }
 
