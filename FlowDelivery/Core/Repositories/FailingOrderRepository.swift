@@ -8,4 +8,8 @@ struct FailingOrderRepository: OrderRepository {
 
         throw Failure()
     }
+
+    func fetchOrders() async throws -> [Order] {
+        throw Failure()
+    }
 }
