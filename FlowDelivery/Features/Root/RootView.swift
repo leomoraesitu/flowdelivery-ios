@@ -54,6 +54,22 @@ struct RootView: View {
                         orderID: orderID
                     )
             )
+
+        case let .restaurantDetails(restaurantID):
+            RestaurantDetailsView(
+                viewModel: appContainer
+                    .makeRestaurantDetailsViewModel(
+                        restaurantID: restaurantID
+                    )
+            )
+
+        case .cart:
+            CartView(
+                viewModel: appContainer
+                    .makeCartViewModel(),
+                checkoutViewModel: appContainer
+                    .makeCheckoutViewModel()
+            )
         }
     }
 }

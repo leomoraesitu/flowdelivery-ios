@@ -27,14 +27,11 @@ struct HomeView: View {
 
             case let .loaded(content):
                 List(content.restaurants) { restaurant in
-                    NavigationLink {
-                        RestaurantDetailsView(
-                            viewModel: appContainer
-                                .makeRestaurantDetailsViewModel(
-                                    restaurantID: restaurant.id
-                                )
+                    NavigationLink(
+                        value: AppRoute.restaurantDetails(
+                            restaurant.id
                         )
-                    } label: {
+                    ) {
                         RestaurantRowView(
                             model: restaurant
                         )
@@ -78,14 +75,9 @@ struct HomeView: View {
                 }
                 .accessibilityLabel("Meus pedidos")
 
-                NavigationLink {
-                    CartView(
-                        viewModel: appContainer
-                            .makeCartViewModel(),
-                        checkoutViewModel: appContainer
-                            .makeCheckoutViewModel()
-                    )
-                } label: {
+                NavigationLink(
+                    value: AppRoute.cart
+                ) {
                     CartBadgeView(
                         itemCount: appContainer.cartStore.itemCount
                     )
