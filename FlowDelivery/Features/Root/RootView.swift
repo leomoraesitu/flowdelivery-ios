@@ -10,6 +10,13 @@ struct RootView: View {
             content
                 .padding(AppSpacing.large)
                 .navigationTitle("FlowDelivery")
+                .navigationDestination(
+                    for: AppRoute.self
+                ) { route in
+                    destination(
+                        for: route
+                    )
+                }
         }
     }
 
@@ -25,6 +32,27 @@ struct RootView: View {
         case .unauthenticated:
             AuthenticationView(
                 viewModel: viewModel.authenticationViewModel
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func destination(
+        for route: AppRoute
+    ) -> some View {
+        switch route {
+        case .orderHistory:
+            OrderHistoryView(
+                viewModel: appContainer
+                    .makeOrderHistoryViewModel()
+            )
+
+        case let .orderDetails(orderID):
+            OrderDetailsView(
+                viewModel: appContainer
+                    .makeOrderDetailsViewModel(
+                        orderID: orderID
+                    )
             )
         }
     }
