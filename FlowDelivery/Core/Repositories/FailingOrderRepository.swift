@@ -1,3 +1,5 @@
+import Foundation
+
 struct FailingOrderRepository: OrderRepository {
     struct Failure: Error {}
 
@@ -10,6 +12,14 @@ struct FailingOrderRepository: OrderRepository {
     }
 
     func fetchOrders() async throws -> [Order] {
+        throw Failure()
+    }
+
+    func fetchOrder(
+        id: UUID
+    ) async throws -> Order? {
+        _ = id
+
         throw Failure()
     }
 }

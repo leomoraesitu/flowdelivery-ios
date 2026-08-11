@@ -1,4 +1,5 @@
 @testable import FlowDelivery
+import Foundation
 
 @MainActor
 final class SuspendingOrderRepository: OrderRepository {
@@ -29,5 +30,13 @@ final class SuspendingOrderRepository: OrderRepository {
     func complete() {
         continuation?.resume()
         continuation = nil
+    }
+
+    func fetchOrder(
+        id: UUID
+    ) async throws -> Order? {
+        orders.first { order in
+            order.id == id
+        }
     }
 }
