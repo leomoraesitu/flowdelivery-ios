@@ -72,7 +72,12 @@ struct HomeView: View {
                 NavigationLink {
                     OrderHistoryView(
                         viewModel: appContainer
-                            .makeOrderHistoryViewModel()
+                            .makeOrderHistoryViewModel(),
+                        makeOrderDetailsViewModel: { orderID in
+                            appContainer.makeOrderDetailsViewModel(
+                                orderID: orderID
+                            )
+                        }
                     )
                 } label: {
                     Image(
@@ -129,6 +134,7 @@ extension HomeViewModel.HomeError {
     let viewModel = HomeViewModel(
         repository: EmptyRestaurantRepository()
     )
+
     HomeView(
         viewModel: viewModel,
         appContainer: container

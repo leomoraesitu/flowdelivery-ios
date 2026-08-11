@@ -74,4 +74,13 @@ final class AppContainer {
             repository: orderRepository
         )
     }
+
+    func makeOrderDetailsViewModel(
+        orderID: UUID
+    ) -> OrderDetailsViewModel {
+        OrderDetailsViewModel(
+            orderID: orderID,
+            repository: orderRepository
+        )
+    }
 }
