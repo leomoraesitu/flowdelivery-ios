@@ -11,7 +11,7 @@ final class OrderDetailsViewModel {
 
     enum OrderDetailsState: Equatable {
         case loading
-        case loaded(Order)
+        case loaded(OrderDetailsContent)
         case notFound
         case error(OrderDetailsError)
     }
@@ -39,7 +39,9 @@ final class OrderDetailsViewModel {
                 return
             }
 
-            state = .loaded(order)
+            state = .loaded(OrderDetailsContent(
+                order: order
+            ))
         } catch {
             state = .error(.loadFailed)
         }
