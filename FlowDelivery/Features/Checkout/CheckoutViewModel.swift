@@ -11,6 +11,7 @@ final class CheckoutViewModel {
     var paymentMethod: PaymentMethod?
 
     private(set) var orderCreationError: OrderCreationError?
+    private(set) var isSubmitting = false
 
     var isOrderCreationErrorPresented: Bool {
         get {
@@ -28,7 +29,8 @@ final class CheckoutViewModel {
             in: .whitespacesAndNewlines
         )
 
-        return !normalizedAddress.isEmpty &&
+        return !isSubmitting &&
+            !normalizedAddress.isEmpty &&
             paymentMethod != nil &&
             cartStore.itemCount > 0
     }
@@ -71,12 +73,17 @@ final class CheckoutViewModel {
     }
 
     func confirmOrder() async -> Bool {
-        orderCreationError = nil
-
         guard canConfirmOrder,
               let selectedPaymentMethod = paymentMethod
         else {
             return false
+        }
+
+        orderCreationError = nil
+        isSubmitting = true
+
+        defer {
+            isSubmitting = false
         }
 
         let normalizedAddress = deliveryAddress.trimmingCharacters(

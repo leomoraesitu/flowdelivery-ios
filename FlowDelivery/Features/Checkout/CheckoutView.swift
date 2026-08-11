@@ -86,15 +86,26 @@ struct CheckoutView: View {
                     }
                     .listStyle(.insetGrouped)
                     .scrollDismissesKeyboard(.interactively)
+                    .disabled(
+                        viewModel.isSubmitting
+                    )
                     .safeAreaInset(
                         edge: .bottom,
                         spacing: .zero
                     ) {
                         VStack(spacing: .zero) {
-                            Button(
-                                "Confirmar pedido"
-                            ) {
+                            Button {
                                 isOrderConfirmationPresented = true
+                            } label: {
+                                if viewModel.isSubmitting {
+                                    ProgressView()
+                                        .tint(AppColor.onPrimary)
+                                        .accessibilityLabel(
+                                            "Enviando pedido"
+                                        )
+                                } else {
+                                    Text("Confirmar pedido")
+                                }
                             }
                             .buttonStyle(
                                 PrimaryButtonStyle()

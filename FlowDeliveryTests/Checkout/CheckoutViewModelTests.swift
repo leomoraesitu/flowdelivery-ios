@@ -28,6 +28,7 @@ struct CheckoutViewModelTests {
         )
         #expect(sut.paymentMethod == nil)
         #expect(sut.orderCreationError == nil)
+        #expect(!sut.isSubmitting)
     }
 
     @Test("Creates order and clears checkout after valid confirmation")
@@ -66,6 +67,7 @@ struct CheckoutViewModelTests {
         #expect(sut.paymentMethod == nil)
         #expect(!sut.canConfirmOrder)
         #expect(sut.orderCreationError == nil)
+        #expect(!sut.isSubmitting)
     }
 
     @Test("Preserves checkout after an order creation failure")
@@ -101,6 +103,48 @@ struct CheckoutViewModelTests {
 
         #expect(sut.orderCreationError == nil)
         #expect(!sut.isOrderCreationErrorPresented)
+        #expect(!sut.isSubmitting)
+    }
+
+    @Test("Prevents duplicate confirmation while submitting")
+    @MainActor
+    func confirmOrderPreventsDuplicateSubmission() async {
+        let cartStore = makeCartStore()
+        let orderRepository = SuspendingOrderRepository()
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: orderRepository
+        )
+
+        sut.deliveryAddress =
+            "Avenida Paulista, 1000, Bela Vista"
+
+        sut.paymentMethod = .pix
+
+        let firstConfirmation = Task {
+            await sut.confirmOrder()
+        }
+
+        await orderRepository.waitUntilStarted()
+
+        #expect(sut.isSubmitting)
+        #expect(!sut.canConfirmOrder)
+        #expect(cartStore.itemCount == 1)
+
+        let duplicateConfirmation = await sut.confirmOrder()
+
+        #expect(!duplicateConfirmation)
+        #expect(orderRepository.orders.count == 1)
+
+        orderRepository.complete()
+
+        let didConfirm = await firstConfirmation.value
+
+        #expect(didConfirm)
+        #expect(!sut.isSubmitting)
+        #expect(cartStore.items.isEmpty)
+        #expect(orderRepository.orders.count == 1)
     }
 
     @MainActor
