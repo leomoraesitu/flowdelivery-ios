@@ -1,3 +1,5 @@
+import Foundation
+
 final class FakeOrderRepository: OrderRepository {
     private(set) var orders: [Order]
 
@@ -15,5 +17,13 @@ final class FakeOrderRepository: OrderRepository {
 
     func fetchOrders() async throws -> [Order] {
         orders
+    }
+
+    func fetchOrder(
+        id: UUID
+    ) async throws -> Order? {
+        orders.first { order in
+            order.id == id
+        }
     }
 }

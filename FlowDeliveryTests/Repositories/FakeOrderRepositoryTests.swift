@@ -47,4 +47,38 @@ struct FakeOrderRepositoryTests {
             createdAt: .now
         )
     }
+
+    @Test("Fetches an order by identifier")
+    func fetchOrderReturnsMatchingOrder() async throws {
+        let firstOrder = makeOrder()
+        let expectedOrder = makeOrder()
+
+        let sut = await FakeOrderRepository(
+            orders: [
+                firstOrder,
+                expectedOrder
+            ]
+        )
+
+        let order = try await sut.fetchOrder(
+            id: expectedOrder.id
+        )
+
+        #expect(order == expectedOrder)
+    }
+
+    @Test("Returns nil for an unknown identifier")
+    func fetchOrderReturnsNilForUnknownIdentifier() async throws {
+        let sut = await FakeOrderRepository(
+            orders: [
+                makeOrder()
+            ]
+        )
+
+        let order = try await sut.fetchOrder(
+            id: UUID()
+        )
+
+        #expect(order == nil)
+    }
 }
