@@ -37,10 +37,14 @@ struct OrderHistoryViewModelTests {
             repository: repository
         )
 
+        let expectedEntry = OrderHistoryEntry(
+            order: order
+        )
+
         await sut.load()
 
         #expect(
-            sut.state == .loaded([order])
+            sut.state == .loaded([expectedEntry])
         )
     }
 
