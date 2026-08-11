@@ -9,7 +9,7 @@ final class OrderHistoryViewModel {
 
     enum OrderHistoryState: Equatable {
         case loading
-        case loaded([Order])
+        case loaded([OrderHistoryEntry])
         case empty
         case error(OrderHistoryError)
     }
@@ -30,10 +30,14 @@ final class OrderHistoryViewModel {
         do {
             let orders = try await repository.fetchOrders()
 
+            let entries = orders.map(
+                OrderHistoryEntry.init
+            )
+
             if orders.isEmpty {
                 state = .empty
             } else {
-                state = .loaded(orders)
+                state = .loaded(entries)
             }
         } catch {
             state = .error(.loadFailed)
