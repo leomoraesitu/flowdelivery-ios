@@ -16,6 +16,10 @@ final class SuspendingOrderRepository: OrderRepository {
         }
     }
 
+    func fetchOrders() async throws -> [Order] {
+        orders
+    }
+
     func waitUntilStarted() async {
         while orders.isEmpty {
             await Task.yield()

@@ -6,4 +6,8 @@ final class FakeOrderRepository: OrderRepository {
     ) async throws {
         orders.append(order)
     }
+
+    func fetchOrders() async throws -> [Order] {
+        orders
+    }
 }
