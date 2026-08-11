@@ -68,4 +68,10 @@ final class AppContainer {
             orderRepository: orderRepository
         )
     }
+
+    func makeOrderHistoryViewModel() -> OrderHistoryViewModel {
+        OrderHistoryViewModel(
+            repository: orderRepository
+        )
+    }
 }

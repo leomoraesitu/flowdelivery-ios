@@ -66,9 +66,21 @@ struct HomeView: View {
             }
         }
         .toolbar {
-            ToolbarItem(
+            ToolbarItemGroup(
                 placement: .topBarTrailing
             ) {
+                NavigationLink {
+                    OrderHistoryView(
+                        viewModel: appContainer
+                            .makeOrderHistoryViewModel()
+                    )
+                } label: {
+                    Image(
+                        systemName: "clock.arrow.circlepath"
+                    )
+                }
+                .accessibilityLabel("Meus pedidos")
+
                 NavigationLink {
                     CartView(
                         viewModel: appContainer
