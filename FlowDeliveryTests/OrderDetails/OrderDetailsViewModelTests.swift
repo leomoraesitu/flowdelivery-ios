@@ -26,10 +26,14 @@ struct OrderDetailsViewModelTests {
             )
         )
 
+        let expectedContent = OrderDetailsContent(
+            order: order
+        )
+
         await sut.load()
 
         #expect(
-            sut.state == .loaded(order)
+            sut.state == .loaded(expectedContent)
         )
     }
 
