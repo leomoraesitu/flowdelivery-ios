@@ -4,19 +4,12 @@ struct OrderHistoryView: View {
     @State
     private var viewModel: OrderHistoryViewModel
 
-    let makeOrderDetailsViewModel:
-        (UUID) -> OrderDetailsViewModel
-
     init(
-        viewModel: OrderHistoryViewModel,
-        makeOrderDetailsViewModel:
-        @escaping (UUID) -> OrderDetailsViewModel
+        viewModel: OrderHistoryViewModel
     ) {
         _viewModel = State(
             initialValue: viewModel
         )
-        self.makeOrderDetailsViewModel =
-            makeOrderDetailsViewModel
     }
 
     var body: some View {
@@ -40,13 +33,9 @@ struct OrderHistoryView: View {
 
         case let .loaded(entries):
             List(entries) { entry in
-                NavigationLink {
-                    OrderDetailsView(
-                        viewModel: makeOrderDetailsViewModel(
-                            entry.id
-                        )
-                    )
-                } label: {
+                NavigationLink(
+                    value: AppRoute.orderDetails(entry.id)
+                ) {
                     orderRow(
                         entry: entry
                     )
@@ -127,37 +116,21 @@ extension OrderHistoryViewModel.OrderHistoryError {
 }
 
 #Preview("Empty") {
-    let repository = FakeOrderRepository()
-
     NavigationStack {
         OrderHistoryView(
             viewModel: OrderHistoryViewModel(
-                repository: repository
-            ),
-            makeOrderDetailsViewModel: { orderID in
-                OrderDetailsViewModel(
-                    orderID: orderID,
-                    repository: repository
-                )
-            }
+                repository: FakeOrderRepository()
+            )
         )
     }
 }
 
 #Preview("Error") {
-    let repository = FailingOrderRepository()
-
     NavigationStack {
         OrderHistoryView(
             viewModel: OrderHistoryViewModel(
-                repository: repository
-            ),
-            makeOrderDetailsViewModel: { orderID in
-                OrderDetailsViewModel(
-                    orderID: orderID,
-                    repository: repository
-                )
-            }
+                repository: FailingOrderRepository()
+            )
         )
     }
 }
@@ -190,17 +163,27 @@ extension OrderHistoryViewModel.OrderHistoryError {
         orders: [order]
     )
 
-    NavigationStack {
+    return NavigationStack {
         OrderHistoryView(
             viewModel: OrderHistoryViewModel(
                 repository: repository
-            ),
-            makeOrderDetailsViewModel: { orderID in
-                OrderDetailsViewModel(
-                    orderID: orderID,
-                    repository: repository
+            )
+        )
+        .navigationDestination(
+            for: AppRoute.self
+        ) { route in
+            switch route {
+            case .orderHistory:
+                EmptyView()
+
+            case let .orderDetails(orderID):
+                OrderDetailsView(
+                    viewModel: OrderDetailsViewModel(
+                        orderID: orderID,
+                        repository: repository
+                    )
                 )
             }
-        )
+        }
     }
 }

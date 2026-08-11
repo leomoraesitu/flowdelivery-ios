@@ -69,17 +69,9 @@ struct HomeView: View {
             ToolbarItemGroup(
                 placement: .topBarTrailing
             ) {
-                NavigationLink {
-                    OrderHistoryView(
-                        viewModel: appContainer
-                            .makeOrderHistoryViewModel(),
-                        makeOrderDetailsViewModel: { orderID in
-                            appContainer.makeOrderDetailsViewModel(
-                                orderID: orderID
-                            )
-                        }
-                    )
-                } label: {
+                NavigationLink(
+                    value: AppRoute.orderHistory
+                ) {
                     Image(
                         systemName: "clock.arrow.circlepath"
                     )
