@@ -183,6 +183,12 @@ extension OrderHistoryViewModel.OrderHistoryError {
                         repository: repository
                     )
                 )
+
+            case .restaurantDetails:
+                EmptyView()
+
+            case .cart:
+                EmptyView()
             }
         }
     }
