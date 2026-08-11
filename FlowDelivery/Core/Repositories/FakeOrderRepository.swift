@@ -1,5 +1,11 @@
 final class FakeOrderRepository: OrderRepository {
-    private(set) var orders: [Order] = []
+    private(set) var orders: [Order]
+
+    init(
+        orders: [Order] = []
+    ) {
+        self.orders = orders
+    }
 
     func createOrder(
         _ order: Order
