@@ -18,7 +18,7 @@ xcodebuild \
     -configuration Debug \
     -destination "platform=iOS Simulator,name=${SIMULATOR_NAME},OS=latest" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
-    -only-testing:FlowDeliveryUITests/FlowDeliveryUITests/testHomeScreenLoadsRestaurants \
+    -only-testing:FlowDeliveryUITests/FlowDeliveryUITests \
     -parallel-testing-enabled NO \
     CODE_SIGNING_ALLOWED=NO \
     test

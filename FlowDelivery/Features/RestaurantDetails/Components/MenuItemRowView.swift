@@ -67,6 +67,9 @@ struct MenuItemRowView: View {
                 Image(systemName: "plus.circle.fill")
                     .font(.title2)
             }
+            .accessibilityLabel(
+                "Adicionar \(content.title)"
+            )
         }
         .padding(.vertical, AppSpacing.small)
     }
