@@ -108,6 +108,7 @@ struct CheckoutView: View {
                                     Text("Confirmar pedido")
                                 }
                             }
+                            .accessibilityLabel("Confirmar pedido")
                             .buttonStyle(
                                 PrimaryButtonStyle()
                             )
