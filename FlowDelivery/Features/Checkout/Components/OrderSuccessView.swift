@@ -1,7 +1,8 @@
 import SwiftUI
 
-struct OrderSuccessView: View {
-    let onContinue: () -> Void
+struct OrderSuccessView<ContinueAction: View>: View {
+    @ViewBuilder
+    let continueAction: () -> ContinueAction
 
     var body: some View {
         ContentUnavailableView {
@@ -14,20 +15,15 @@ struct OrderSuccessView: View {
                 "Seu pedido foi confirmado e já está sendo preparado."
             )
         } actions: {
-            Button(
-                "Continuar",
-                action: onContinue
-            )
-            .buttonStyle(
-                PrimaryButtonStyle()
-            )
+            continueAction()
         }
         .padding(AppSpacing.large)
     }
 }
 
 #Preview {
-    OrderSuccessView(
-        onContinue: {}
-    )
+    OrderSuccessView {
+        Button("Continuar") {}
+            .buttonStyle(PrimaryButtonStyle())
+    }
 }

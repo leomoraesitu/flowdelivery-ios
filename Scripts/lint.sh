@@ -17,6 +17,7 @@ echo "🔍 Executando SwiftLint..."
 
 swiftlint lint \
     --strict \
+    --no-cache \
     --config "$ROOT_DIR/.swiftlint.yml"
 
 echo "✅ SwiftLint aprovado."
