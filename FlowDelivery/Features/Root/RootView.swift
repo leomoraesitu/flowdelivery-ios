@@ -66,8 +66,12 @@ struct RootView: View {
         case .cart:
             CartView(
                 viewModel: appContainer
-                    .makeCartViewModel(),
-                checkoutViewModel: appContainer
+                    .makeCartViewModel()
+            )
+
+        case .checkout:
+            CheckoutView(
+                viewModel: appContainer
                     .makeCheckoutViewModel()
             )
         }

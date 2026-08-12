@@ -5,4 +5,5 @@ enum AppRoute: Hashable {
     case orderDetails(UUID)
     case restaurantDetails(UUID)
     case cart
+    case checkout
 }

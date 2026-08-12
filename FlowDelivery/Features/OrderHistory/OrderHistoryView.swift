@@ -189,6 +189,9 @@ extension OrderHistoryViewModel.OrderHistoryError {
 
             case .cart:
                 EmptyView()
+
+            case .checkout:
+                EmptyView()
             }
         }
     }
