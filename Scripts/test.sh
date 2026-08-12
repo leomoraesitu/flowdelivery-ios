@@ -8,6 +8,7 @@ cd "$ROOT_DIR"
 SIMULATOR_NAME="${SIMULATOR_NAME:-iPhone 17}"
 
 echo "🧪 Executando testes no simulador: $SIMULATOR_NAME..."
+echo "ℹ️ Testes de UI são executados separadamente; esta etapa valida a suíte unitária."
 
 DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-${TMPDIR:-/tmp}/FlowDeliveryDerivedData}"
 mkdir -p "$DERIVED_DATA_PATH"
@@ -18,6 +19,7 @@ xcodebuild \
     -configuration Debug \
     -destination "platform=iOS Simulator,name=${SIMULATOR_NAME},OS=latest" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
+    -skip-testing:FlowDeliveryUITests \
     CODE_SIGNING_ALLOWED=NO \
     test
 
