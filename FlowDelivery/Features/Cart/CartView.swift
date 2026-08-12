@@ -58,7 +58,15 @@ struct CartView: View {
                 ) {
                     CartSummaryView(
                         total: content.total
-                    )
+                    ) {
+                        NavigationLink(
+                            value: AppRoute.checkout
+                        ) {
+                            Text("Finalizar pedido")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                    }
                 }
             }
         }
