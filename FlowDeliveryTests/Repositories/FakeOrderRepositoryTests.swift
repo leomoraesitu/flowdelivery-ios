@@ -4,8 +4,9 @@ import Testing
 
 struct FakeOrderRepositoryTests {
     @Test("Starts with no orders")
+    @MainActor
     func fetchOrdersStartsEmpty() async throws {
-        let sut = await FakeOrderRepository()
+        let sut = FakeOrderRepository()
 
         let orders = try await sut.fetchOrders()
 
@@ -13,8 +14,9 @@ struct FakeOrderRepositoryTests {
     }
 
     @Test("Fetches a created order")
+    @MainActor
     func fetchOrdersReturnsCreatedOrder() async throws {
-        let sut = await FakeOrderRepository()
+        let sut = FakeOrderRepository()
         let order = makeOrder()
 
         try await sut.createOrder(order)
@@ -49,11 +51,12 @@ struct FakeOrderRepositoryTests {
     }
 
     @Test("Fetches an order by identifier")
+    @MainActor
     func fetchOrderReturnsMatchingOrder() async throws {
         let firstOrder = makeOrder()
         let expectedOrder = makeOrder()
 
-        let sut = await FakeOrderRepository(
+        let sut = FakeOrderRepository(
             orders: [
                 firstOrder,
                 expectedOrder
@@ -68,8 +71,9 @@ struct FakeOrderRepositoryTests {
     }
 
     @Test("Returns nil for an unknown identifier")
+    @MainActor
     func fetchOrderReturnsNilForUnknownIdentifier() async throws {
-        let sut = await FakeOrderRepository(
+        let sut = FakeOrderRepository(
             orders: [
                 makeOrder()
             ]
