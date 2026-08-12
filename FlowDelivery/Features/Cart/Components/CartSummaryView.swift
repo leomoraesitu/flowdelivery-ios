@@ -2,7 +2,6 @@ import SwiftUI
 
 struct CartSummaryView: View {
     let total: String
-    let onCheckout: () -> Void
 
     var body: some View {
         VStack(
@@ -25,13 +24,13 @@ struct CartSummaryView: View {
                 children: .combine
             )
 
-            Button(
-                "Finalizar pedido",
-                action: onCheckout
-            )
-            .buttonStyle(
-                PrimaryButtonStyle()
-            )
+            NavigationLink(
+                value: AppRoute.checkout
+            ) {
+                Text("Finalizar pedido")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(PrimaryButtonStyle())
         }
         .padding(AppSpacing.large)
         .frame(maxWidth: .infinity)
@@ -46,7 +45,6 @@ struct CartSummaryView: View {
 
 #Preview {
     CartSummaryView(
-        total: "R$ 154,70",
-        onCheckout: {}
+        total: "R$ 154,70"
     )
 }
