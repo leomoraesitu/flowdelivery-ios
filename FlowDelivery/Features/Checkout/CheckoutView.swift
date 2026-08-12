@@ -1,9 +1,6 @@
 import SwiftUI
 
 struct CheckoutView: View {
-    @Environment(\.dismiss)
-    private var dismiss
-
     @State
     private var isOrderConfirmationPresented = false
 
@@ -15,11 +12,15 @@ struct CheckoutView: View {
     var body: some View {
         Group {
             if isOrderCompleted {
-                OrderSuccessView(
-                    onContinue: {
-                        dismiss()
+                OrderSuccessView {
+                    NavigationLink(
+                        value: AppRoute.orderHistory
+                    ) {
+                        Text("Ver meus pedidos")
+                            .frame(maxWidth: .infinity)
                     }
-                )
+                    .buttonStyle(PrimaryButtonStyle())
+                }
             } else {
                 switch viewModel.state {
                 case .empty:

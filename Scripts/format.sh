@@ -15,6 +15,6 @@ fi
 
 echo "🎨 Executando SwiftFormat..."
 
-swiftformat .
+swiftformat --cache ignore .
 
 echo "✅ Formatação concluída."
