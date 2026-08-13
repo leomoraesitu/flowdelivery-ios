@@ -201,4 +201,34 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
     }
+
+    @MainActor
+    func testUserCanSeeEmptyCart() {
+        let app = XCUIApplication()
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: 5)
+        )
+        loginButton.tap()
+
+        let cartButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            cartButton.waitForExistence(timeout: 5)
+        )
+        cartButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Carrinho"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            app.staticTexts["Seu carrinho está vazio"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
