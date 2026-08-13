@@ -41,6 +41,10 @@ final class FlowDeliveryUITests: XCTestCase {
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(cartButton.waitForExistence(timeout: 5))
+        XCTAssertEqual(
+            cartButton.value as? String,
+            "1 item"
+        )
         cartButton.tap()
 
         XCTAssertTrue(
