@@ -170,4 +170,35 @@ final class FlowDeliveryUITests: XCTestCase {
         XCTAssertTrue(placeOrderButton.waitForExistence(timeout: 5))
         placeOrderButton.tap()
     }
+
+    @MainActor
+    func testUserCanSeeEmptyOrderHistory() {
+        let app = XCUIApplication()
+
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: 5)
+        )
+        loginButton.tap()
+
+        let historyButton = app.buttons["Meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Meus pedidos"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            app.staticTexts["Nenhum pedido ainda"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
