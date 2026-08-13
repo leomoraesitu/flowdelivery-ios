@@ -94,6 +94,32 @@ final class FlowDeliveryUITests: XCTestCase {
                 timeout: 5
             )
         )
+
+        let deliveryAddress = app.staticTexts[
+            "OrderDetails.DeliveryAddress"
+        ]
+
+        XCTAssertTrue(
+            deliveryAddress.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            deliveryAddress.label,
+            "Avenida Paulista, 1000"
+        )
+
+        let total = app.staticTexts[
+            "OrderDetails.Total"
+        ]
+
+        XCTAssertTrue(
+            total.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            total.label,
+            "Total, R$ 49,90"
+        )
     }
 
     @MainActor

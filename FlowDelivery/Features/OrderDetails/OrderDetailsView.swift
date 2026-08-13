@@ -89,6 +89,9 @@ struct OrderDetailsView: View {
 
                     Text(content.deliveryAddress)
                         .font(AppTypography.body)
+                        .accessibilityIdentifier(
+                            "OrderDetails.DeliveryAddress"
+                        )
                 }
             }
 
@@ -105,6 +108,9 @@ struct OrderDetailsView: View {
                     Text(content.total)
                         .font(AppTypography.bodyBold)
                         .monospacedDigit()
+                        .accessibilityIdentifier(
+                            "OrderDetails.Total"
+                        )
                 }
             }
         }
