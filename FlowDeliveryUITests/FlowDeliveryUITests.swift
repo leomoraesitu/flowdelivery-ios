@@ -74,6 +74,26 @@ final class FlowDeliveryUITests: XCTestCase {
         XCTAssertTrue(
             app.staticTexts["R$ 49,90"].waitForExistence(timeout: 5)
         )
+        app.staticTexts["1 item"].tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Detalhes do pedido"].waitForExistence(
+                timeout: 5
+            )
+        )
+        let paymentMethod = app.descendants(
+            matching: .any
+        )["OrderDetails.PaymentMethod"]
+
+        XCTAssertTrue(
+            paymentMethod.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertTrue(
+            app.staticTexts["Pizza Margherita"].waitForExistence(
+                timeout: 5
+            )
+        )
     }
 
     @MainActor

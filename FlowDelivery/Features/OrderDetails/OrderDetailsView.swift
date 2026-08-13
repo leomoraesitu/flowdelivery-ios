@@ -75,6 +75,7 @@ struct OrderDetailsView: View {
                     "Pagamento",
                     value: content.paymentMethod
                 )
+                .accessibilityIdentifier("OrderDetails.PaymentMethod")
             }
 
             Section("Entrega") {
