@@ -337,6 +337,50 @@ final class FlowDeliveryUITests: XCTestCase {
     }
 }
 
+extension FlowDeliveryUITests {
+    @MainActor
+    func testUserCanCancelCartClearing() {
+        let app = makeCartApp()
+
+        let clearButton = app.buttons["Limpar"]
+        XCTAssertTrue(
+            clearButton.waitForExistence(timeout: 5)
+        )
+        clearButton.tap()
+
+        let confirmClearButton = app.buttons[
+            "Limpar carrinho"
+        ]
+        XCTAssertTrue(
+            confirmClearButton.waitForExistence(timeout: 5)
+        )
+
+        let cancelButton = app.buttons["Cancelar"]
+
+        if cancelButton.waitForExistence(timeout: 1) {
+            cancelButton.tap()
+        } else {
+            let outsideDialog = app.coordinate(
+                withNormalizedOffset: CGVector(
+                    dx: 0.5,
+                    dy: 0.8
+                )
+            )
+            outsideDialog.tap()
+        }
+
+        XCTAssertTrue(
+            app.staticTexts["Pizza Margherita"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertFalse(
+            confirmClearButton.exists
+        )
+    }
+}
+
 private extension FlowDeliveryUITests {
     @MainActor
     private func makeCartApp() -> XCUIApplication {
