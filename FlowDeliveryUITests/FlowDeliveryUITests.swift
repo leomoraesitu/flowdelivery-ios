@@ -286,4 +286,45 @@ final class FlowDeliveryUITests: XCTestCase {
         XCTAssertTrue(placeOrderButton.waitForExistence(timeout: 5))
         placeOrderButton.tap()
     }
+
+    @MainActor
+    func testUserCanDecreaseCartItemQuantity() {
+        let app = makeCartApp()
+
+        let incrementButton = app.buttons["Aumentar quantidade"]
+        XCTAssertTrue(
+            incrementButton.waitForExistence(timeout: 5)
+        )
+        incrementButton.tap()
+
+        let decrementButton = app.buttons["Diminuir quantidade"]
+        XCTAssertTrue(
+            decrementButton.waitForExistence(timeout: 5)
+        )
+        XCTAssertTrue(decrementButton.isEnabled)
+        decrementButton.tap()
+
+        let quantity = app.staticTexts["1"]
+        XCTAssertTrue(
+            quantity.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertFalse(decrementButton.isEnabled)
+
+        let backButton = app.buttons["FlowDelivery"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        let cartButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            cartButton.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            cartButton.value as? String,
+            "1 item"
+        )
+    }
 }
