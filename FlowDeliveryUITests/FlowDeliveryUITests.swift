@@ -220,74 +220,6 @@ final class FlowDeliveryUITests: XCTestCase {
     }
 
     @MainActor
-    private func makeCartApp() -> XCUIApplication {
-        let app = XCUIApplication()
-        app.launch()
-
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(loginButton.waitForExistence(timeout: 5))
-        loginButton.tap()
-
-        let restaurant = app.staticTexts["Pizzaria Itália"]
-        XCTAssertTrue(restaurant.waitForExistence(timeout: 5))
-        restaurant.tap()
-
-        let addButton = app.buttons["Adicionar Pizza Margherita"]
-        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
-        addButton.tap()
-
-        let backButton = app.buttons["FlowDelivery"]
-        XCTAssertTrue(backButton.waitForExistence(timeout: 5))
-        backButton.tap()
-
-        let cartButton = app.buttons["Carrinho"]
-        XCTAssertTrue(cartButton.waitForExistence(timeout: 5))
-        cartButton.tap()
-
-        XCTAssertTrue(
-            app.navigationBars["Carrinho"].waitForExistence(timeout: 5)
-        )
-
-        return app
-    }
-
-    @MainActor
-    private func makeCheckoutApp() -> XCUIApplication {
-        let app = makeCartApp()
-
-        let checkoutButton = app.buttons["Finalizar pedido"]
-        XCTAssertTrue(checkoutButton.waitForExistence(timeout: 5))
-        checkoutButton.tap()
-
-        let addressField = app.textFields["Rua, número e complemento"]
-        XCTAssertTrue(addressField.waitForExistence(timeout: 5))
-        addressField.tap()
-        addressField.typeText("Avenida Paulista, 1000")
-        app.keyboards.buttons["Return"].tap()
-
-        let paymentPicker = app.buttons["Forma de pagamento, Selecione"]
-        XCTAssertTrue(paymentPicker.waitForExistence(timeout: 5))
-        paymentPicker.tap()
-
-        let pixOption = app.buttons["Pix"]
-        XCTAssertTrue(pixOption.waitForExistence(timeout: 5))
-        pixOption.tap()
-
-        return app
-    }
-
-    @MainActor
-    private func confirmOrder(in app: XCUIApplication) {
-        let confirmButton = app.buttons["Confirmar pedido"]
-        XCTAssertTrue(confirmButton.waitForExistence(timeout: 5))
-        confirmButton.tap()
-
-        let placeOrderButton = app.buttons["Fazer pedido"]
-        XCTAssertTrue(placeOrderButton.waitForExistence(timeout: 5))
-        placeOrderButton.tap()
-    }
-
-    @MainActor
     func testUserCanDecreaseCartItemQuantity() {
         let app = makeCartApp()
 
@@ -361,5 +293,116 @@ final class FlowDeliveryUITests: XCTestCase {
             total.label,
             "Total, R$ 99,80"
         )
+    }
+
+    @MainActor
+    func testUserCanClearCart() {
+        let app = makeCartApp()
+
+        let clearButton = app.buttons["Limpar"]
+        XCTAssertTrue(
+            clearButton.waitForExistence(timeout: 5)
+        )
+        clearButton.tap()
+
+        let confirmClearButton = app.buttons[
+            "Limpar carrinho"
+        ]
+        XCTAssertTrue(
+            confirmClearButton.waitForExistence(timeout: 5)
+        )
+        confirmClearButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Seu carrinho está vazio"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        let backButton = app.buttons["FlowDelivery"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        let cartButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            cartButton.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            cartButton.value as? String,
+            "Vazio"
+        )
+    }
+}
+
+private extension FlowDeliveryUITests {
+    @MainActor
+    private func makeCartApp() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(loginButton.waitForExistence(timeout: 5))
+        loginButton.tap()
+
+        let restaurant = app.staticTexts["Pizzaria Itália"]
+        XCTAssertTrue(restaurant.waitForExistence(timeout: 5))
+        restaurant.tap()
+
+        let addButton = app.buttons["Adicionar Pizza Margherita"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        addButton.tap()
+
+        let backButton = app.buttons["FlowDelivery"]
+        XCTAssertTrue(backButton.waitForExistence(timeout: 5))
+        backButton.tap()
+
+        let cartButton = app.buttons["Carrinho"]
+        XCTAssertTrue(cartButton.waitForExistence(timeout: 5))
+        cartButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Carrinho"].waitForExistence(timeout: 5)
+        )
+
+        return app
+    }
+
+    @MainActor
+    private func makeCheckoutApp() -> XCUIApplication {
+        let app = makeCartApp()
+
+        let checkoutButton = app.buttons["Finalizar pedido"]
+        XCTAssertTrue(checkoutButton.waitForExistence(timeout: 5))
+        checkoutButton.tap()
+
+        let addressField = app.textFields["Rua, número e complemento"]
+        XCTAssertTrue(addressField.waitForExistence(timeout: 5))
+        addressField.tap()
+        addressField.typeText("Avenida Paulista, 1000")
+        app.keyboards.buttons["Return"].tap()
+
+        let paymentPicker = app.buttons["Forma de pagamento, Selecione"]
+        XCTAssertTrue(paymentPicker.waitForExistence(timeout: 5))
+        paymentPicker.tap()
+
+        let pixOption = app.buttons["Pix"]
+        XCTAssertTrue(pixOption.waitForExistence(timeout: 5))
+        pixOption.tap()
+
+        return app
+    }
+
+    @MainActor
+    private func confirmOrder(in app: XCUIApplication) {
+        let confirmButton = app.buttons["Confirmar pedido"]
+        XCTAssertTrue(confirmButton.waitForExistence(timeout: 5))
+        confirmButton.tap()
+
+        let placeOrderButton = app.buttons["Fazer pedido"]
+        XCTAssertTrue(placeOrderButton.waitForExistence(timeout: 5))
+        placeOrderButton.tap()
     }
 }
