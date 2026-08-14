@@ -379,6 +379,29 @@ extension FlowDeliveryUITests {
             confirmClearButton.exists
         )
     }
+
+    @MainActor
+    func testUserCanRemoveCartItem() {
+        let app = makeCartApp()
+
+        let cartItem = app.staticTexts["Pizza Margherita"]
+        XCTAssertTrue(
+            cartItem.waitForExistence(timeout: 5)
+        )
+
+        cartItem.swipeLeft()
+
+        let removeButton = app.buttons["Remover"]
+        XCTAssertTrue(
+            removeButton.waitForExistence(timeout: 5)
+        )
+        removeButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Seu carrinho está vazio"]
+                .waitForExistence(timeout: 5)
+        )
+    }
 }
 
 private extension FlowDeliveryUITests {
