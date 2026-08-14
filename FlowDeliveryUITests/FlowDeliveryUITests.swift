@@ -327,4 +327,39 @@ final class FlowDeliveryUITests: XCTestCase {
             "1 item"
         )
     }
+
+    @MainActor
+    func testCartUpdatesMonetaryValuesAfterIncrement() {
+        let app = makeCartApp()
+
+        let incrementButton = app.buttons[
+            "Aumentar quantidade"
+        ]
+        XCTAssertTrue(
+            incrementButton.waitForExistence(timeout: 5)
+        )
+        incrementButton.tap()
+
+        let subtotal = app.staticTexts[
+            "CartItem.Subtotal"
+        ]
+        XCTAssertTrue(
+            subtotal.waitForExistence(timeout: 5)
+        )
+        XCTAssertEqual(
+            subtotal.label,
+            "R$ 99,80"
+        )
+
+        let total = app.descendants(
+            matching: .any
+        )["CartSummary.Total"]
+        XCTAssertTrue(
+            total.waitForExistence(timeout: 5)
+        )
+        XCTAssertEqual(
+            total.label,
+            "Total, R$ 99,80"
+        )
+    }
 }

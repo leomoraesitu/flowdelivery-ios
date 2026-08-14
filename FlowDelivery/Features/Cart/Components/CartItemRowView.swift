@@ -40,6 +40,9 @@ struct CartItemRowView: View {
 
                 Text(content.subtotal)
                     .font(AppTypography.bodyBold)
+                    .accessibilityIdentifier(
+                        "CartItem.Subtotal"
+                    )
             }
         }
         .padding(.vertical, AppSpacing.small)
