@@ -26,6 +26,9 @@ struct CartSummaryView<CheckoutAction: View>: View {
             .accessibilityElement(
                 children: .combine
             )
+            .accessibilityIdentifier(
+                "CartSummary.Total"
+            )
 
             checkoutAction()
         }
