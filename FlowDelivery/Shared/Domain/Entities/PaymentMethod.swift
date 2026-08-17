@@ -1,4 +1,4 @@
-enum PaymentMethod: CaseIterable, Identifiable, Equatable {
+enum PaymentMethod: CaseIterable, Identifiable, Equatable, Sendable {
     case creditCard
     case pix
     case cash
