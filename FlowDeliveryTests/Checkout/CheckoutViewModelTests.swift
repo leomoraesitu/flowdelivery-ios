@@ -242,4 +242,36 @@ struct CheckoutViewModelTests {
         #expect(sut.state == .empty)
         #expect(!sut.canConfirmOrder)
     }
+
+    @Test(
+        "Persists every selected payment method",
+        arguments: PaymentMethod.allCases
+    )
+    @MainActor
+    func confirmOrderPersistsSelectedPaymentMethod(
+        paymentMethod: PaymentMethod
+    ) async throws {
+        let cartStore = makeCartStore()
+        let orderRepository = FakeOrderRepository()
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: orderRepository
+        )
+
+        sut.deliveryAddress =
+            "Avenida Paulista, 1000"
+        sut.paymentMethod = paymentMethod
+
+        let didConfirm = await sut.confirmOrder()
+
+        let createdOrder = try #require(
+            orderRepository.orders.first
+        )
+
+        #expect(didConfirm)
+        #expect(orderRepository.orders.count == 1)
+        #expect(createdOrder.paymentMethod == paymentMethod)
+        #expect(cartStore.items.isEmpty)
+    }
 }
