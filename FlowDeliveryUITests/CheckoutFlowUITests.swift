@@ -282,4 +282,50 @@ extension FlowDeliveryUITests {
             app.alerts["Confirmar pedido?"].exists
         )
     }
+
+    @MainActor
+    func testUserCanConfirmOrderWhenCheckoutIsComplete() {
+        let app = makeCartApp()
+
+        let checkoutButton = app.buttons["Finalizar pedido"]
+        XCTAssertTrue(
+            checkoutButton.waitForExistence(timeout: 5)
+        )
+        checkoutButton.tap()
+
+        let paymentPicker = app.buttons[
+            "Forma de pagamento, Selecione"
+        ]
+        XCTAssertTrue(
+            paymentPicker.waitForExistence(timeout: 5)
+        )
+        paymentPicker.tap()
+
+        let pixOption = app.buttons["Pix"]
+        XCTAssertTrue(
+            pixOption.waitForExistence(timeout: 5)
+        )
+        pixOption.tap()
+
+        let confirmButton = app.buttons["Confirmar pedido"]
+        XCTAssertTrue(
+            confirmButton.waitForExistence(timeout: 5)
+        )
+        XCTAssertFalse(confirmButton.isEnabled)
+
+        let addressField = app.textFields[
+            "Rua, número e complemento"
+        ]
+        addressField.tap()
+        addressField.typeText("Avenida Paulista, 1000")
+        app.keyboards.buttons["Return"].tap()
+
+        XCTAssertTrue(
+            confirmButton.wait(
+                for: \.isEnabled,
+                toEqual: true,
+                timeout: 5
+            )
+        )
+    }
 }
