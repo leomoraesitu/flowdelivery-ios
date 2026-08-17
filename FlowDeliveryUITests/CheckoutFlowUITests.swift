@@ -136,4 +136,41 @@ extension FlowDeliveryUITests {
             )
         )
     }
+
+    @MainActor
+    func testUserCanRetryOrderAfterFailure() {
+        let app = makeCartApp(
+            launchArguments: [
+                "-ui-testing-failing-order-repository"
+            ]
+        )
+
+        configureCheckout(in: app)
+        confirmOrder(in: app)
+
+        let errorAlert = app.alerts[
+            "Não foi possível fazer o pedido"
+        ]
+        XCTAssertTrue(
+            errorAlert.waitForExistence(timeout: 5)
+        )
+
+        let okButton = errorAlert.buttons["OK"]
+        XCTAssertTrue(
+            okButton.waitForExistence(timeout: 5)
+        )
+        okButton.tap()
+
+        let confirmButton = app.buttons["Confirmar pedido"]
+        XCTAssertTrue(
+            confirmButton.waitForExistence(timeout: 5)
+        )
+        XCTAssertTrue(confirmButton.isEnabled)
+
+        confirmOrder(in: app)
+
+        XCTAssertTrue(
+            errorAlert.waitForExistence(timeout: 5)
+        )
+    }
 }
