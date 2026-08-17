@@ -189,4 +189,34 @@ struct CheckoutViewModelTests {
         #expect(sut.orderCreationError == nil)
         #expect(!sut.isSubmitting)
     }
+
+    @Test("Trims delivery address before creating order")
+    @MainActor
+    func confirmOrderTrimsDeliveryAddressBeforeCreatingOrder() async throws {
+        let cartStore = makeCartStore()
+        let orderRepository = FakeOrderRepository()
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: orderRepository
+        )
+
+        sut.deliveryAddress =
+            " \n Avenida Paulista, 1000 \t"
+        sut.paymentMethod = .pix
+
+        let didConfirm = await sut.confirmOrder()
+
+        let createdOrder = try #require(
+            orderRepository.orders.first
+        )
+
+        #expect(didConfirm)
+        #expect(
+            createdOrder.deliveryAddress ==
+                "Avenida Paulista, 1000"
+        )
+        #expect(createdOrder.paymentMethod == .pix)
+        #expect(cartStore.items.isEmpty)
+    }
 }
