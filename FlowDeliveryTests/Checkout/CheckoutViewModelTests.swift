@@ -219,4 +219,27 @@ struct CheckoutViewModelTests {
         #expect(createdOrder.paymentMethod == .pix)
         #expect(cartStore.items.isEmpty)
     }
+
+    @Test("Checkout becomes unavailable when cart is cleared")
+    @MainActor
+    func checkoutBecomesUnavailableWhenCartIsCleared() {
+        let cartStore = makeCartStore()
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: FakeOrderRepository()
+        )
+
+        sut.deliveryAddress =
+            "Avenida Paulista, 1000"
+        sut.paymentMethod = .pix
+
+        #expect(sut.state != .empty)
+        #expect(sut.canConfirmOrder)
+
+        cartStore.clear()
+
+        #expect(sut.state == .empty)
+        #expect(!sut.canConfirmOrder)
+    }
 }
