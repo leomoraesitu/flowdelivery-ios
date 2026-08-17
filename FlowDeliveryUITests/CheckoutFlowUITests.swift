@@ -1,0 +1,67 @@
+import XCTest
+
+extension FlowDeliveryUITests {
+    @MainActor
+    func testUserCanCompleteOrderWithRemainingCartItem() {
+        let app = makeCartApp(
+            menuItemNames: [
+                "Pizza Margherita",
+                "Pizza Calabresa"
+            ]
+        )
+
+        let margherita = app.staticTexts["Pizza Margherita"]
+        XCTAssertTrue(
+            margherita.waitForExistence(timeout: 5)
+        )
+
+        margherita.swipeLeft()
+
+        let removeButton = app.buttons["Remover"]
+        XCTAssertTrue(
+            removeButton.waitForExistence(timeout: 5)
+        )
+        removeButton.tap()
+
+        XCTAssertTrue(
+            margherita.waitForNonExistence(timeout: 5)
+        )
+
+        configureCheckout(in: app)
+        confirmOrder(in: app)
+
+        XCTAssertTrue(
+            app.staticTexts["Pedido realizado!"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        let historyButton = app.buttons["Ver meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        let orderEntry = app.staticTexts["1 item"]
+        XCTAssertTrue(
+            orderEntry.waitForExistence(timeout: 5)
+        )
+        orderEntry.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Pizza Calabresa"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        let total = app.staticTexts["OrderDetails.Total"]
+        XCTAssertTrue(
+            total.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            total.label,
+            "Total, R$ 54,90"
+        )
+    }
+}
