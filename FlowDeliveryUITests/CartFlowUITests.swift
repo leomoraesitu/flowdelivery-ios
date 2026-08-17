@@ -319,4 +319,36 @@ extension FlowDeliveryUITests {
             )
         )
     }
+
+    @MainActor
+    func testCartItemPersistsAfterNavigatingAwayAndReturning() {
+        let app = makeCartApp()
+
+        let cartItem = app.staticTexts["Pizza Margherita"]
+        XCTAssertTrue(
+            cartItem.waitForExistence(timeout: 5)
+        )
+
+        let backButton = app.buttons["FlowDelivery"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        let cartButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            cartButton.waitForExistence(timeout: 5)
+        )
+        cartButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Carrinho"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            cartItem.waitForExistence(timeout: 5)
+        )
+    }
 }
