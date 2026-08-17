@@ -64,4 +64,35 @@ extension FlowDeliveryUITests {
             "Total, R$ 54,90"
         )
     }
+
+    @MainActor
+    func testCartIsEmptyAfterCompletingOrder() {
+        let app = makeCheckoutApp()
+
+        confirmOrder(in: app)
+
+        XCTAssertTrue(
+            app.staticTexts["Pedido realizado!"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        let backButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Carrinho"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            app.staticTexts["Seu carrinho está vazio"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
