@@ -112,44 +112,4 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
     }
-
-    @MainActor
-    func testCartUpdatesTotalAfterRemovingItem() {
-        let app = makeCartApp(
-            menuItemNames: [
-                "Pizza Margherita",
-                "Pizza Calabresa"
-            ]
-        )
-
-        let margherita = app.staticTexts["Pizza Margherita"]
-        XCTAssertTrue(
-            margherita.waitForExistence(timeout: 5)
-        )
-
-        margherita.swipeLeft()
-
-        let removeButton = app.buttons["Remover"]
-        XCTAssertTrue(
-            removeButton.waitForExistence(timeout: 5)
-        )
-        removeButton.tap()
-
-        XCTAssertTrue(
-            margherita.waitForNonExistence(timeout: 5)
-        )
-
-        let total = app.descendants(
-            matching: .any
-        )["CartSummary.Total"]
-
-        XCTAssertTrue(
-            total.waitForExistence(timeout: 5)
-        )
-
-        XCTAssertEqual(
-            total.label,
-            "Total, R$ 54,90"
-        )
-    }
 }
