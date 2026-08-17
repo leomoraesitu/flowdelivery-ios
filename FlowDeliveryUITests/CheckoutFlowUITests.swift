@@ -173,4 +173,47 @@ extension FlowDeliveryUITests {
             errorAlert.waitForExistence(timeout: 5)
         )
     }
+
+    @MainActor
+    func testUserCanCancelOrderConfirmation() {
+        let app = makeCheckoutApp()
+
+        let confirmButton = app.buttons["Confirmar pedido"]
+        XCTAssertTrue(
+            confirmButton.waitForExistence(timeout: 5)
+        )
+        confirmButton.tap()
+
+        let confirmationAlert = app.alerts["Confirmar pedido?"]
+        XCTAssertTrue(
+            confirmationAlert.waitForExistence(timeout: 5)
+        )
+
+        let cancelButton = confirmationAlert.buttons["Cancelar"]
+        XCTAssertTrue(
+            cancelButton.waitForExistence(timeout: 5)
+        )
+        cancelButton.tap()
+
+        XCTAssertTrue(
+            confirmButton.waitForExistence(timeout: 5)
+        )
+        XCTAssertTrue(confirmButton.isEnabled)
+
+        XCTAssertFalse(
+            app.staticTexts["Pedido realizado!"].exists
+        )
+
+        let backButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Pizza Margherita"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
