@@ -1,6 +1,11 @@
 import Foundation
 import Observation
 
+private enum UITestLaunchArgument {
+    static let failingOrderRepository =
+        "-ui-testing-failing-order-repository"
+}
+
 @MainActor
 @Observable
 final class AppContainer {
@@ -18,7 +23,13 @@ final class AppContainer {
         let authRepository = FakeAuthRepository()
         let tokenStore = FakeTokenStore()
         let restaurantRepository = FakeRestaurantRepository()
-        let orderRepository = FakeOrderRepository()
+        let orderRepository: OrderRepository = if ProcessInfo.processInfo.arguments.contains(
+            UITestLaunchArgument.failingOrderRepository
+        ) {
+            FailingOrderRepository()
+        } else {
+            FakeOrderRepository()
+        }
 
         let authService = AuthService(
             repository: authRepository,

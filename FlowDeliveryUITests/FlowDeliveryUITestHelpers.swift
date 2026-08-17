@@ -5,9 +5,11 @@ extension FlowDeliveryUITests {
     func makeCartApp(
         menuItemNames: [String] = [
             "Pizza Margherita"
-        ]
+        ],
+        launchArguments: [String] = []
     ) -> XCUIApplication {
         let app = XCUIApplication()
+        app.launchArguments = launchArguments
         app.launch()
 
         let loginButton = app.buttons["Entrar"]
