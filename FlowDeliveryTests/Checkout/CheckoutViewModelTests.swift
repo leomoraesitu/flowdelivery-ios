@@ -163,4 +163,30 @@ struct CheckoutViewModelTests {
 
         return cartStore
     }
+
+    @Test("Rejects checkout with whitespace-only delivery address")
+    @MainActor
+    func confirmOrderRejectsWhitespaceOnlyAddress() async {
+        let cartStore = makeCartStore()
+        let orderRepository = FakeOrderRepository()
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: orderRepository
+        )
+
+        sut.deliveryAddress = " \n\t "
+        sut.paymentMethod = .pix
+
+        let didConfirm = await sut.confirmOrder()
+
+        #expect(!didConfirm)
+        #expect(!sut.canConfirmOrder)
+        #expect(orderRepository.orders.isEmpty)
+        #expect(cartStore.itemCount == 1)
+        #expect(sut.deliveryAddress == " \n\t ")
+        #expect(sut.paymentMethod == .pix)
+        #expect(sut.orderCreationError == nil)
+        #expect(!sut.isSubmitting)
+    }
 }
