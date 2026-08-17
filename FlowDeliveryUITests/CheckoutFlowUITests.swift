@@ -95,4 +95,45 @@ extension FlowDeliveryUITests {
             )
         )
     }
+
+    @MainActor
+    func testCartIsPreservedWhenOrderCreationFails() {
+        let app = makeCartApp(
+            launchArguments: [
+                "-ui-testing-failing-order-repository"
+            ]
+        )
+
+        configureCheckout(in: app)
+        confirmOrder(in: app)
+
+        let errorAlert = app.alerts[
+            "Não foi possível fazer o pedido"
+        ]
+        XCTAssertTrue(
+            errorAlert.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertFalse(
+            app.staticTexts["Pedido realizado!"].exists
+        )
+
+        let okButton = errorAlert.buttons["OK"]
+        XCTAssertTrue(
+            okButton.waitForExistence(timeout: 5)
+        )
+        okButton.tap()
+
+        let backButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Pizza Margherita"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
