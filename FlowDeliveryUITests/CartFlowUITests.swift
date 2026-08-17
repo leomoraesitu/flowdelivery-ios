@@ -351,4 +351,87 @@ extension FlowDeliveryUITests {
             cartItem.waitForExistence(timeout: 5)
         )
     }
+
+    @MainActor
+    func testCartUpdatesTotalAfterRemovingItem() {
+        let app = makeCartApp(
+            menuItemNames: [
+                "Pizza Margherita",
+                "Pizza Calabresa"
+            ]
+        )
+
+        let margherita = app.staticTexts["Pizza Margherita"]
+        XCTAssertTrue(
+            margherita.waitForExistence(timeout: 5)
+        )
+
+        margherita.swipeLeft()
+
+        let removeButton = app.buttons["Remover"]
+        XCTAssertTrue(
+            removeButton.waitForExistence(timeout: 5)
+        )
+        removeButton.tap()
+
+        XCTAssertTrue(
+            margherita.waitForNonExistence(timeout: 5)
+        )
+
+        let total = app.descendants(
+            matching: .any
+        )["CartSummary.Total"]
+
+        XCTAssertTrue(
+            total.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            total.label,
+            "Total, R$ 54,90"
+        )
+    }
+
+    @MainActor
+    func testCartBadgeUpdatesAfterRemovingItem() {
+        let app = makeCartApp(
+            menuItemNames: [
+                "Pizza Margherita",
+                "Pizza Calabresa"
+            ]
+        )
+
+        let margherita = app.staticTexts["Pizza Margherita"]
+        XCTAssertTrue(
+            margherita.waitForExistence(timeout: 5)
+        )
+
+        margherita.swipeLeft()
+
+        let removeButton = app.buttons["Remover"]
+        XCTAssertTrue(
+            removeButton.waitForExistence(timeout: 5)
+        )
+        removeButton.tap()
+
+        XCTAssertTrue(
+            margherita.waitForNonExistence(timeout: 5)
+        )
+
+        let backButton = app.buttons["FlowDelivery"]
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: 5)
+        )
+        backButton.tap()
+
+        let cartButton = app.buttons["Carrinho"]
+        XCTAssertTrue(
+            cartButton.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            cartButton.value as? String,
+            "1 item"
+        )
+    }
 }
