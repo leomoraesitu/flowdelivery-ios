@@ -274,4 +274,63 @@ struct CheckoutViewModelTests {
         #expect(createdOrder.paymentMethod == paymentMethod)
         #expect(cartStore.items.isEmpty)
     }
+
+    @Test("Allows retrying order confirmation after a failure")
+    @MainActor
+    func confirmOrderAllowsRetryAfterFailure() async {
+        let cartStore = makeCartStore()
+        let orderRepository = FailOnceOrderRepository()
+
+        let sut = CheckoutViewModel(
+            cartStore: cartStore,
+            orderRepository: orderRepository
+        )
+
+        sut.deliveryAddress = "Avenida Paulista, 1000"
+        sut.paymentMethod = .pix
+
+        let firstAttempt = await sut.confirmOrder()
+
+        #expect(!firstAttempt)
+        #expect(sut.orderCreationError == .failed)
+        #expect(cartStore.itemCount == 1)
+
+        let secondAttempt = await sut.confirmOrder()
+
+        #expect(secondAttempt)
+        #expect(sut.orderCreationError == nil)
+        #expect(cartStore.items.isEmpty)
+        #expect(orderRepository.orders.count == 1)
+    }
+}
+
+@MainActor
+final class FailOnceOrderRepository: OrderRepository {
+    private(set) var orders: [Order] = []
+    private var shouldFail = true
+
+    func createOrder(
+        _ order: Order
+    ) async throws {
+        if shouldFail {
+            shouldFail = false
+            throw Failure()
+        }
+
+        orders.append(order)
+    }
+
+    func fetchOrders() async throws -> [Order] {
+        orders
+    }
+
+    func fetchOrder(
+        id: UUID
+    ) async throws -> Order? {
+        orders.first { order in
+            order.id == id
+        }
+    }
+
+    private struct Failure: Error {}
 }
