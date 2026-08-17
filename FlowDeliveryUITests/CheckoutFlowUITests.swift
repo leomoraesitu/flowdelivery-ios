@@ -216,4 +216,39 @@ extension FlowDeliveryUITests {
             )
         )
     }
+
+    @MainActor
+    func testUserCannotConfirmOrderWithoutDeliveryAddress() {
+        let app = makeCartApp()
+
+        let checkoutButton = app.buttons["Finalizar pedido"]
+        XCTAssertTrue(
+            checkoutButton.waitForExistence(timeout: 5)
+        )
+        checkoutButton.tap()
+
+        let paymentPicker = app.buttons[
+            "Forma de pagamento, Selecione"
+        ]
+        XCTAssertTrue(
+            paymentPicker.waitForExistence(timeout: 5)
+        )
+        paymentPicker.tap()
+
+        let pixOption = app.buttons["Pix"]
+        XCTAssertTrue(
+            pixOption.waitForExistence(timeout: 5)
+        )
+        pixOption.tap()
+
+        let confirmButton = app.buttons["Confirmar pedido"]
+        XCTAssertTrue(
+            confirmButton.waitForExistence(timeout: 5)
+        )
+        XCTAssertFalse(confirmButton.isEnabled)
+
+        XCTAssertFalse(
+            app.alerts["Confirmar pedido?"].exists
+        )
+    }
 }
