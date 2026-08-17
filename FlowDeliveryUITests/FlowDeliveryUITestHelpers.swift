@@ -48,26 +48,44 @@ extension FlowDeliveryUITests {
     @MainActor
     func makeCheckoutApp() -> XCUIApplication {
         let app = makeCartApp()
+        configureCheckout(in: app)
 
+        return app
+    }
+
+    @MainActor
+    func configureCheckout(
+        in app: XCUIApplication
+    ) {
         let checkoutButton = app.buttons["Finalizar pedido"]
-        XCTAssertTrue(checkoutButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(
+            checkoutButton.waitForExistence(timeout: 5)
+        )
         checkoutButton.tap()
 
-        let addressField = app.textFields["Rua, número e complemento"]
-        XCTAssertTrue(addressField.waitForExistence(timeout: 5))
+        let addressField = app.textFields[
+            "Rua, número e complemento"
+        ]
+        XCTAssertTrue(
+            addressField.waitForExistence(timeout: 5)
+        )
         addressField.tap()
         addressField.typeText("Avenida Paulista, 1000")
         app.keyboards.buttons["Return"].tap()
 
-        let paymentPicker = app.buttons["Forma de pagamento, Selecione"]
-        XCTAssertTrue(paymentPicker.waitForExistence(timeout: 5))
+        let paymentPicker = app.buttons[
+            "Forma de pagamento, Selecione"
+        ]
+        XCTAssertTrue(
+            paymentPicker.waitForExistence(timeout: 5)
+        )
         paymentPicker.tap()
 
         let pixOption = app.buttons["Pix"]
-        XCTAssertTrue(pixOption.waitForExistence(timeout: 5))
+        XCTAssertTrue(
+            pixOption.waitForExistence(timeout: 5)
+        )
         pixOption.tap()
-
-        return app
     }
 
     @MainActor
