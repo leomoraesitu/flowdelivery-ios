@@ -151,4 +151,37 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
     }
+
+    @MainActor
+    func testUserCanRetryOrderHistoryLoading() {
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "-ui-testing-fail-once-order-history-repository"
+        ]
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: 5)
+        )
+        loginButton.tap()
+
+        let historyButton = app.buttons["Meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        let retryButton = app.buttons["Tentar novamente"]
+        XCTAssertTrue(
+            retryButton.waitForExistence(timeout: 5)
+        )
+        retryButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Nenhum pedido ainda"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
