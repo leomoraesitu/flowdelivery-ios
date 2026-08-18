@@ -261,4 +261,43 @@ final class FlowDeliveryUITests: XCTestCase {
             "Total, R$ 99,80"
         )
     }
+
+    @MainActor
+    func testOrderHistoryRowsExposeAccessibleSummaries() {
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-order-history-fixture-repository"
+            ]
+        )
+
+        let orderRows = orderHistoryRows(
+            in: app
+        )
+
+        let newerOrder = orderRows.element(
+            boundBy: 0
+        )
+
+        let olderOrder = orderRows.element(
+            boundBy: 1
+        )
+
+        XCTAssertTrue(
+            newerOrder.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertTrue(
+            olderOrder.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            newerOrder.label,
+            "Pedido com 2 itens, total R$ 99,80"
+        )
+
+        XCTAssertEqual(
+            olderOrder.label,
+            "Pedido com 1 item, total R$ 49,90"
+        )
+    }
 }
