@@ -112,4 +112,43 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
     }
+
+    @MainActor
+    func testUserSeesOrderHistoryError() {
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "-ui-testing-failing-order-repository"
+        ]
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: 5)
+        )
+        loginButton.tap()
+
+        let historyButton = app.buttons["Meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Meus pedidos"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            app.staticTexts[
+                "Não foi possível carregar seus pedidos."
+            ].waitForExistence(timeout: 5)
+        )
+
+        XCTAssertTrue(
+            app.buttons["Tentar novamente"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }
