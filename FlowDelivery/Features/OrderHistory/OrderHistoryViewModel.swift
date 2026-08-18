@@ -30,9 +30,11 @@ final class OrderHistoryViewModel {
         do {
             let orders = try await repository.fetchOrders()
 
-            let entries = orders.map(
-                OrderHistoryEntry.init
-            )
+            let entries = orders
+                .sorted { first, second in
+                    first.createdAt > second.createdAt
+                }
+                .map(OrderHistoryEntry.init)
 
             if orders.isEmpty {
                 state = .empty
