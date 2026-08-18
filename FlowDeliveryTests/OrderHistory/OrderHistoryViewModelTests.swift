@@ -62,7 +62,9 @@ struct OrderHistoryViewModelTests {
         )
     }
 
-    private func makeOrder() -> Order {
+    private func makeOrder(
+        createdAt: Date = .now
+    ) -> Order {
         let menuItem = MenuItem(
             id: UUID(),
             name: "Pizza Margherita",
@@ -82,7 +84,43 @@ struct OrderHistoryViewModelTests {
             deliveryAddress:
             "Avenida Paulista, 1000, Bela Vista",
             paymentMethod: .pix,
-            createdAt: .now
+            createdAt: createdAt
+        )
+    }
+
+    @Test("Displays most recent orders first")
+    @MainActor
+    func loadDisplaysMostRecentOrdersFirst() async {
+        let olderOrder = makeOrder(
+            createdAt: Date(
+                timeIntervalSince1970: 1000
+            )
+        )
+
+        let newerOrder = makeOrder(
+            createdAt: Date(
+                timeIntervalSince1970: 2000
+            )
+        )
+
+        let repository = FakeOrderRepository(
+            orders: [
+                olderOrder,
+                newerOrder
+            ]
+        )
+
+        let sut = OrderHistoryViewModel(
+            repository: repository
+        )
+
+        await sut.load()
+
+        #expect(
+            sut.state == .loaded([
+                OrderHistoryEntry(order: newerOrder),
+                OrderHistoryEntry(order: olderOrder)
+            ])
         )
     }
 }
