@@ -234,6 +234,10 @@ final class FlowDeliveryUITests: XCTestCase {
         XCTAssertTrue(
             newerOrder.waitForExistence(timeout: 5)
         )
+        XCTAssertEqual(
+            newerOrder.label,
+            "Pedido com 2 itens, total R$ 99,80"
+        )
         newerOrder.tap()
 
         XCTAssertTrue(

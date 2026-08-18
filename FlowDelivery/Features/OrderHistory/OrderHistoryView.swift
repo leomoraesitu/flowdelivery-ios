@@ -40,6 +40,9 @@ struct OrderHistoryView: View {
                         entry: entry
                     )
                 }
+                .accessibilityLabel(
+                    "Pedido com \(entry.itemCount), total \(entry.total)"
+                )
                 .accessibilityHint(
                     "Abre os detalhes do pedido"
                 )
