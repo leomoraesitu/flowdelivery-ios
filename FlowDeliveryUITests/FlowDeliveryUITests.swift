@@ -186,4 +186,28 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
     }
+
+    @MainActor
+    func testUserSeesMostRecentOrderFirst() {
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-order-history-fixture-repository"
+            ]
+        )
+
+        let newerOrder = app.staticTexts["2 itens"]
+        let olderOrder = app.staticTexts["1 item"]
+
+        XCTAssertTrue(
+            newerOrder.waitForExistence(timeout: 5)
+        )
+        XCTAssertTrue(
+            olderOrder.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertLessThan(
+            newerOrder.frame.minY,
+            olderOrder.frame.minY
+        )
+    }
 }
