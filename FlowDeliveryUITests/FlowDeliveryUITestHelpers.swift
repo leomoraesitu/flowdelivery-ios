@@ -133,4 +133,18 @@ extension FlowDeliveryUITests {
 
         return app
     }
+
+    @MainActor
+    func orderHistoryRows(
+        in app: XCUIApplication
+    ) -> XCUIElementQuery {
+        app.descendants(
+            matching: .any
+        ).matching(
+            NSPredicate(
+                format: "identifier BEGINSWITH %@",
+                "OrderHistory.Row."
+            )
+        )
+    }
 }

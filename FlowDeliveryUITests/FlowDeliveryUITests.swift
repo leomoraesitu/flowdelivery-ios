@@ -195,12 +195,22 @@ final class FlowDeliveryUITests: XCTestCase {
             ]
         )
 
-        let newerOrder = app.staticTexts["2 itens"]
-        let olderOrder = app.staticTexts["1 item"]
+        let orderRows = orderHistoryRows(
+            in: app
+        )
+
+        let newerOrder = orderRows.element(
+            boundBy: 0
+        )
+
+        let olderOrder = orderRows.element(
+            boundBy: 1
+        )
 
         XCTAssertTrue(
             newerOrder.waitForExistence(timeout: 5)
         )
+
         XCTAssertTrue(
             olderOrder.waitForExistence(timeout: 5)
         )
@@ -219,13 +229,8 @@ final class FlowDeliveryUITests: XCTestCase {
             ]
         )
 
-        let orderRows = app.descendants(
-            matching: .any
-        ).matching(
-            NSPredicate(
-                format: "identifier BEGINSWITH %@",
-                "OrderHistory.Row."
-            )
+        let orderRows = orderHistoryRows(
+            in: app
         )
 
         let newerOrder = orderRows.element(
