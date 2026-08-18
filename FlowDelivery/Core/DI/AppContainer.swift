@@ -10,6 +10,8 @@ private enum UITestLaunchArgument {
         "-ui-testing-fail-once-order-history-repository"
     static let failOnceOrderDetailsRepository =
         "-ui-testing-fail-once-order-details-repository"
+    static let orderHistoryFixtureRepository =
+        "-ui-testing-order-history-fixture-repository"
 }
 
 @MainActor
@@ -45,6 +47,10 @@ final class AppContainer {
             UITestLaunchArgument.failOnceOrderDetailsRepository
         ) {
             FailOnceOrderDetailsRepository()
+        } else if ProcessInfo.processInfo.arguments.contains(
+            UITestLaunchArgument.orderHistoryFixtureRepository
+        ) {
+            OrderHistoryFixtureRepository()
         } else {
             FakeOrderRepository()
         }
