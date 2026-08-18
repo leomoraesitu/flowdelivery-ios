@@ -100,6 +100,32 @@ struct OrderDetailsViewModelTests {
         )
     }
 
+    @Test("Loads order details after retrying a failed request")
+    @MainActor
+    func loadRecoversAfterFailure() async {
+        let order = makeOrder()
+        let repository = FailOnceFetchOrderRepository(
+            order: order
+        )
+
+        let sut = OrderDetailsViewModel(
+            orderID: order.id,
+            repository: repository
+        )
+
+        await sut.load()
+
+        #expect(sut.state == .error(.loadFailed))
+
+        await sut.load()
+
+        #expect(
+            sut.state == .loaded(
+                OrderDetailsContent(order: order)
+            )
+        )
+    }
+
     private func makeOrder() -> Order {
         let menuItem = MenuItem(
             id: UUID(),
@@ -124,4 +150,38 @@ struct OrderDetailsViewModelTests {
             createdAt: .now
         )
     }
+}
+
+private final class FailOnceFetchOrderRepository: OrderRepository {
+    private let order: Order
+    private var shouldFail = true
+
+    init(
+        order: Order
+    ) {
+        self.order = order
+    }
+
+    func createOrder(
+        _ order: Order
+    ) async throws {
+        _ = order
+    }
+
+    func fetchOrders() async throws -> [Order] {
+        [order]
+    }
+
+    func fetchOrder(
+        id: UUID
+    ) async throws -> Order? {
+        if shouldFail {
+            shouldFail = false
+            throw Failure()
+        }
+
+        return id == order.id ? order : nil
+    }
+
+    private struct Failure: Error {}
 }
