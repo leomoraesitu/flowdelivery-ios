@@ -141,7 +141,7 @@ extension FlowDeliveryUITests {
     func testUserCanRetryOrderAfterFailure() {
         let app = makeCartApp(
             launchArguments: [
-                "-ui-testing-failing-order-repository"
+                "-ui-testing-fail-once-order-repository"
             ]
         )
 
@@ -170,7 +170,9 @@ extension FlowDeliveryUITests {
         confirmOrder(in: app)
 
         XCTAssertTrue(
-            errorAlert.waitForExistence(timeout: 5)
+            app.staticTexts["Pedido realizado!"].waitForExistence(
+                timeout: 5
+            )
         )
     }
 

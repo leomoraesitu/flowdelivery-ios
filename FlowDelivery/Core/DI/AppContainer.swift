@@ -4,6 +4,8 @@ import Observation
 private enum UITestLaunchArgument {
     static let failingOrderRepository =
         "-ui-testing-failing-order-repository"
+    static let failOnceOrderRepository =
+        "-ui-testing-fail-once-order-repository"
 }
 
 @MainActor
@@ -27,6 +29,10 @@ final class AppContainer {
             UITestLaunchArgument.failingOrderRepository
         ) {
             FailingOrderRepository()
+        } else if ProcessInfo.processInfo.arguments.contains(
+            UITestLaunchArgument.failOnceOrderRepository
+        ) {
+            FailOnceOrderRepository()
         } else {
             FakeOrderRepository()
         }
