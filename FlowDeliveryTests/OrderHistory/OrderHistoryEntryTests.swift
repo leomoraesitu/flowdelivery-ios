@@ -7,7 +7,7 @@ struct OrderHistoryEntryTests {
     @MainActor
     func mapsOrderToPresentationValues() {
         let order = makeOrder(
-            quantity: 2
+            quantities: [2]
         )
 
         let sut = OrderHistoryEntry(
@@ -38,7 +38,7 @@ struct OrderHistoryEntryTests {
     @MainActor
     func formatsSingularItemCount() {
         let order = makeOrder(
-            quantity: 1
+            quantities: [1]
         )
 
         let sut = OrderHistoryEntry(
@@ -49,25 +49,26 @@ struct OrderHistoryEntryTests {
     }
 
     private func makeOrder(
-        quantity: Int
+        quantities: [Int]
     ) -> Order {
-        let menuItem = MenuItem(
-            id: UUID(),
-            name: "Pizza Margherita",
-            description:
-            "Molho de tomate, mussarela e manjericão.",
-            price: Decimal(string: "49.90") ?? .zero,
-            imageURL: nil
-        )
+        let items = quantities.enumerated().map { index, quantity in
+            let menuItem = MenuItem(
+                id: UUID(),
+                name: "Item \(index + 1)",
+                description: "Descrição do item.",
+                price: Decimal(string: "10.00") ?? .zero,
+                imageURL: nil
+            )
+
+            return CartItem(
+                menuItem: menuItem,
+                quantity: quantity
+            )
+        }
 
         return Order(
             id: UUID(),
-            items: [
-                CartItem(
-                    menuItem: menuItem,
-                    quantity: quantity
-                )
-            ],
+            items: items,
             deliveryAddress:
             "Avenida Paulista, 1000, Bela Vista",
             paymentMethod: .pix,
@@ -75,5 +76,22 @@ struct OrderHistoryEntryTests {
                 timeIntervalSince1970: 1_700_000_000
             )
         )
+    }
+
+    @Test("Sums quantities across different order items")
+    @MainActor
+    func sumsQuantitiesAcrossDifferentOrderItems() {
+        let order = makeOrder(
+            quantities: [
+                1,
+                2
+            ]
+        )
+
+        let sut = OrderHistoryEntry(
+            order: order
+        )
+
+        #expect(sut.itemCount == "3 itens")
     }
 }
