@@ -210,4 +210,35 @@ final class FlowDeliveryUITests: XCTestCase {
             olderOrder.frame.minY
         )
     }
+
+    @MainActor
+    func testUserCanOpenMostRecentOrderDetails() {
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-order-history-fixture-repository"
+            ]
+        )
+
+        let newerOrder = app.staticTexts["2 itens"]
+        XCTAssertTrue(
+            newerOrder.waitForExistence(timeout: 5)
+        )
+        newerOrder.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Detalhes do pedido"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        let total = app.staticTexts["OrderDetails.Total"]
+        XCTAssertTrue(
+            total.waitForExistence(timeout: 5)
+        )
+
+        XCTAssertEqual(
+            total.label,
+            "Total, R$ 99,80"
+        )
+    }
 }
