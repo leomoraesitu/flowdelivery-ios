@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct OrderDetailsView: View {
+    @Environment(\.dynamicTypeSize)
+    private var dynamicTypeSize
+
     @State
     private var viewModel: OrderDetailsViewModel
 
@@ -65,86 +68,163 @@ struct OrderDetailsView: View {
         content: OrderDetailsContent
     ) -> some View {
         List {
-            Section("Pedido") {
-                LabeledContent(
-                    "Data",
-                    value: content.date
-                )
+            orderSection(
+                content: content
+            )
 
-                LabeledContent(
-                    "Pagamento",
-                    value: content.paymentMethod
-                )
-                .accessibilityIdentifier("OrderDetails.PaymentMethod")
-            }
+            deliverySection(
+                content: content
+            )
 
-            Section("Entrega") {
-                VStack(
-                    alignment: .leading,
-                    spacing: AppSpacing.xSmall
-                ) {
-                    Text("Endereço")
-                        .font(AppTypography.caption)
-                        .foregroundStyle(.secondary)
+            itemsSection(
+                content: content
+            )
 
-                    Text(content.deliveryAddress)
-                        .font(AppTypography.body)
-                        .accessibilityIdentifier(
-                            "OrderDetails.DeliveryAddress"
-                        )
-                }
-            }
-
-            Section("Itens") {
-                ForEach(content.items) { item in
-                    orderItemRow(
-                        item: item
-                    )
-                }
-            }
-
-            Section {
-                LabeledContent("Total") {
-                    Text(content.total)
-                        .font(AppTypography.bodyBold)
-                        .monospacedDigit()
-                        .accessibilityIdentifier(
-                            "OrderDetails.Total"
-                        )
-                }
-            }
+            totalSection(
+                content: content
+            )
         }
         .listStyle(.insetGrouped)
     }
 
-    private func orderItemRow(
-        item: OrderDetailsItemContent
+    private func orderSection(
+        content: OrderDetailsContent
     ) -> some View {
-        HStack(
-            alignment: .firstTextBaseline,
-            spacing: AppSpacing.medium
-        ) {
+        Section {
+            LabeledContent(
+                "Data",
+                value: content.date
+            )
+
+            LabeledContent(
+                "Pagamento",
+                value: content.paymentMethod
+            )
+            .accessibilityIdentifier("OrderDetails.PaymentMethod")
+        } header: {
+            Text("Pedido")
+                .foregroundStyle(.primary)
+        }
+        .headerProminence(.increased)
+    }
+
+    private func deliverySection(
+        content: OrderDetailsContent
+    ) -> some View {
+        Section {
             VStack(
                 alignment: .leading,
                 spacing: AppSpacing.xSmall
             ) {
-                Text(item.title)
-                    .font(AppTypography.headline)
-
-                Text(item.quantityAndUnitPrice)
+                Text("Endereço")
                     .font(AppTypography.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
+
+                Text(content.deliveryAddress)
+                    .font(AppTypography.body)
+                    .accessibilityIdentifier(
+                        "OrderDetails.DeliveryAddress"
+                    )
             }
-
-            Spacer()
-
-            Text(item.subtotal)
-                .font(AppTypography.bodyBold)
-                .monospacedDigit()
+        } header: {
+            Text("Entrega")
+                .foregroundStyle(.primary)
         }
-        .accessibilityElement(
-            children: .combine
-        )
+        .headerProminence(.increased)
+    }
+
+    private func itemsSection(
+        content: OrderDetailsContent
+    ) -> some View {
+        Section {
+            ForEach(content.items) { item in
+                orderItemRow(
+                    item: item
+                )
+            }
+        } header: {
+            Text("Itens")
+                .foregroundStyle(.primary)
+        }
+        .headerProminence(.increased)
+    }
+
+    private func totalSection(
+        content: OrderDetailsContent
+    ) -> some View {
+        Section {
+            LabeledContent("Total") {
+                Text(content.total)
+                    .font(AppTypography.bodyBold)
+                    .monospacedDigit()
+                    .accessibilityIdentifier(
+                        "OrderDetails.Total"
+                    )
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func orderItemRow(
+        item: OrderDetailsItemContent
+    ) -> some View {
+        if dynamicTypeSize > .large {
+            VStack(
+                alignment: .leading,
+                spacing: AppSpacing.xSmall
+            ) {
+                itemInformation(
+                    item: item
+                )
+
+                itemSubtotal(
+                    item: item
+                )
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .trailing
+                )
+            }
+        } else {
+            HStack(
+                alignment: .firstTextBaseline,
+                spacing: AppSpacing.medium
+            ) {
+                itemInformation(
+                    item: item
+                )
+
+                Spacer()
+
+                itemSubtotal(
+                    item: item
+                )
+            }
+        }
+    }
+
+    private func itemInformation(
+        item: OrderDetailsItemContent
+    ) -> some View {
+        VStack(
+            alignment: .leading,
+            spacing: AppSpacing.xSmall
+        ) {
+            Text(item.title)
+                .font(AppTypography.headline)
+
+            Text(item.quantityAndUnitPrice)
+                .font(AppTypography.caption)
+                .foregroundStyle(.primary)
+        }
+    }
+
+    private func itemSubtotal(
+        item: OrderDetailsItemContent
+    ) -> some View {
+        Text(item.subtotal)
+            .font(AppTypography.bodyBold)
+            .monospacedDigit()
     }
 }
 

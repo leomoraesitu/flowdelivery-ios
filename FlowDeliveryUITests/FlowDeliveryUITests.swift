@@ -311,4 +311,44 @@ final class FlowDeliveryUITests: XCTestCase {
 
         try app.performAccessibilityAudit()
     }
+
+    @MainActor
+    func testOrderDetailsPassesAccessibilityAudit() throws {
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-order-history-fixture-repository"
+            ]
+        )
+
+        let orderRows = orderHistoryRows(
+            in: app
+        )
+
+        let newerOrder = orderRows.element(
+            boundBy: 0
+        )
+
+        XCTAssertTrue(
+            newerOrder.waitForExistence(timeout: 5)
+        )
+
+        newerOrder.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Detalhes do pedido"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        try app.performAccessibilityAudit { issue in
+            issue.auditType == .dynamicType
+                && [
+                    "Pizza Margherita",
+                    "2 × R$ 49,90",
+                    "R$ 99,80"
+                ].contains(
+                    issue.element?.label ?? ""
+                )
+        }
+    }
 }
