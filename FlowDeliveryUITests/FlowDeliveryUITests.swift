@@ -184,4 +184,44 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
     }
+
+    @MainActor
+    func testUserCanRetryOrderDetailsLoading() {
+        let app = makeCheckoutApp(
+            launchArguments: [
+                "-ui-testing-fail-once-order-details-repository"
+            ]
+        )
+        confirmOrder(in: app)
+
+        let historyButton = app.buttons["Ver meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        let orderRow = app.staticTexts["1 item"]
+        XCTAssertTrue(
+            orderRow.waitForExistence(timeout: 5)
+        )
+        orderRow.tap()
+
+        XCTAssertTrue(
+            app.staticTexts[
+                "Não foi possível carregar os detalhes do pedido."
+            ].waitForExistence(timeout: 5)
+        )
+
+        let retryButton = app.buttons["Tentar novamente"]
+        XCTAssertTrue(
+            retryButton.waitForExistence(timeout: 5)
+        )
+        retryButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Pizza Margherita"].waitForExistence(
+                timeout: 5
+            )
+        )
+    }
 }

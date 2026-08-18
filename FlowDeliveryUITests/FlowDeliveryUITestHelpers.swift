@@ -48,8 +48,12 @@ extension FlowDeliveryUITests {
     }
 
     @MainActor
-    func makeCheckoutApp() -> XCUIApplication {
-        let app = makeCartApp()
+    func makeCheckoutApp(
+        launchArguments: [String] = []
+    ) -> XCUIApplication {
+        let app = makeCartApp(
+            launchArguments: launchArguments
+        )
         configureCheckout(in: app)
 
         return app
