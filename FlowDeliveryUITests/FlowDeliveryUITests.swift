@@ -300,4 +300,15 @@ final class FlowDeliveryUITests: XCTestCase {
             "Pedido com 1 item, total R$ 49,90"
         )
     }
+
+    @MainActor
+    func testOrderHistoryPassesAccessibilityAudit() throws {
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-order-history-fixture-repository"
+            ]
+        )
+
+        try app.performAccessibilityAudit()
+    }
 }

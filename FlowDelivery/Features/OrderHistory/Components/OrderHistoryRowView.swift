@@ -16,6 +16,10 @@ struct OrderHistoryRowView: View {
                     entry.itemCount,
                     systemImage: "bag"
                 )
+                .fixedSize(
+                    horizontal: true,
+                    vertical: false
+                )
 
                 Spacer()
 
@@ -24,14 +28,11 @@ struct OrderHistoryRowView: View {
                     .monospacedDigit()
             }
             .font(AppTypography.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary)
         }
         .padding(
             .vertical,
             AppSpacing.xSmall
-        )
-        .accessibilityElement(
-            children: .combine
         )
     }
 }
