@@ -174,6 +174,29 @@ extension FlowDeliveryUITests {
                 timeout: 5
             )
         )
+        let historyButton = app.buttons["Ver meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Meus pedidos"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            app.staticTexts["1 item"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        XCTAssertTrue(
+            app.staticTexts["R$ 49,90"].waitForExistence(
+                timeout: 5
+            )
+        )
     }
 
     @MainActor
