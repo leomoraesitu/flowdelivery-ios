@@ -43,6 +43,9 @@ struct OrderHistoryView: View {
                 .accessibilityHint(
                     "Abre os detalhes do pedido"
                 )
+                .accessibilityIdentifier(
+                    "OrderHistory.Row.\(entry.id.uuidString)"
+                )
             }
             .listStyle(.plain)
 
