@@ -39,6 +39,7 @@ struct OrderHistoryView: View {
                     OrderHistoryRowView(
                         entry: entry
                     )
+                    .accessibilityHidden(true)
                 }
                 .accessibilityLabel(
                     "Pedido com \(entry.itemCount), total \(entry.total)"
