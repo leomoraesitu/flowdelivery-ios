@@ -351,4 +351,14 @@ final class FlowDeliveryUITests: XCTestCase {
                 )
         }
     }
+
+    @MainActor
+    func testCheckoutPassesAccessibilityAudit() throws {
+        let app = makeCheckoutApp()
+
+        try app.performAccessibilityAudit { issue in
+            issue.auditType == .dynamicType
+                && issue.element?.label == "Pagamento"
+        }
+    }
 }

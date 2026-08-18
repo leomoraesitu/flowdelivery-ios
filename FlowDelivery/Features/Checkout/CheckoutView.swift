@@ -7,6 +7,9 @@ struct CheckoutView: View {
     @State
     private var isOrderCompleted = false
 
+    @FocusState
+    private var isDeliveryAddressFocused: Bool
+
     @Bindable
     var viewModel: CheckoutViewModel
     var body: some View {
@@ -34,9 +37,7 @@ struct CheckoutView: View {
 
                 case let .loaded(content):
                     List {
-                        Section(
-                            "Resumo do pedido"
-                        ) {
+                        Section {
                             LabeledContent(
                                 "Itens",
                                 value: content.itemCount
@@ -46,15 +47,19 @@ struct CheckoutView: View {
                                 Text(content.total)
                                     .font(AppTypography.bodyBold)
                                     .monospacedDigit()
+                                    .foregroundStyle(.primary)
                             } label: {
                                 Text("Total")
                                     .font(AppTypography.bodyBold)
+                                    .foregroundStyle(.primary)
                             }
+                        } header: {
+                            Text("Resumo do pedido")
+                                .foregroundStyle(.primary)
                         }
+                        .headerProminence(.increased)
 
-                        Section(
-                            "Endereço de entrega"
-                        ) {
+                        Section {
                             TextField(
                                 "Rua, número e complemento",
                                 text: $viewModel.deliveryAddress,
@@ -63,10 +68,14 @@ struct CheckoutView: View {
                             .textContentType(.fullStreetAddress)
                             .textInputAutocapitalization(.words)
                             .lineLimit(2 ... 3)
+                            .focused($isDeliveryAddressFocused)
+                        } header: {
+                            Text("Endereço de entrega")
+                                .foregroundStyle(.primary)
                         }
-                        Section(
-                            "Pagamento"
-                        ) {
+                        .headerProminence(.increased)
+
+                        Section {
                             Picker(
                                 "Forma de pagamento",
                                 selection: $viewModel.paymentMethod
@@ -83,7 +92,14 @@ struct CheckoutView: View {
                                 }
                             }
                             .pickerStyle(.menu)
+                            .onChange(of: viewModel.paymentMethod) { _, _ in
+                                isDeliveryAddressFocused = false
+                            }
+                        } header: {
+                            Text("Pagamento")
+                                .foregroundStyle(.primary)
                         }
+                        .headerProminence(.increased)
                     }
                     .listStyle(.insetGrouped)
                     .scrollDismissesKeyboard(.interactively)
