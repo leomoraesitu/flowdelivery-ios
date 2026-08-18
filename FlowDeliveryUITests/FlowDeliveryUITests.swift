@@ -84,21 +84,7 @@ final class FlowDeliveryUITests: XCTestCase {
 
     @MainActor
     func testUserCanSeeEmptyOrderHistory() {
-        let app = XCUIApplication()
-
-        app.launch()
-
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(
-            loginButton.waitForExistence(timeout: 5)
-        )
-        loginButton.tap()
-
-        let historyButton = app.buttons["Meus pedidos"]
-        XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
-        )
-        historyButton.tap()
+        let app = makeOrderHistoryApp()
 
         XCTAssertTrue(
             app.navigationBars["Meus pedidos"].waitForExistence(
@@ -115,23 +101,11 @@ final class FlowDeliveryUITests: XCTestCase {
 
     @MainActor
     func testUserSeesOrderHistoryError() {
-        let app = XCUIApplication()
-        app.launchArguments = [
-            "-ui-testing-failing-order-repository"
-        ]
-        app.launch()
-
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(
-            loginButton.waitForExistence(timeout: 5)
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-failing-order-repository"
+            ]
         )
-        loginButton.tap()
-
-        let historyButton = app.buttons["Meus pedidos"]
-        XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
-        )
-        historyButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Meus pedidos"].waitForExistence(
@@ -154,23 +128,11 @@ final class FlowDeliveryUITests: XCTestCase {
 
     @MainActor
     func testUserCanRetryOrderHistoryLoading() {
-        let app = XCUIApplication()
-        app.launchArguments = [
-            "-ui-testing-fail-once-order-history-repository"
-        ]
-        app.launch()
-
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(
-            loginButton.waitForExistence(timeout: 5)
+        let app = makeOrderHistoryApp(
+            launchArguments: [
+                "-ui-testing-fail-once-order-history-repository"
+            ]
         )
-        loginButton.tap()
-
-        let historyButton = app.buttons["Meus pedidos"]
-        XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
-        )
-        historyButton.tap()
 
         let retryButton = app.buttons["Tentar novamente"]
         XCTAssertTrue(

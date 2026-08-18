@@ -104,4 +104,33 @@ extension FlowDeliveryUITests {
         XCTAssertTrue(placeOrderButton.waitForExistence(timeout: 5))
         placeOrderButton.tap()
     }
+
+    @MainActor
+    func makeOrderHistoryApp(
+        launchArguments: [String] = []
+    ) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = launchArguments
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: 5)
+        )
+        loginButton.tap()
+
+        let historyButton = app.buttons["Meus pedidos"]
+        XCTAssertTrue(
+            historyButton.waitForExistence(timeout: 5)
+        )
+        historyButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Meus pedidos"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        return app
+    }
 }
