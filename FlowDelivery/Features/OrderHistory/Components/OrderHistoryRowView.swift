@@ -35,3 +35,17 @@ struct OrderHistoryRowView: View {
         )
     }
 }
+
+#Preview {
+    List {
+        OrderHistoryRowView(
+            entry: OrderHistoryEntry(
+                id: UUID(),
+                date: "18 de ago. de 2026, 14:32",
+                itemCount: "2 itens",
+                total: "R$ 99,80"
+            )
+        )
+    }
+    .listStyle(.plain)
+}
