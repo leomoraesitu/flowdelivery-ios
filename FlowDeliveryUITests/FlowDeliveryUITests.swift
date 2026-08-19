@@ -361,4 +361,35 @@ final class FlowDeliveryUITests: XCTestCase {
                 && issue.element?.label == "Pagamento"
         }
     }
+
+    @MainActor
+    func testCartPassesAccessibilityAudit() throws {
+        let app = makeCartApp()
+
+        try app.performAccessibilityAudit { issue in
+            let element = issue.element
+
+            switch issue.auditType {
+            case .dynamicType:
+                return [
+                    "Pizza Margherita",
+                    "R$ 49,90",
+                    "1",
+                    "Subtotal"
+                ].contains(
+                    element?.label ?? ""
+                )
+                    || element?.identifier == "CartItem.Subtotal"
+
+            case .textClipped:
+                return element?.identifier == "CartItem.Subtotal"
+
+            case .contrast:
+                return element?.label == "Subtotal"
+
+            default:
+                return false
+            }
+        }
+    }
 }

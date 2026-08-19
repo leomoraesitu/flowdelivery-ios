@@ -187,7 +187,7 @@ extension FlowDeliveryUITests {
     func testUserCanClearCart() {
         let app = makeCartApp()
 
-        let clearButton = app.buttons["Limpar"]
+        let clearButton = app.buttons["Limpar carrinho"]
         XCTAssertTrue(
             clearButton.waitForExistence(timeout: 5)
         )
@@ -228,7 +228,7 @@ extension FlowDeliveryUITests {
     func testUserCanCancelCartClearing() {
         let app = makeCartApp()
 
-        let clearButton = app.buttons["Limpar"]
+        let clearButton = app.buttons["Limpar carrinho"]
         XCTAssertTrue(
             clearButton.waitForExistence(timeout: 5)
         )
