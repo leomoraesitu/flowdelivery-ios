@@ -48,6 +48,7 @@ chmod +x Scripts/*.sh
 ./Scripts/quality.sh
 ./Scripts/start-branch.sh feat/example-branch
 ./Scripts/publish-pr.sh "feat(scope): short description"
+./Scripts/ready-pr.sh
 ```
 
 ### Development workflow
@@ -77,7 +78,9 @@ After committing the completed work, publish the branch and create a draft Pull 
 ./Scripts/publish-pr.sh "feat(scope): short description"
 ```
 
-The command pushes only committed changes, runs the pre-push Quality Gate and creates a draft Pull Request.
+The command pushes only committed changes, runs the pre-push Quality Gate
+and creates or reuses an open Pull Request. Newly created Pull Requests
+remain in draft until they are explicitly prepared for review.
 
 If `origin/main` advanced while the branch was under development, update the branch before publishing:
 
@@ -85,6 +88,16 @@ If `origin/main` advanced while the branch was under development, update the bra
 git fetch origin
 git rebase origin/main
 ```
+
+After completing the Pull Request description and validation checklist,
+wait for the required checks and move it to Ready for review:
+
+```bash
+./Scripts/ready-pr.sh
+```
+The command confirms that the local branch, remote branch and Pull Request
+reference the same commit before marking the Pull Request as ready.
+It does not merge the Pull Request.
 
 To list the available simulators:
 
