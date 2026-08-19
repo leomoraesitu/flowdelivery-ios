@@ -47,6 +47,7 @@ chmod +x Scripts/*.sh
 ./Scripts/test.sh
 ./Scripts/quality.sh
 ./Scripts/start-branch.sh feat/example-branch
+./Scripts/sync-branch.sh
 ./Scripts/publish-pr.sh "feat(scope): short description"
 ./Scripts/ready-pr.sh
 ./Scripts/finish-branch.sh
@@ -83,12 +84,16 @@ The command pushes only committed changes, runs the pre-push Quality Gate
 and creates or reuses an open Pull Request. Newly created Pull Requests
 remain in draft until they are explicitly prepared for review.
 
-If `origin/main` advanced while the branch was under development, update the branch before publishing:
+If `origin/main` advances while the branch is under development, synchronize
+the current branch before publishing:
 
 ```bash
-git fetch origin
-git rebase origin/main
+./Scripts/sync-branch.sh
 ```
+
+Unpublished branches are rebased onto `origin/main`. Published branches merge
+`origin/main` to preserve their remote history and avoid force-pushes. The
+command never pushes changes automatically.
 
 After completing the Pull Request description and validation checklist,
 wait for the required checks and move it to Ready for review:
