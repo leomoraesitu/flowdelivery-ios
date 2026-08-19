@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct RestaurantRowView: View {
+    @Environment(\.dynamicTypeSize)
+    private var dynamicTypeSize
+
     let model: RestaurantRowModel
 
     var body: some View {
@@ -37,27 +40,46 @@ struct RestaurantRowView: View {
                 Text(model.title)
                     .font(.headline)
 
-                HStack {
-                    Label(
-                        model.rating,
-                        systemImage: "star.fill"
-                    )
-
-                    Spacer()
-
-                    Text(model.deliveryTime)
-
-                    Spacer()
-
-                    Text(
-                        model.deliveryFee
-                    )
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                deliveryInformation
+                    .font(AppTypography.caption)
+                    .foregroundStyle(.primary)
             }
         }
         .padding(.vertical, AppSpacing.small)
+    }
+
+    @ViewBuilder
+    private var deliveryInformation: some View {
+        if dynamicTypeSize > .large {
+            VStack(
+                alignment: .leading,
+                spacing: AppSpacing.xxSmall
+            ) {
+                Label(
+                    model.rating,
+                    systemImage: "star.fill"
+                )
+
+                Text(model.deliveryTime)
+
+                Text(model.deliveryFee)
+            }
+        } else {
+            HStack {
+                Label(
+                    model.rating,
+                    systemImage: "star.fill"
+                )
+
+                Spacer()
+
+                Text(model.deliveryTime)
+
+                Spacer()
+
+                Text(model.deliveryFee)
+            }
+        }
     }
 }
 

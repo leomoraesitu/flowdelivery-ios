@@ -392,4 +392,17 @@ final class FlowDeliveryUITests: XCTestCase {
             }
         }
     }
+
+    @MainActor
+    func testHomePassesAccessibilityAudit() throws {
+        let app = makeHomeApp()
+
+        XCTAssertTrue(
+            app.staticTexts["Pizzaria Itália"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        try app.performAccessibilityAudit()
+    }
 }
