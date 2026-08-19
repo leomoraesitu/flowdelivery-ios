@@ -17,6 +17,12 @@ struct CartQuantityControlView: View {
                 .labelStyle(.iconOnly)
             }
             .buttonStyle(.borderless)
+            .frame(
+                minWidth: AppComponentSize.minimumHitTarget,
+                minHeight: AppComponentSize.minimumHitTarget
+            )
+            .contentShape(Rectangle())
+            .accessibilityValue("\(quantity)")
             .disabled(quantity <= 1)
 
             Text(
@@ -25,6 +31,7 @@ struct CartQuantityControlView: View {
             )
             .font(AppTypography.bodyBold)
             .monospacedDigit()
+            .accessibilityHidden(true)
 
             Button(
                 action: onIncrement
@@ -36,6 +43,12 @@ struct CartQuantityControlView: View {
                 .labelStyle(.iconOnly)
             }
             .buttonStyle(.borderless)
+            .frame(
+                minWidth: AppComponentSize.minimumHitTarget,
+                minHeight: AppComponentSize.minimumHitTarget
+            )
+            .contentShape(Rectangle())
+            .accessibilityValue("\(quantity)")
         }
     }
 }

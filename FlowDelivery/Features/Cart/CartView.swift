@@ -78,11 +78,13 @@ struct CartView: View {
             ) {
                 if case .loaded = viewModel.state {
                     Button(
-                        "Limpar",
                         role: .destructive
                     ) {
                         isClearCartConfirmationPresented = true
+                    } label: {
+                        Image(systemName: "trash")
                     }
+                    .accessibilityLabel("Limpar carrinho")
                 }
             }
         }
