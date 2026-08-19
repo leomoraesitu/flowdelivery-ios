@@ -3,7 +3,7 @@ import SwiftUI
 struct RestaurantRowView: View {
     @Environment(\.dynamicTypeSize)
     private var dynamicTypeSize
-    
+
     let model: RestaurantRowModel
 
     var body: some View {
@@ -47,7 +47,7 @@ struct RestaurantRowView: View {
         }
         .padding(.vertical, AppSpacing.small)
     }
-    
+
     @ViewBuilder
     private var deliveryInformation: some View {
         if dynamicTypeSize > .large {
