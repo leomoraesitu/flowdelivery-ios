@@ -62,10 +62,22 @@ Before pushing or opening a Pull Request:
 ./Scripts/quality.sh
 ```
 
-To use another simulator:
+To list the available simulators:
 
 ```bash
-SIMULATOR_NAME="iPhone 16 Pro" ./Scripts/test.sh
+xcrun simctl list devices available
+```
+
+To use another simulator for unit tests:
+
+```bash
+SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/test.sh
+```
+
+To run the complete quality gate with another simulator:
+
+```bash
+SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/quality.sh
 ```
 
 ```text
@@ -74,7 +86,7 @@ Pre-commit:
 - lint
 
 Before PR:
-- format
+- format check
 - lint
 - build
 - unit tests

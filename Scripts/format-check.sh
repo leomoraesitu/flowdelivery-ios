@@ -15,6 +15,6 @@ fi
 
 echo "🔎 Verificando formatação..."
 
-swiftformat --lint .
+swiftformat --lint . --cache ignore
 
 echo "✅ Formatação válida."
