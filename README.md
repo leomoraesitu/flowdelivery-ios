@@ -49,6 +49,7 @@ chmod +x Scripts/*.sh
 ./Scripts/start-branch.sh feat/example-branch
 ./Scripts/publish-pr.sh "feat(scope): short description"
 ./Scripts/ready-pr.sh
+./Scripts/finish-branch.sh
 ```
 
 ### Development workflow
@@ -95,9 +96,23 @@ wait for the required checks and move it to Ready for review:
 ```bash
 ./Scripts/ready-pr.sh
 ```
+
 The command confirms that the local branch, remote branch and Pull Request
 reference the same commit before marking the Pull Request as ready.
 It does not merge the Pull Request.
+
+After the Pull Request has been merged, remain on the completed local branch
+and run:
+
+```bash
+./Scripts/finish-branch.sh
+```
+
+The command verifies that the exact branch HEAD belongs to a merged Pull
+Request, confirms that its squash commit is present on `origin/main`,
+updates the local `main` with a fast-forward merge and removes the
+completed local branch. It does not merge Pull Requests or delete remote
+branches.
 
 To list the available simulators:
 
@@ -172,12 +187,16 @@ gh auth status \
 gh api user --jq '.login'
 ```
 
-By default, the publishing script expects the `leomoraesitu` account. To use another account, provide it explicitly:
+By default, the GitFlow automation scripts that access GitHub expect the
+`leomoraesitu` account. To use another account throughout the workflow,
+export it for the current terminal session:
 
 ```bash
-EXPECTED_GITHUB_LOGIN="another-account" \
-    ./Scripts/publish-pr.sh "feat(scope): short description"
+export EXPECTED_GITHUB_LOGIN="another-account"
 ```
+
+The exported account is reused by `publish-pr.sh`, `ready-pr.sh` and
+`finish-branch.sh` in the same terminal session.
 
 ## Status
 
