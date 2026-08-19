@@ -8,9 +8,9 @@ extension FlowDeliveryUITests {
         ],
         launchArguments: [String] = []
     ) -> XCUIApplication {
-        let app = XCUIApplication()
-        app.launchArguments = launchArguments
-        app.launch()
+        let app = makeHomeApp(
+            launchArguments: launchArguments
+        )
 
         let loginButton = app.buttons["Entrar"]
         XCTAssertTrue(loginButton.waitForExistence(timeout: 5))
@@ -109,9 +109,7 @@ extension FlowDeliveryUITests {
     func makeOrderHistoryApp(
         launchArguments: [String] = []
     ) -> XCUIApplication {
-        let app = XCUIApplication()
-        app.launchArguments = launchArguments
-        app.launch()
+        let app = makeHomeApp()
 
         let loginButton = app.buttons["Entrar"]
         XCTAssertTrue(
@@ -146,5 +144,28 @@ extension FlowDeliveryUITests {
                 "OrderHistory.Row."
             )
         )
+    }
+
+    @MainActor
+    func makeHomeApp(
+        launchArguments: [String] = []
+    ) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = launchArguments
+        app.launch()
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: 5)
+        )
+        loginButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["FlowDelivery"].waitForExistence(
+                timeout: 5
+            )
+        )
+
+        return app
     }
 }
