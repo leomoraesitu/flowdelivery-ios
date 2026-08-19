@@ -48,6 +48,7 @@ chmod +x Scripts/*.sh
 ./Scripts/quality.sh
 ./Scripts/start-branch.sh feat/example-branch
 ./Scripts/sync-branch.sh
+./Scripts/commit.sh "feat(scope): short description"
 ./Scripts/publish-pr.sh "feat(scope): short description"
 ./Scripts/ready-pr.sh
 ./Scripts/finish-branch.sh
@@ -61,12 +62,15 @@ To start new work from the latest `main`:
 ./Scripts/start-branch.sh feat/short-description
 ```
 
-Before committing:
+Stage only the intended files and create the commit through the helper:
 
 ```bash
-./Scripts/format.sh
-./Scripts/lint.sh
+git add <explicit-file-path>
+./Scripts/commit.sh "feat(scope): short description"
 ```
+
+The command validates the Conventional Commit message, checks the staged
+diff and runs the versioned pre-commit hook. It never stages files itself.
 
 To run the complete Quality Gate manually at any time:
 
