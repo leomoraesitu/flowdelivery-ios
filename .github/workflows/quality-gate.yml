@@ -25,7 +25,6 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
       SIMULATOR_NAME: iPhone 17
-      DERIVED_DATA_PATH: ${{ runner.temp }}/FlowDeliveryDerivedData
 
     steps:
       - name: Checkout repository
@@ -34,4 +33,6 @@ jobs:
           persist-credentials: false
 
       - name: Run quality gate
+        env:
+          DERIVED_DATA_PATH: ${{ runner.temp }}/FlowDeliveryDerivedData
         run: ./Scripts/quality.sh
