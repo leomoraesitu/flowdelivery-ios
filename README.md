@@ -115,7 +115,9 @@ Pre-push:
 - build
 - unit tests
 
-Before PR:
+GitHub Actions:
+- pull requests targeting main
+- pushes to main
 - format check
 - lint
 - build

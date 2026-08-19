@@ -1,0 +1,37 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: Quality Gate
+    runs-on: macos-26-intel
+    timeout-minutes: 30
+
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
+      SIMULATOR_NAME: iPhone 17
+      DERIVED_DATA_PATH: ${{ runner.temp }}/FlowDeliveryDerivedData
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Run quality gate
+        run: ./Scripts/quality.sh
