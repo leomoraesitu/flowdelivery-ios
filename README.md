@@ -47,6 +47,7 @@ chmod +x Scripts/*.sh
 ./Scripts/test.sh
 ./Scripts/quality.sh
 ./Scripts/start-branch.sh feat/example-branch
+./Scripts/publish-pr.sh "feat(scope): short description"
 ```
 
 ### Development workflow
@@ -64,10 +65,25 @@ Before committing:
 ./Scripts/lint.sh
 ```
 
-Before pushing or opening a Pull Request:
+To run the complete Quality Gate manually at any time:
 
 ```bash
 ./Scripts/quality.sh
+```
+
+After committing the completed work, publish the branch and create a draft Pull Request:
+
+```bash
+./Scripts/publish-pr.sh "feat(scope): short description"
+```
+
+The command pushes only committed changes, runs the pre-push Quality Gate and creates a draft Pull Request.
+
+If `origin/main` advanced while the branch was under development, update the branch before publishing:
+
+```bash
+git fetch origin
+git rebase origin/main
 ```
 
 To list the available simulators:
@@ -137,6 +153,15 @@ Confirm the active account:
 gh auth status \
     --active \
     --hostname github.com
+
+gh api user --jq '.login'
+```
+
+By default, the publishing script expects the `leomoraesitu` account. To use another account, provide it explicitly:
+
+```bash
+EXPECTED_GITHUB_LOGIN="another-account" \
+    ./Scripts/publish-pr.sh "feat(scope): short description"
 ```
 
 ## Status
