@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -euo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+REMOTE_NAME="${1:-desconhecido}"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🪝 Pre-push Quality Gate"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🌐 Remote: $REMOTE_NAME"
+
+if [[ ! -x ./Scripts/quality.sh ]]; then
+    echo "❌ Scripts/quality.sh não encontrado ou sem permissão de execução."
+    exit 1
+fi
+
+./Scripts/quality.sh </dev/null
+
+echo ""
+echo "✅ Pre-push aprovado. Push liberado."

@@ -85,6 +85,12 @@ Pre-commit:
 - format check
 - lint
 
+Pre-push:
+- format check
+- lint
+- build
+- unit tests
+
 Before PR:
 - format check
 - lint
