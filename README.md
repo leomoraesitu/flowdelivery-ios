@@ -24,6 +24,7 @@ This repository contains the native iOS version of FlowDelivery, developed as a 
 ```bash
 brew install swiftformat
 brew install swiftlint
+brew install gh
 ```
 
 ### Enable versioned Git hooks
@@ -118,6 +119,25 @@ The original cross-platform Flutter implementation is available at:
 - macOS
 - Xcode
 - iOS Simulator
+
+### Authenticate GitHub CLI
+
+Authenticate once after installing GitHub CLI:
+
+```bash
+gh auth login \
+    --hostname github.com \
+    --git-protocol https \
+    --web
+```
+
+Confirm the active account:
+
+```bash
+gh auth status \
+    --active \
+    --hostname github.com
+```
 
 ## Status
 
