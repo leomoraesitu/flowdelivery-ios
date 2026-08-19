@@ -45,9 +45,16 @@ chmod +x Scripts/*.sh
 ./Scripts/build.sh
 ./Scripts/test.sh
 ./Scripts/quality.sh
+./Scripts/start-branch.sh feat/example-branch
 ```
 
 ### Development workflow
+
+To start new work from the latest `main`:
+
+```bash
+./Scripts/start-branch.sh feat/short-description
+```
 
 Before committing:
 
