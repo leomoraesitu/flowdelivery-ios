@@ -46,12 +46,44 @@ chmod +x Scripts/*.sh
 ./Scripts/build.sh
 ./Scripts/test.sh
 ./Scripts/quality.sh
+./Scripts/dev-flow.sh help
 ./Scripts/start-branch.sh feat/example-branch
 ./Scripts/sync-branch.sh
 ./Scripts/commit.sh "feat(scope): short description"
 ./Scripts/publish-pr.sh "feat(scope): short description"
 ./Scripts/ready-pr.sh
 ./Scripts/finish-branch.sh
+```
+
+### Recommended GitFlow
+
+Use `dev-flow.sh` as the recommended entry point for the development flow:
+
+```bash
+./Scripts/dev-flow.sh start feat/short-description
+
+git add <explicit-file-path>
+./Scripts/dev-flow.sh commit "feat(scope): short description"
+
+./Scripts/dev-flow.sh sync
+./Scripts/dev-flow.sh check
+./Scripts/dev-flow.sh publish "feat(scope): short description"
+./Scripts/dev-flow.sh ready
+./Scripts/dev-flow.sh finish
+```
+
+Use `--dry-run` to inspect the delegated command without executing it:
+
+```bash
+./Scripts/dev-flow.sh --dry-run start feat/short-description
+```
+
+The low-level scripts remain available for focused maintenance and debugging.
+
+To use `flow` as a shortcut in the current shell while at the repository root:
+
+```bash
+alias flow='./Scripts/dev-flow.sh'
 ```
 
 ### Development workflow
