@@ -1,0 +1,41 @@
+name: Setup SwiftLint
+description: Installs a pinned, checksum-verified SwiftLint binary on the runner.
+
+inputs:
+  version:
+    description: SwiftLint release tag.
+    required: false
+    default: "0.65.0"
+  sha256:
+    description: Expected SHA-256 of portable_swiftlint.zip.
+    required: false
+    default: "d6cb0aa7a2f5f1ef306fc9e37bcb54dc9a26facc8f7784ac0c3dd3eccf5c6ba6"
+
+runs:
+  using: composite
+  steps:
+    - name: Install SwiftLint
+      shell: bash
+      env:
+        SWIFTLINT_VERSION: ${{ inputs.version }}
+        SWIFTLINT_SHA256: ${{ inputs.sha256 }}
+      run: |
+        set -euo pipefail
+
+        ARCHIVE_PATH="${RUNNER_TEMP}/portable_swiftlint.zip"
+        INSTALL_PATH="${RUNNER_TEMP}/swiftlint"
+
+        curl \
+          --silent \
+          --show-error \
+          --fail \
+          --location \
+          --output "$ARCHIVE_PATH" \
+          "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
+
+        echo "${SWIFTLINT_SHA256}  ${ARCHIVE_PATH}" | shasum -a 256 --check --status
+
+        unzip -q -o "$ARCHIVE_PATH" -d "$INSTALL_PATH"
+        chmod +x "${INSTALL_PATH}/swiftlint"
+
+        echo "$INSTALL_PATH" >> "$GITHUB_PATH"
