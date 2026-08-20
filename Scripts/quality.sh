@@ -37,7 +37,8 @@ echo "SwiftLint $(swiftlint version)"
 echo ""
 ./Scripts/format-check.sh
 ./Scripts/lint.sh
-./Scripts/build.sh
+# ./Scripts/build.sh nao e executado aqui: `xcodebuild test` ja compila o app
+# e os targets de teste. Rodar os dois duplicava a compilacao do projeto.
 ./Scripts/test.sh
 
 echo ""

@@ -181,15 +181,15 @@ Pre-commit:
 Pre-push:
 - format check
 - lint
-- build
-- unit tests
+- unit tests (xcodebuild test also compiles the app)
 
-GitHub Actions:
-- pull requests targeting main
-- pushes to main
+GitHub Actions (Quality Gate - pull requests and pushes to main):
 - format check
 - lint
-- build
+
+GitHub Actions (Nightly Quality Gate - scheduled and manual):
+- format check
+- lint
 - unit tests
 ```
 

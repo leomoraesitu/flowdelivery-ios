@@ -17,22 +17,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality-gate:
-    name: Quality Gate
-    runs-on: macos-26-intel
-    timeout-minutes: 30
-
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
-      SIMULATOR_NAME: iPhone 17
+  static-analysis:
+    name: Static Analysis
+    runs-on: macos-26
+    timeout-minutes: 5
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+          fetch-depth: 1
 
-      - name: Run quality gate
-        env:
-          DERIVED_DATA_PATH: ${{ runner.temp }}/FlowDeliveryDerivedData
-        run: ./Scripts/quality.sh
+      - name: Tool versions
+        run: |
+          echo "SwiftFormat $(swiftformat --version)"
+          echo "SwiftLint $(swiftlint version)"
+
+      - name: Format check
+        run: ./Scripts/format-check.sh
+
+      - name: Lint
+        run: ./Scripts/lint.sh
