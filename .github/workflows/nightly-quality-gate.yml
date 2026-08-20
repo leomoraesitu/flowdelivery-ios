@@ -29,6 +29,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Setup SwiftLint
+        uses: ./.github/actions/setup-swiftlint
+
       - name: Run quality gate
         env:
           DERIVED_DATA_PATH: ${{ runner.temp }}/FlowDeliveryDerivedData

@@ -29,10 +29,13 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
+      - name: Setup SwiftLint
+        uses: ./.github/actions/setup-swiftlint
+
       - name: Tool versions
         run: |
-          echo "SwiftFormat $(swiftformat --version)"
-          echo "SwiftLint $(swiftlint version)"
+          swiftformat --version
+          swiftlint version
 
       - name: Format check
         run: ./Scripts/format-check.sh
