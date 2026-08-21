@@ -39,7 +39,6 @@ xcodebuild \
     -destination "platform=iOS Simulator,name=${SIMULATOR_NAME},OS=latest" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
     -skip-testing:FlowDeliveryUITests \
-    CODE_SIGNING_ALLOWED=NO \
     test
 
 echo "✅ Testes aprovados."

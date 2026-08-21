@@ -3,27 +3,26 @@ import XCTest
 extension FlowDeliveryUITests {
     @MainActor
     func testUserCanAddRestaurantItemToCart() {
-        let app = XCUIApplication()
-        app.launch()
+        let app = launchApp()
 
         let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(loginButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(loginButton.waitForExistence(timeout: UITestTimeout.standard))
         loginButton.tap()
 
         let restaurant = app.staticTexts["Pizzaria Itália"]
-        XCTAssertTrue(restaurant.waitForExistence(timeout: 5))
+        XCTAssertTrue(restaurant.waitForExistence(timeout: UITestTimeout.standard))
         restaurant.tap()
 
         let addButton = app.buttons["Adicionar Pizza Margherita"]
-        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(addButton.waitForExistence(timeout: UITestTimeout.standard))
         addButton.tap()
 
         let backButton = app.buttons["FlowDelivery"]
-        XCTAssertTrue(backButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(backButton.waitForExistence(timeout: UITestTimeout.standard))
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
-        XCTAssertTrue(cartButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(cartButton.waitForExistence(timeout: UITestTimeout.standard))
         XCTAssertEqual(
             cartButton.value as? String,
             "1 item"
@@ -31,7 +30,7 @@ extension FlowDeliveryUITests {
         cartButton.tap()
 
         XCTAssertTrue(
-            app.navigationBars["Carrinho"].waitForExistence(timeout: 5)
+            app.navigationBars["Carrinho"].waitForExistence(timeout: UITestTimeout.standard)
         )
     }
 
@@ -41,36 +40,35 @@ extension FlowDeliveryUITests {
         confirmOrder(in: app)
 
         XCTAssertTrue(
-            app.staticTexts["Pedido realizado!"].waitForExistence(timeout: 5)
+            app.staticTexts["Pedido realizado!"].waitForExistence(timeout: UITestTimeout.standard)
         )
     }
 
     @MainActor
     func testUserCanSeeEmptyCart() {
-        let app = XCUIApplication()
-        app.launch()
+        let app = launchApp()
 
         let loginButton = app.buttons["Entrar"]
         XCTAssertTrue(
-            loginButton.waitForExistence(timeout: 5)
+            loginButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         loginButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            cartButton.waitForExistence(timeout: 5)
+            cartButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         cartButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Carrinho"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
             app.staticTexts["Seu carrinho está vazio"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -81,24 +79,24 @@ extension FlowDeliveryUITests {
 
         let incrementButton = app.buttons["Aumentar quantidade"]
         XCTAssertTrue(
-            incrementButton.waitForExistence(timeout: 5)
+            incrementButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         incrementButton.tap()
 
         let quantity = app.staticTexts["2"]
         XCTAssertTrue(
-            quantity.waitForExistence(timeout: 5)
+            quantity.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         let backButton = app.buttons["FlowDelivery"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            cartButton.waitForExistence(timeout: 5)
+            cartButton.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -113,33 +111,33 @@ extension FlowDeliveryUITests {
 
         let incrementButton = app.buttons["Aumentar quantidade"]
         XCTAssertTrue(
-            incrementButton.waitForExistence(timeout: 5)
+            incrementButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         incrementButton.tap()
 
         let decrementButton = app.buttons["Diminuir quantidade"]
         XCTAssertTrue(
-            decrementButton.waitForExistence(timeout: 5)
+            decrementButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertTrue(decrementButton.isEnabled)
         decrementButton.tap()
 
         let quantity = app.staticTexts["1"]
         XCTAssertTrue(
-            quantity.waitForExistence(timeout: 5)
+            quantity.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertFalse(decrementButton.isEnabled)
 
         let backButton = app.buttons["FlowDelivery"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            cartButton.waitForExistence(timeout: 5)
+            cartButton.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -156,7 +154,7 @@ extension FlowDeliveryUITests {
             "Aumentar quantidade"
         ]
         XCTAssertTrue(
-            incrementButton.waitForExistence(timeout: 5)
+            incrementButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         incrementButton.tap()
 
@@ -164,22 +162,22 @@ extension FlowDeliveryUITests {
             "CartItem.Subtotal"
         ]
         XCTAssertTrue(
-            subtotal.waitForExistence(timeout: 5)
+            subtotal.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertEqual(
-            subtotal.label,
-            "R$ 99,80"
+            subtotal.label.normalizingSpaces,
+            "Subtotal, R$ 99,80"
         )
 
         let total = app.descendants(
             matching: .any
         )["CartSummary.Total"]
         XCTAssertTrue(
-            total.waitForExistence(timeout: 5)
+            total.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertEqual(
-            total.label,
-            "Total, R$ 99,80"
+            total.label.normalizingSpaces,
+            "Total, R$ 99,80"
         )
     }
 
@@ -187,35 +185,39 @@ extension FlowDeliveryUITests {
     func testUserCanClearCart() {
         let app = makeCartApp()
 
-        let clearButton = app.buttons["Limpar carrinho"]
+        let clearButton = app.navigationBars["Carrinho"]
+            .buttons["Limpar carrinho"]
         XCTAssertTrue(
-            clearButton.waitForExistence(timeout: 5)
+            clearButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         clearButton.tap()
 
-        let confirmClearButton = app.buttons[
-            "Limpar carrinho"
-        ]
+        let dialog = app.sheets["Limpar carrinho?"]
         XCTAssertTrue(
-            confirmClearButton.waitForExistence(timeout: 5)
+            dialog.waitForExistence(timeout: UITestTimeout.standard)
+        )
+
+        let confirmClearButton = dialog.buttons["Limpar carrinho"]
+        XCTAssertTrue(
+            confirmClearButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         confirmClearButton.tap()
 
         XCTAssertTrue(
             app.staticTexts["Seu carrinho está vazio"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         let backButton = app.buttons["FlowDelivery"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            cartButton.waitForExistence(timeout: 5)
+            cartButton.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -228,41 +230,28 @@ extension FlowDeliveryUITests {
     func testUserCanCancelCartClearing() {
         let app = makeCartApp()
 
-        let clearButton = app.buttons["Limpar carrinho"]
+        let clearButton = app.navigationBars["Carrinho"]
+            .buttons["Limpar carrinho"]
         XCTAssertTrue(
-            clearButton.waitForExistence(timeout: 5)
+            clearButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         clearButton.tap()
 
-        let confirmClearButton = app.buttons[
-            "Limpar carrinho"
-        ]
+        let dialog = app.sheets["Limpar carrinho?"]
         XCTAssertTrue(
-            confirmClearButton.waitForExistence(timeout: 5)
+            dialog.waitForExistence(timeout: UITestTimeout.standard)
         )
 
-        let cancelButton = app.buttons["Cancelar"]
+        dismissPopoverDialog(in: app)
 
-        if cancelButton.waitForExistence(timeout: 1) {
-            cancelButton.tap()
-        } else {
-            let outsideDialog = app.coordinate(
-                withNormalizedOffset: CGVector(
-                    dx: 0.5,
-                    dy: 0.8
-                )
-            )
-            outsideDialog.tap()
-        }
+        XCTAssertTrue(
+            dialog.waitForNonExistence(timeout: UITestTimeout.standard)
+        )
 
         XCTAssertTrue(
             app.staticTexts["Pizza Margherita"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
-        )
-
-        XCTAssertFalse(
-            confirmClearButton.exists
         )
     }
 
@@ -272,20 +261,20 @@ extension FlowDeliveryUITests {
 
         let cartItem = app.staticTexts["Pizza Margherita"]
         XCTAssertTrue(
-            cartItem.waitForExistence(timeout: 5)
+            cartItem.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         cartItem.swipeLeft()
 
         let removeButton = app.buttons["Remover"]
         XCTAssertTrue(
-            removeButton.waitForExistence(timeout: 5)
+            removeButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         removeButton.tap()
 
         XCTAssertTrue(
             app.staticTexts["Seu carrinho está vazio"]
-                .waitForExistence(timeout: 5)
+                .waitForExistence(timeout: UITestTimeout.standard)
         )
     }
 
@@ -300,14 +289,14 @@ extension FlowDeliveryUITests {
 
         let margherita = app.staticTexts["Pizza Margherita"]
         XCTAssertTrue(
-            margherita.waitForExistence(timeout: 5)
+            margherita.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         margherita.swipeLeft()
 
         let removeButton = app.buttons["Remover"]
         XCTAssertTrue(
-            removeButton.waitForExistence(timeout: 5)
+            removeButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         removeButton.tap()
 
@@ -315,7 +304,7 @@ extension FlowDeliveryUITests {
 
         XCTAssertTrue(
             app.staticTexts["Pizza Calabresa"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -326,29 +315,29 @@ extension FlowDeliveryUITests {
 
         let cartItem = app.staticTexts["Pizza Margherita"]
         XCTAssertTrue(
-            cartItem.waitForExistence(timeout: 5)
+            cartItem.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         let backButton = app.buttons["FlowDelivery"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            cartButton.waitForExistence(timeout: 5)
+            cartButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         cartButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Carrinho"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
-            cartItem.waitForExistence(timeout: 5)
+            cartItem.waitForExistence(timeout: UITestTimeout.standard)
         )
     }
 
@@ -363,19 +352,19 @@ extension FlowDeliveryUITests {
 
         let margherita = app.staticTexts["Pizza Margherita"]
         XCTAssertTrue(
-            margherita.waitForExistence(timeout: 5)
+            margherita.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         margherita.swipeLeft()
 
         let removeButton = app.buttons["Remover"]
         XCTAssertTrue(
-            removeButton.waitForExistence(timeout: 5)
+            removeButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         removeButton.tap()
 
         XCTAssertTrue(
-            margherita.waitForNonExistence(timeout: 5)
+            margherita.waitForNonExistence(timeout: UITestTimeout.standard)
         )
 
         let total = app.descendants(
@@ -383,7 +372,7 @@ extension FlowDeliveryUITests {
         )["CartSummary.Total"]
 
         XCTAssertTrue(
-            total.waitForExistence(timeout: 5)
+            total.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -403,30 +392,30 @@ extension FlowDeliveryUITests {
 
         let margherita = app.staticTexts["Pizza Margherita"]
         XCTAssertTrue(
-            margherita.waitForExistence(timeout: 5)
+            margherita.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         margherita.swipeLeft()
 
         let removeButton = app.buttons["Remover"]
         XCTAssertTrue(
-            removeButton.waitForExistence(timeout: 5)
+            removeButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         removeButton.tap()
 
         XCTAssertTrue(
-            margherita.waitForNonExistence(timeout: 5)
+            margherita.waitForNonExistence(timeout: UITestTimeout.standard)
         )
 
         let backButton = app.buttons["FlowDelivery"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            cartButton.waitForExistence(timeout: 5)
+            cartButton.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(

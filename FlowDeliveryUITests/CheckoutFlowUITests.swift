@@ -12,19 +12,19 @@ extension FlowDeliveryUITests {
 
         let margherita = app.staticTexts["Pizza Margherita"]
         XCTAssertTrue(
-            margherita.waitForExistence(timeout: 5)
+            margherita.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         margherita.swipeLeft()
 
         let removeButton = app.buttons["Remover"]
         XCTAssertTrue(
-            removeButton.waitForExistence(timeout: 5)
+            removeButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         removeButton.tap()
 
         XCTAssertTrue(
-            margherita.waitForNonExistence(timeout: 5)
+            margherita.waitForNonExistence(timeout: UITestTimeout.standard)
         )
 
         configureCheckout(in: app)
@@ -32,31 +32,31 @@ extension FlowDeliveryUITests {
 
         XCTAssertTrue(
             app.staticTexts["Pedido realizado!"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         let historyButton = app.buttons["Ver meus pedidos"]
         XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
+            historyButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         historyButton.tap()
 
         let orderEntry = app.staticTexts["1 item"]
         XCTAssertTrue(
-            orderEntry.waitForExistence(timeout: 5)
+            orderEntry.waitForExistence(timeout: UITestTimeout.standard)
         )
         orderEntry.tap()
 
         XCTAssertTrue(
             app.staticTexts["Pizza Calabresa"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         let total = app.staticTexts["OrderDetails.Total"]
         XCTAssertTrue(
-            total.waitForExistence(timeout: 5)
+            total.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -73,25 +73,25 @@ extension FlowDeliveryUITests {
 
         XCTAssertTrue(
             app.staticTexts["Pedido realizado!"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         let backButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Carrinho"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
             app.staticTexts["Seu carrinho está vazio"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -111,7 +111,7 @@ extension FlowDeliveryUITests {
             "Não foi possível fazer o pedido"
         ]
         XCTAssertTrue(
-            errorAlert.waitForExistence(timeout: 5)
+            errorAlert.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertFalse(
@@ -120,19 +120,19 @@ extension FlowDeliveryUITests {
 
         let okButton = errorAlert.buttons["OK"]
         XCTAssertTrue(
-            okButton.waitForExistence(timeout: 5)
+            okButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         okButton.tap()
 
         let backButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         XCTAssertTrue(
             app.staticTexts["Pizza Margherita"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -152,18 +152,18 @@ extension FlowDeliveryUITests {
             "Não foi possível fazer o pedido"
         ]
         XCTAssertTrue(
-            errorAlert.waitForExistence(timeout: 5)
+            errorAlert.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         let okButton = errorAlert.buttons["OK"]
         XCTAssertTrue(
-            okButton.waitForExistence(timeout: 5)
+            okButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         okButton.tap()
 
         let confirmButton = app.buttons["Confirmar pedido"]
         XCTAssertTrue(
-            confirmButton.waitForExistence(timeout: 5)
+            confirmButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertTrue(confirmButton.isEnabled)
 
@@ -171,30 +171,30 @@ extension FlowDeliveryUITests {
 
         XCTAssertTrue(
             app.staticTexts["Pedido realizado!"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
         let historyButton = app.buttons["Ver meus pedidos"]
         XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
+            historyButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         historyButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Meus pedidos"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
             app.staticTexts["1 item"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
             app.staticTexts["R$ 49,90"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -205,23 +205,23 @@ extension FlowDeliveryUITests {
 
         let confirmButton = app.buttons["Confirmar pedido"]
         XCTAssertTrue(
-            confirmButton.waitForExistence(timeout: 5)
+            confirmButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         confirmButton.tap()
 
         let confirmationAlert = app.alerts["Confirmar pedido?"]
         XCTAssertTrue(
-            confirmationAlert.waitForExistence(timeout: 5)
+            confirmationAlert.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         let cancelButton = confirmationAlert.buttons["Cancelar"]
         XCTAssertTrue(
-            cancelButton.waitForExistence(timeout: 5)
+            cancelButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         cancelButton.tap()
 
         XCTAssertTrue(
-            confirmButton.waitForExistence(timeout: 5)
+            confirmButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertTrue(confirmButton.isEnabled)
 
@@ -231,13 +231,13 @@ extension FlowDeliveryUITests {
 
         let backButton = app.buttons["Carrinho"]
         XCTAssertTrue(
-            backButton.waitForExistence(timeout: 5)
+            backButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         backButton.tap()
 
         XCTAssertTrue(
             app.staticTexts["Pizza Margherita"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -248,7 +248,7 @@ extension FlowDeliveryUITests {
 
         let checkoutButton = app.buttons["Finalizar pedido"]
         XCTAssertTrue(
-            checkoutButton.waitForExistence(timeout: 5)
+            checkoutButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         checkoutButton.tap()
 
@@ -256,19 +256,19 @@ extension FlowDeliveryUITests {
             "Forma de pagamento, Selecione"
         ]
         XCTAssertTrue(
-            paymentPicker.waitForExistence(timeout: 5)
+            paymentPicker.waitForExistence(timeout: UITestTimeout.standard)
         )
         paymentPicker.tap()
 
         let pixOption = app.buttons["Pix"]
         XCTAssertTrue(
-            pixOption.waitForExistence(timeout: 5)
+            pixOption.waitForExistence(timeout: UITestTimeout.standard)
         )
         pixOption.tap()
 
         let confirmButton = app.buttons["Confirmar pedido"]
         XCTAssertTrue(
-            confirmButton.waitForExistence(timeout: 5)
+            confirmButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertFalse(confirmButton.isEnabled)
 
@@ -283,7 +283,7 @@ extension FlowDeliveryUITests {
 
         let checkoutButton = app.buttons["Finalizar pedido"]
         XCTAssertTrue(
-            checkoutButton.waitForExistence(timeout: 5)
+            checkoutButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         checkoutButton.tap()
 
@@ -291,7 +291,7 @@ extension FlowDeliveryUITests {
             "Rua, número e complemento"
         ]
         XCTAssertTrue(
-            addressField.waitForExistence(timeout: 5)
+            addressField.waitForExistence(timeout: UITestTimeout.standard)
         )
         addressField.tap()
         addressField.typeText("Avenida Paulista, 1000")
@@ -299,7 +299,7 @@ extension FlowDeliveryUITests {
 
         let confirmButton = app.buttons["Confirmar pedido"]
         XCTAssertTrue(
-            confirmButton.waitForExistence(timeout: 5)
+            confirmButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertFalse(confirmButton.isEnabled)
 
@@ -314,7 +314,7 @@ extension FlowDeliveryUITests {
 
         let checkoutButton = app.buttons["Finalizar pedido"]
         XCTAssertTrue(
-            checkoutButton.waitForExistence(timeout: 5)
+            checkoutButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         checkoutButton.tap()
 
@@ -322,19 +322,19 @@ extension FlowDeliveryUITests {
             "Forma de pagamento, Selecione"
         ]
         XCTAssertTrue(
-            paymentPicker.waitForExistence(timeout: 5)
+            paymentPicker.waitForExistence(timeout: UITestTimeout.standard)
         )
         paymentPicker.tap()
 
         let pixOption = app.buttons["Pix"]
         XCTAssertTrue(
-            pixOption.waitForExistence(timeout: 5)
+            pixOption.waitForExistence(timeout: UITestTimeout.standard)
         )
         pixOption.tap()
 
         let confirmButton = app.buttons["Confirmar pedido"]
         XCTAssertTrue(
-            confirmButton.waitForExistence(timeout: 5)
+            confirmButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertFalse(confirmButton.isEnabled)
 
@@ -349,7 +349,7 @@ extension FlowDeliveryUITests {
             confirmButton.wait(
                 for: \.isEnabled,
                 toEqual: true,
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }

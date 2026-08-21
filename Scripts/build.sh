@@ -16,7 +16,6 @@ xcodebuild \
     -configuration Debug \
     -destination "generic/platform=iOS Simulator" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
-    CODE_SIGNING_ALLOWED=NO \
     build
 
 echo "✅ Build aprovado."

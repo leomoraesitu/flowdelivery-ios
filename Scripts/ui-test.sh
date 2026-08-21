@@ -20,7 +20,6 @@ xcodebuild \
     -derivedDataPath "$DERIVED_DATA_PATH" \
     -only-testing:FlowDeliveryUITests/FlowDeliveryUITests \
     -parallel-testing-enabled NO \
-    CODE_SIGNING_ALLOWED=NO \
     test
 
 echo "✅ Testes de UI aprovados."

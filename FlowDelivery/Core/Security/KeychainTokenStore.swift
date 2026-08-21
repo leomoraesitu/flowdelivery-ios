@@ -10,13 +10,24 @@ enum KeychainTokenStoreError: Error {
 final class KeychainTokenStore: TokenStore {
     private let service: String
     private let account: String
+    private let accessibility: CFString
 
     init(
         service: String = "com.flowdelivery.authentication",
-        account: String = "access-token"
+        account: String = "access-token",
+        accessibility: CFString = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
     ) {
         self.service = service
         self.account = account
+        self.accessibility = accessibility
+    }
+
+    private var baseQuery: [String: Any] {
+        [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
     }
 
     func save(_ accessToken: String) throws {
@@ -26,35 +37,46 @@ final class KeychainTokenStore: TokenStore {
             throw KeychainTokenStoreError.encodingFailed
         }
 
-        try delete()
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-            kSecValueData as String: tokenData
+        let attributes: [String: Any] = [
+            kSecValueData as String: tokenData,
+            kSecAttrAccessible as String: accessibility
         ]
 
-        let status = SecItemAdd(
-            query as CFDictionary,
+        let updateStatus = SecItemUpdate(
+            baseQuery as CFDictionary,
+            attributes as CFDictionary
+        )
+
+        if updateStatus == errSecSuccess {
+            return
+        }
+
+        guard updateStatus == errSecItemNotFound else {
+            throw KeychainTokenStoreError.unhandledStatus(
+                updateStatus
+            )
+        }
+
+        var addQuery = baseQuery
+        addQuery[kSecValueData as String] = tokenData
+        addQuery[kSecAttrAccessible as String] = accessibility
+
+        let addStatus = SecItemAdd(
+            addQuery as CFDictionary,
             nil
         )
 
-        guard status == errSecSuccess else {
+        guard addStatus == errSecSuccess else {
             throw KeychainTokenStoreError.unhandledStatus(
-                status
+                addStatus
             )
         }
     }
 
     func load() throws -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
+        var query = baseQuery
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
 
         var result: CFTypeRef?
 
@@ -87,14 +109,8 @@ final class KeychainTokenStore: TokenStore {
     }
 
     func delete() throws {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account
-        ]
-
         let status = SecItemDelete(
-            query as CFDictionary
+            baseQuery as CFDictionary
         )
 
         guard status == errSecSuccess
