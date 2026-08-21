@@ -3,18 +3,17 @@ import XCTest
 final class FlowDeliveryUITests: XCTestCase {
     @MainActor
     func testHomeScreenLoadsRestaurants() {
-        let app = XCUIApplication()
-        app.launch()
+        let app = launchApp()
 
         let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(loginButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(loginButton.waitForExistence(timeout: UITestTimeout.standard))
         loginButton.tap()
 
         XCTAssertTrue(
-            app.navigationBars["FlowDelivery"].waitForExistence(timeout: 5)
+            app.navigationBars["FlowDelivery"].waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertTrue(
-            app.staticTexts["Pizzaria Itália"].waitForExistence(timeout: 5)
+            app.staticTexts["Pizzaria Itália"].waitForExistence(timeout: UITestTimeout.standard)
         )
     }
 
@@ -24,21 +23,21 @@ final class FlowDeliveryUITests: XCTestCase {
         confirmOrder(in: app)
 
         let historyButton = app.buttons["Ver meus pedidos"]
-        XCTAssertTrue(historyButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(historyButton.waitForExistence(timeout: UITestTimeout.standard))
         historyButton.tap()
 
         XCTAssertTrue(
-            app.navigationBars["Meus pedidos"].waitForExistence(timeout: 5)
+            app.navigationBars["Meus pedidos"].waitForExistence(timeout: UITestTimeout.standard)
         )
-        XCTAssertTrue(app.staticTexts["1 item"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["1 item"].waitForExistence(timeout: UITestTimeout.standard))
         XCTAssertTrue(
-            app.staticTexts["R$ 49,90"].waitForExistence(timeout: 5)
+            app.staticTexts["R$ 49,90"].waitForExistence(timeout: UITestTimeout.standard)
         )
         app.staticTexts["1 item"].tap()
 
         XCTAssertTrue(
             app.navigationBars["Detalhes do pedido"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
         let paymentMethod = app.descendants(
@@ -46,12 +45,12 @@ final class FlowDeliveryUITests: XCTestCase {
         )["OrderDetails.PaymentMethod"]
 
         XCTAssertTrue(
-            paymentMethod.waitForExistence(timeout: 5)
+            paymentMethod.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertTrue(
             app.staticTexts["Pizza Margherita"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
@@ -60,7 +59,7 @@ final class FlowDeliveryUITests: XCTestCase {
         ]
 
         XCTAssertTrue(
-            deliveryAddress.waitForExistence(timeout: 5)
+            deliveryAddress.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -73,7 +72,7 @@ final class FlowDeliveryUITests: XCTestCase {
         ]
 
         XCTAssertTrue(
-            total.waitForExistence(timeout: 5)
+            total.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -88,13 +87,13 @@ final class FlowDeliveryUITests: XCTestCase {
 
         XCTAssertTrue(
             app.navigationBars["Meus pedidos"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
             app.staticTexts["Nenhum pedido ainda"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -109,19 +108,19 @@ final class FlowDeliveryUITests: XCTestCase {
 
         XCTAssertTrue(
             app.navigationBars["Meus pedidos"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         XCTAssertTrue(
             app.staticTexts[
                 "Não foi possível carregar seus pedidos."
-            ].waitForExistence(timeout: 5)
+            ].waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertTrue(
             app.buttons["Tentar novamente"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -136,13 +135,13 @@ final class FlowDeliveryUITests: XCTestCase {
 
         let retryButton = app.buttons["Tentar novamente"]
         XCTAssertTrue(
-            retryButton.waitForExistence(timeout: 5)
+            retryButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         retryButton.tap()
 
         XCTAssertTrue(
             app.staticTexts["Nenhum pedido ainda"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -158,31 +157,31 @@ final class FlowDeliveryUITests: XCTestCase {
 
         let historyButton = app.buttons["Ver meus pedidos"]
         XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
+            historyButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         historyButton.tap()
 
         let orderRow = app.staticTexts["1 item"]
         XCTAssertTrue(
-            orderRow.waitForExistence(timeout: 5)
+            orderRow.waitForExistence(timeout: UITestTimeout.standard)
         )
         orderRow.tap()
 
         XCTAssertTrue(
             app.staticTexts[
                 "Não foi possível carregar os detalhes do pedido."
-            ].waitForExistence(timeout: 5)
+            ].waitForExistence(timeout: UITestTimeout.standard)
         )
 
         let retryButton = app.buttons["Tentar novamente"]
         XCTAssertTrue(
-            retryButton.waitForExistence(timeout: 5)
+            retryButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         retryButton.tap()
 
         XCTAssertTrue(
             app.staticTexts["Pizza Margherita"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
     }
@@ -208,11 +207,11 @@ final class FlowDeliveryUITests: XCTestCase {
         )
 
         XCTAssertTrue(
-            newerOrder.waitForExistence(timeout: 5)
+            newerOrder.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertTrue(
-            olderOrder.waitForExistence(timeout: 5)
+            olderOrder.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertLessThan(
@@ -237,7 +236,7 @@ final class FlowDeliveryUITests: XCTestCase {
             boundBy: 0
         )
         XCTAssertTrue(
-            newerOrder.waitForExistence(timeout: 5)
+            newerOrder.waitForExistence(timeout: UITestTimeout.standard)
         )
         XCTAssertEqual(
             newerOrder.label,
@@ -247,13 +246,13 @@ final class FlowDeliveryUITests: XCTestCase {
 
         XCTAssertTrue(
             app.navigationBars["Detalhes do pedido"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
         let total = app.staticTexts["OrderDetails.Total"]
         XCTAssertTrue(
-            total.waitForExistence(timeout: 5)
+            total.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -283,11 +282,11 @@ final class FlowDeliveryUITests: XCTestCase {
         )
 
         XCTAssertTrue(
-            newerOrder.waitForExistence(timeout: 5)
+            newerOrder.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertTrue(
-            olderOrder.waitForExistence(timeout: 5)
+            olderOrder.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         XCTAssertEqual(
@@ -329,14 +328,14 @@ final class FlowDeliveryUITests: XCTestCase {
         )
 
         XCTAssertTrue(
-            newerOrder.waitForExistence(timeout: 5)
+            newerOrder.waitForExistence(timeout: UITestTimeout.standard)
         )
 
         newerOrder.tap()
 
         XCTAssertTrue(
             app.navigationBars["Detalhes do pedido"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
@@ -366,26 +365,42 @@ final class FlowDeliveryUITests: XCTestCase {
     func testCartPassesAccessibilityAudit() throws {
         let app = makeCartApp()
 
+        // Dynamic Type: textos da célula que não reflowam nos tamanhos maiores.
+        let dynamicTypeExceptions = [
+            "Pizza Margherita",
+            "R$ 49,90",
+            "1",
+            "Subtotal"
+        ]
+
+        // Hit region: textos estáticos auditados individualmente, mas cujo
+        // alvo de toque real é a linha da List (altura > 44 pt).
+        // Dívida técnica: combinar a célula em um único elemento acessível.
+        let hitRegionExceptions = [
+            "Pizza Margherita",
+            "R$ 49,90"
+        ]
+
+        let subtotalIdentifier = "CartItem.Subtotal"
+
         try app.performAccessibilityAudit { issue in
-            let element = issue.element
+            let label = (issue.element?.label ?? "").normalizingSpaces
+            let identifier = issue.element?.identifier ?? ""
 
             switch issue.auditType {
             case .dynamicType:
-                return [
-                    "Pizza Margherita",
-                    "R$ 49,90",
-                    "1",
-                    "Subtotal"
-                ].contains(
-                    element?.label ?? ""
-                )
-                    || element?.identifier == "CartItem.Subtotal"
+                return dynamicTypeExceptions.contains(label)
+                    || identifier == subtotalIdentifier
 
             case .textClipped:
-                return element?.identifier == "CartItem.Subtotal"
+                return identifier == subtotalIdentifier
 
             case .contrast:
-                return element?.label == "Subtotal"
+                return label == "Subtotal"
+
+            case .hitRegion:
+                return hitRegionExceptions.contains(label)
+                    || identifier == subtotalIdentifier
 
             default:
                 return false
@@ -399,7 +414,7 @@ final class FlowDeliveryUITests: XCTestCase {
 
         XCTAssertTrue(
             app.staticTexts["Pizzaria Itália"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 

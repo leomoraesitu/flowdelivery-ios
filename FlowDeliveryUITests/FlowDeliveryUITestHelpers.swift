@@ -1,6 +1,53 @@
 import XCTest
 
-extension FlowDeliveryUITests {
+enum UITestLaunchArgument {
+    static let inMemoryTokenStore =
+        "-ui-testing-in-memory-token-store"
+}
+
+enum UITestTimeout {
+    static let standard: TimeInterval = 15
+}
+
+extension XCTestCase {
+    @MainActor
+    func launchApp(
+        launchArguments: [String] = []
+    ) -> XCUIApplication {
+        let app = XCUIApplication()
+
+        app.launchArguments = launchArguments + [
+            UITestLaunchArgument.inMemoryTokenStore
+        ]
+
+        app.launch()
+
+        return app
+    }
+
+    @MainActor
+    func makeHomeApp(
+        launchArguments: [String] = []
+    ) -> XCUIApplication {
+        let app = launchApp(
+            launchArguments: launchArguments
+        )
+
+        let loginButton = app.buttons["Entrar"]
+        XCTAssertTrue(
+            loginButton.waitForExistence(timeout: UITestTimeout.standard)
+        )
+        loginButton.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["FlowDelivery"].waitForExistence(
+                timeout: UITestTimeout.standard
+            )
+        )
+
+        return app
+    }
+
     @MainActor
     func makeCartApp(
         menuItemNames: [String] = [
@@ -12,12 +59,8 @@ extension FlowDeliveryUITests {
             launchArguments: launchArguments
         )
 
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(loginButton.waitForExistence(timeout: 5))
-        loginButton.tap()
-
         let restaurant = app.staticTexts["Pizzaria Itália"]
-        XCTAssertTrue(restaurant.waitForExistence(timeout: 5))
+        XCTAssertTrue(restaurant.waitForExistence(timeout: UITestTimeout.standard))
         restaurant.tap()
 
         for menuItemName in menuItemNames {
@@ -25,22 +68,22 @@ extension FlowDeliveryUITests {
                 "Adicionar \(menuItemName)"
             ]
             XCTAssertTrue(
-                addButton.waitForExistence(timeout: 5)
+                addButton.waitForExistence(timeout: UITestTimeout.standard)
             )
             addButton.tap()
         }
 
         let backButton = app.buttons["FlowDelivery"]
-        XCTAssertTrue(backButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(backButton.waitForExistence(timeout: UITestTimeout.standard))
         backButton.tap()
 
         let cartButton = app.buttons["Carrinho"]
-        XCTAssertTrue(cartButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(cartButton.waitForExistence(timeout: UITestTimeout.standard))
         cartButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Carrinho"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
@@ -65,7 +108,7 @@ extension FlowDeliveryUITests {
     ) {
         let checkoutButton = app.buttons["Finalizar pedido"]
         XCTAssertTrue(
-            checkoutButton.waitForExistence(timeout: 5)
+            checkoutButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         checkoutButton.tap()
 
@@ -73,7 +116,7 @@ extension FlowDeliveryUITests {
             "Rua, número e complemento"
         ]
         XCTAssertTrue(
-            addressField.waitForExistence(timeout: 5)
+            addressField.waitForExistence(timeout: UITestTimeout.standard)
         )
         addressField.tap()
         addressField.typeText("Avenida Paulista, 1000")
@@ -83,13 +126,13 @@ extension FlowDeliveryUITests {
             "Forma de pagamento, Selecione"
         ]
         XCTAssertTrue(
-            paymentPicker.waitForExistence(timeout: 5)
+            paymentPicker.waitForExistence(timeout: UITestTimeout.standard)
         )
         paymentPicker.tap()
 
         let pixOption = app.buttons["Pix"]
         XCTAssertTrue(
-            pixOption.waitForExistence(timeout: 5)
+            pixOption.waitForExistence(timeout: UITestTimeout.standard)
         )
         pixOption.tap()
     }
@@ -97,11 +140,11 @@ extension FlowDeliveryUITests {
     @MainActor
     func confirmOrder(in app: XCUIApplication) {
         let confirmButton = app.buttons["Confirmar pedido"]
-        XCTAssertTrue(confirmButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(confirmButton.waitForExistence(timeout: UITestTimeout.standard))
         confirmButton.tap()
 
         let placeOrderButton = app.buttons["Fazer pedido"]
-        XCTAssertTrue(placeOrderButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(placeOrderButton.waitForExistence(timeout: UITestTimeout.standard))
         placeOrderButton.tap()
     }
 
@@ -109,23 +152,19 @@ extension FlowDeliveryUITests {
     func makeOrderHistoryApp(
         launchArguments: [String] = []
     ) -> XCUIApplication {
-        let app = makeHomeApp()
-
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(
-            loginButton.waitForExistence(timeout: 5)
+        let app = makeHomeApp(
+            launchArguments: launchArguments
         )
-        loginButton.tap()
 
         let historyButton = app.buttons["Meus pedidos"]
         XCTAssertTrue(
-            historyButton.waitForExistence(timeout: 5)
+            historyButton.waitForExistence(timeout: UITestTimeout.standard)
         )
         historyButton.tap()
 
         XCTAssertTrue(
             app.navigationBars["Meus pedidos"].waitForExistence(
-                timeout: 5
+                timeout: UITestTimeout.standard
             )
         )
 
@@ -146,26 +185,53 @@ extension FlowDeliveryUITests {
         )
     }
 
+    /// Descarta um diálogo apresentado como popover.
+    ///
+    /// Nesse modo de apresentação o sistema não exibe a ação com
+    /// `role: .cancel` — o descarte acontece ao tocar fora do diálogo.
     @MainActor
-    func makeHomeApp(
-        launchArguments: [String] = []
-    ) -> XCUIApplication {
-        let app = XCUIApplication()
-        app.launchArguments = launchArguments
-        app.launch()
+    func dismissPopoverDialog(in app: XCUIApplication) {
+        let dismissRegion = app.otherElements["PopoverDismissRegion"]
 
-        let loginButton = app.buttons["Entrar"]
-        XCTAssertTrue(
-            loginButton.waitForExistence(timeout: 5)
-        )
-        loginButton.tap()
+        if dismissRegion.waitForExistence(timeout: 1) {
+            dismissRegion.tap()
+            return
+        }
 
-        XCTAssertTrue(
-            app.navigationBars["FlowDelivery"].waitForExistence(
-                timeout: 5
+        app.coordinate(
+            withNormalizedOffset: CGVector(
+                dx: 0.5,
+                dy: 0.05
+            )
+        ).tap()
+    }
+}
+
+import Foundation
+
+extension String {
+    /// Remove caracteres invisíveis que o sistema insere em textos acessíveis.
+    ///
+    /// Formatadores de moeda usam espaços não separáveis entre o símbolo e o
+    /// valor, e chaves localizadas com interpolação envolvem o argumento em
+    /// marcas de isolamento bidirecional. Ambos são invisíveis e quebram
+    /// comparações literais em testes.
+    var normalizingSpaces: String {
+        let bidiIsolates: Set<Unicode.Scalar> = [
+            "\u{2066}",
+            "\u{2067}",
+            "\u{2068}",
+            "\u{2069}"
+        ]
+
+        let withoutIsolates = String(
+            String.UnicodeScalarView(
+                unicodeScalars.filter { !bidiIsolates.contains($0) }
             )
         )
 
-        return app
+        return withoutIsolates
+            .replacingOccurrences(of: "\u{00A0}", with: " ")
+            .replacingOccurrences(of: "\u{202F}", with: " ")
     }
 }

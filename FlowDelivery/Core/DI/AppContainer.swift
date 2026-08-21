@@ -12,6 +12,8 @@ private enum UITestLaunchArgument {
         "-ui-testing-fail-once-order-details-repository"
     static let orderHistoryFixtureRepository =
         "-ui-testing-order-history-fixture-repository"
+    static let inMemoryTokenStore =
+        "-ui-testing-in-memory-token-store"
 }
 
 @MainActor
@@ -29,31 +31,9 @@ final class AppContainer {
         let sessionStore = SessionStore()
         let cartStore = CartStore()
         let authRepository = FakeAuthRepository()
-        let tokenStore = FakeTokenStore()
+        let tokenStore = Self.makeTokenStore()
         let restaurantRepository = FakeRestaurantRepository()
-        let orderRepository: OrderRepository = if ProcessInfo.processInfo.arguments.contains(
-            UITestLaunchArgument.failingOrderRepository
-        ) {
-            FailingOrderRepository()
-        } else if ProcessInfo.processInfo.arguments.contains(
-            UITestLaunchArgument.failOnceOrderRepository
-        ) {
-            FailOnceOrderRepository()
-        } else if ProcessInfo.processInfo.arguments.contains(
-            UITestLaunchArgument.failOnceOrderHistoryRepository
-        ) {
-            FailOnceOrderHistoryRepository()
-        } else if ProcessInfo.processInfo.arguments.contains(
-            UITestLaunchArgument.failOnceOrderDetailsRepository
-        ) {
-            FailOnceOrderDetailsRepository()
-        } else if ProcessInfo.processInfo.arguments.contains(
-            UITestLaunchArgument.orderHistoryFixtureRepository
-        ) {
-            OrderHistoryFixtureRepository()
-        } else {
-            FakeOrderRepository()
-        }
+        let orderRepository = Self.makeOrderRepository()
 
         let authService = AuthService(
             repository: authRepository,
@@ -75,6 +55,52 @@ final class AppContainer {
         homeViewModel = HomeViewModel(
             repository: restaurantRepository
         )
+    }
+
+    private static func makeTokenStore() -> TokenStore {
+        if ProcessInfo.processInfo.arguments.contains(
+            UITestLaunchArgument.inMemoryTokenStore
+        ) {
+            FakeTokenStore()
+        } else {
+            KeychainTokenStore()
+        }
+    }
+
+    private static func makeOrderRepository() -> OrderRepository {
+        let arguments = ProcessInfo.processInfo.arguments
+
+        if arguments.contains(
+            UITestLaunchArgument.failingOrderRepository
+        ) {
+            return FailingOrderRepository()
+        }
+
+        if arguments.contains(
+            UITestLaunchArgument.failOnceOrderRepository
+        ) {
+            return FailOnceOrderRepository()
+        }
+
+        if arguments.contains(
+            UITestLaunchArgument.failOnceOrderHistoryRepository
+        ) {
+            return FailOnceOrderHistoryRepository()
+        }
+
+        if arguments.contains(
+            UITestLaunchArgument.failOnceOrderDetailsRepository
+        ) {
+            return FailOnceOrderDetailsRepository()
+        }
+
+        if arguments.contains(
+            UITestLaunchArgument.orderHistoryFixtureRepository
+        ) {
+            return OrderHistoryFixtureRepository()
+        }
+
+        return FakeOrderRepository()
     }
 
     func makeRestaurantDetailsViewModel(
