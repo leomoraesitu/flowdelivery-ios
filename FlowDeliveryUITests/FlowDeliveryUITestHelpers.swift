@@ -1,8 +1,8 @@
 import XCTest
 
 enum UITestLaunchArgument {
-    static let inMemoryTokenStore =
-        "-ui-testing-in-memory-token-store"
+    static let inMemorySessionStore =
+        "-ui-testing-in-memory-session-store"
 }
 
 enum UITestTimeout {
@@ -17,7 +17,7 @@ extension XCTestCase {
         let app = XCUIApplication()
 
         app.launchArguments = launchArguments + [
-            UITestLaunchArgument.inMemoryTokenStore
+            UITestLaunchArgument.inMemorySessionStore
         ]
 
         app.launch()

@@ -31,11 +31,11 @@ struct AuthenticationView: View {
 
 #Preview {
     let sessionStore = SessionStore()
-    let tokenStore = FakeTokenStore()
+    let credentialStore = FakeSessionCredentialStore()
     let authRepository = FakeAuthRepository()
     let authService = AuthService(
         repository: authRepository,
-        tokenStore: tokenStore,
+        sessionCredentialStore: credentialStore,
         sessionStore: sessionStore
     )
 

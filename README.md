@@ -13,9 +13,32 @@ This repository contains the native iOS version of FlowDelivery, developed as a 
 - Swift Concurrency
 - Observation
 - MVVM
+- Keychain Services
 - Supabase
 - Swift Testing
 - XCTest
+
+## Authentication and Session Security
+
+The authenticated session is persisted so the user stays signed in across
+launches:
+
+- The whole `UserSession` (`userID` and access token) is stored in a **single**
+  Keychain item as versioned JSON, so identity and credential cannot drift apart.
+- Accessibility is `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`: the credential
+  is readable only while the device is unlocked and is not migrated through
+  backups. A test guards this attribute.
+- Loading **fails closed**: an unreadable or unknown-version payload is deleted
+  and treated as "no session". Real Keychain errors are propagated, never swallowed.
+- Signing out always clears the in-memory state, even if removing the stored
+  credential fails; the error is still surfaced to the caller.
+- Keychain access requires the app to be code signed (simulator builds use
+  ad-hoc signing). Do not disable signing in build scripts, for example with
+  `CODE_SIGNING_ALLOWED=NO`: every Keychain call would fail with
+  `errSecMissingEntitlement (-34018)`.
+
+UI tests run with an in-memory credential store (launch argument
+`-ui-testing-in-memory-session-store`) so they never touch the real Keychain.
 
 ## Quality Tools
 
@@ -45,6 +68,7 @@ chmod +x Scripts/*.sh
 ./Scripts/lint.sh
 ./Scripts/build.sh
 ./Scripts/test.sh
+./Scripts/ui-test.sh
 ./Scripts/quality.sh
 ./Scripts/dev-flow.sh help
 ./Scripts/start-branch.sh feat/example-branch
@@ -173,6 +197,21 @@ To run the complete quality gate with another simulator:
 SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/quality.sh
 ```
 
+To run the UI tests (not part of any automatic gate, roughly 13 minutes):
+
+```bash
+./Scripts/ui-test.sh
+SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/ui-test.sh
+```
+
+If `xcodebuild` reports that multiple devices matched the destination, two
+simulators share the same name and OS version. Remove the unused one:
+
+```bash
+xcrun simctl list devices available
+xcrun simctl delete <UDID>
+```
+
 ```text
 Pre-commit:
 - format check
@@ -191,6 +230,9 @@ GitHub Actions (Nightly Quality Gate - scheduled and manual):
 - format check
 - lint
 - unit tests
+
+Not automated:
+- UI tests (run manually with ./Scripts/ui-test.sh)
 ```
 
 ---

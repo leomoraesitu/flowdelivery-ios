@@ -1,52 +1,42 @@
 final class AuthService {
     private let sessionStore: SessionStore
     private let repository: AuthRepository
-    private let tokenStore: TokenStore
+    private let sessionCredentialStore: SessionCredentialStore
 
     init(
         repository: AuthRepository,
-        tokenStore: TokenStore,
+        sessionCredentialStore: SessionCredentialStore,
         sessionStore: SessionStore
     ) {
         self.repository = repository
-        self.tokenStore = tokenStore
+        self.sessionCredentialStore = sessionCredentialStore
         self.sessionStore = sessionStore
     }
 
     func login() throws {
-        guard let session = repository.login() else {
-            return
-        }
-        try tokenStore.save(
-            session.accessToken
-        )
-
-        sessionStore.login(
-            with: session
-        )
+        guard let session = repository.login() else { return }
+        // Persist before publishing: if saving fails, the app must not look
+        // logged in for a session that will not survive a relaunch.
+        try sessionCredentialStore.save(session)
+        sessionStore.login(with: session)
     }
 
     func logout() throws {
+        // Always clear in-memory state, even if removing the credential fails.
+        defer { sessionStore.logout() }
+
         repository.logout()
-
-        try tokenStore.delete()
-
-        sessionStore.logout()
+        try sessionCredentialStore.delete()
     }
 
     func restoreSession() throws {
-        guard let accessToken = try tokenStore.load() else {
+        guard let stored = try sessionCredentialStore.load() else { return }
+
+        guard let restored = repository.restoreSession(stored) else {
+            // The backend refused the stored session: don't keep a dead credential.
+            try sessionCredentialStore.delete()
             return
         }
-
-        guard let session = repository.restoreSession(
-            accessToken: accessToken
-        ) else {
-            return
-        }
-
-        sessionStore.login(
-            with: session
-        )
+        sessionStore.login(with: restored)
     }
 }

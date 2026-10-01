@@ -12,8 +12,8 @@ private enum UITestLaunchArgument {
         "-ui-testing-fail-once-order-details-repository"
     static let orderHistoryFixtureRepository =
         "-ui-testing-order-history-fixture-repository"
-    static let inMemoryTokenStore =
-        "-ui-testing-in-memory-token-store"
+    static let inMemorySessionStore =
+        "-ui-testing-in-memory-session-store"
 }
 
 @MainActor
@@ -31,13 +31,13 @@ final class AppContainer {
         let sessionStore = SessionStore()
         let cartStore = CartStore()
         let authRepository = FakeAuthRepository()
-        let tokenStore = Self.makeTokenStore()
+        let credentialStore = Self.makeCredentialStore()
         let restaurantRepository = FakeRestaurantRepository()
         let orderRepository = Self.makeOrderRepository()
 
         let authService = AuthService(
             repository: authRepository,
-            tokenStore: tokenStore,
+            sessionCredentialStore: credentialStore,
             sessionStore: sessionStore
         )
 
@@ -57,13 +57,13 @@ final class AppContainer {
         )
     }
 
-    private static func makeTokenStore() -> TokenStore {
+    private static func makeCredentialStore() -> SessionCredentialStore {
         if ProcessInfo.processInfo.arguments.contains(
-            UITestLaunchArgument.inMemoryTokenStore
+            UITestLaunchArgument.inMemorySessionStore
         ) {
-            FakeTokenStore()
+            FakeSessionCredentialStore()
         } else {
-            KeychainTokenStore()
+            KeychainSessionStore()
         }
     }
 
