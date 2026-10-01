@@ -27,7 +27,7 @@ Regras que não se negociam:
 ## Arquitetura
 
 - **`AppContainer` é o Composition Root** (`@MainActor @Observable`). Toda dependência nasce ali e é injetada explicitamente. Views que precisam criar outra feature recebem o container como parâmetro — a decisão de **não** usar `@Environment(AppContainer.self)` é consciente.
-- As decisões de composição ficam em fábricas (`makeTokenStore`, `makeOrderRepository`), não inline no `init` — ele tem limite de 50 linhas no SwiftLint.
+- As decisões de composição ficam em fábricas (`makeCredentialStore`, `makeOrderRepository`), não inline no `init` — ele tem limite de 50 linhas no SwiftLint.
 - **Estado compartilhado:** `CartStore` e `SessionStore`, instância única por sessão do app. Single source of truth; features não duplicam nem sincronizam estado manualmente.
 - **Design System:** tokens em `DesignSystem/Tokens` (`AppSpacing`, `AppTypography`, `AppColor`, `AppCornerRadius`, `AppIconSize`, `AppComponentSize`, `AppDuration`). Nenhum magic number em View.
 - **Features** em `Features/<Feature>/` com `View`, `ViewModel`, `Models/`, `Components/`. Views propagam intenção; não mutam estado compartilhado diretamente.
@@ -54,7 +54,7 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 
 **UI tests** (XCTest) — rodam **apenas** por `./Scripts/ui-test.sh`; `test.sh` os pula com `-skip-testing`.
 
-- Existe **um único `XCUIApplication()`** no target, dentro de `launchApp` (`extension XCTestCase`), que injeta `-ui-testing-in-memory-token-store`. Confira com `grep -rn "XCUIApplication()" FlowDeliveryUITests/` — mais de um resultado é bug.
+- Existe **um único `XCUIApplication()`** no target, dentro de `launchApp` (`extension XCTestCase`), que injeta `-ui-testing-in-memory-session-store`. Confira com `grep -rn "XCUIApplication()" FlowDeliveryUITests/` — mais de um resultado é bug.
 - `makeHomeApp` é o único helper que faz login. Não repetir o toque em "Entrar" nos helpers que o consomem.
 - Esperas por `UITestTimeout.standard` (15s). Timeout curto não acelera nada e gera falso-negativo sob carga.
 - Comparações com texto formatado pelo sistema usam `.normalizingSpaces`: moeda pt-BR traz espaço não separável (U+00A0), e chaves localizadas interpoladas trazem isolados bidi (U+2068/U+2069). Vale também dentro do closure de `performAccessibilityAudit`.
@@ -64,16 +64,21 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 
 ## Segurança
 
-- O access token vive no Keychain (`KeychainTokenStore`), com `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` **explícito** — o token é lido só na inicialização, em foreground, e credencial de sessão não deve migrar em restauração de backup.
-- `save` usa `SecItemUpdate` com fallback para `SecItemAdd`: nunca existe instante em que o token foi apagado e o novo não foi gravado.
+- A sessão inteira (`UserSession`: `userID` + `accessToken`) vive em **um único item** do Keychain (`KeychainSessionStore`), serializada como JSON versionado (`StoredSession`). Nunca separar token e `userID` em armazenamentos diferentes (ex.: `UserDefaults`): eles precisam ser gravados e apagados juntos. A política é `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` **explícita** — a sessão é lida só na inicialização, em foreground, e credencial não deve migrar em restauração de backup.
+- **Fail closed:** payload ilegível ou de versão desconhecida é apagado e tratado como "sem sessão". Só a decodificação é protegida: erros reais do Keychain propagam.
+- `AuthService.logout()` sempre limpa o estado em memória (`defer`), mesmo se apagar a credencial falhar, e ainda propaga o erro.
+- Não existe (e não deve existir) método de produção que grave bytes arbitrários no item de sessão; testes de corrupção falam direto com `SecItem*` no target de testes.
+- `save` usa `SecItemUpdate` com fallback para `SecItemAdd`: nunca existe instante em que a sessão foi apagada e a nova não foi gravada.
 - Existe teste que verifica o atributo de acessibilidade do item. **Não remover** — é o que impede que a política seja enfraquecida em silêncio.
 - Nunca logar `accessToken`.
 
 ## Dívidas conhecidas
 
-- `UserSession.userID` é regenerado a cada restauração: o `TokenStore` persiste só o token, não a identidade.
+- **Não existe ponto de logout acessível quando autenticado.** O botão "Sair" fica em `AuthenticationView`, que o `RootView` só exibe deslogado. Como a sessão agora persiste, a credencial não pode ser removida pela UI (`AuthService.logout()` existe e é testado, mas sem entrada). Prioridade imediata.
+- `AppStartupViewModel` converte qualquer erro de `restoreSession()` em `.failed`; um erro real do Keychain (ex.: aparelho bloqueado) deveria cair no login.
+- Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
 - `CartItemRowView` deveria virar um elemento acessível combinado; enquanto isso há filtro de `.hitRegion` no audit do carrinho, com o motivo comentado no teste.
-- Os `#Preview` instanciam `AppContainer()` real, portanto constroem um `KeychainTokenStore` real (hoje inofensivo, pois nenhum preview autentica).
+- Os `#Preview` instanciam `AppContainer()` real, portanto constroem um `KeychainSessionStore` real (hoje inofensivo, pois nenhum preview autentica).
 - A suíte de UI (~13 min) não roda em nenhum gate automático.
 
 ## Estilo das respostas
