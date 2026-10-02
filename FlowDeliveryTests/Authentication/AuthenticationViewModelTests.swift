@@ -15,7 +15,7 @@ struct AuthenticationViewModelTests {
             sessionStore: sessionStore
         )
         let viewModel = AuthenticationViewModel(
-            sessionStore: sessionStore,
+            
             authService: authService
         )
         return (viewModel, sessionStore)
@@ -25,10 +25,10 @@ struct AuthenticationViewModelTests {
     func signingInPublishesASession() {
         let (viewModel, sessionStore) = makeSut()
 
-        viewModel.authenticationButtonTapped()
+        viewModel.signInButtonTapped()
 
         #expect(sessionStore.session != nil)
-        #expect(viewModel.authenticationState == .authenticated)
+        #expect(viewModel.authenticationState == .idle)
     }
 
     @Test("signing in persists the same session it publishes")
@@ -36,7 +36,7 @@ struct AuthenticationViewModelTests {
         let credentialStore = FakeSessionCredentialStore()
         let (viewModel, sessionStore) = makeSut(credentialStore: credentialStore)
 
-        viewModel.authenticationButtonTapped()
+        viewModel.signInButtonTapped()
 
         #expect(try credentialStore.load() == sessionStore.session)
     }
@@ -45,7 +45,7 @@ struct AuthenticationViewModelTests {
     func failedSignInShowsLoginFailed() {
         let (viewModel, sessionStore) = makeSut(credentialStore: FailingSaveStore())
 
-        viewModel.authenticationButtonTapped()
+        viewModel.signInButtonTapped()
 
         #expect(viewModel.authenticationState == .error(.loginFailed))
         #expect(sessionStore.session == nil)
