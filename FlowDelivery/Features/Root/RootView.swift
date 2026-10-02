@@ -18,7 +18,25 @@ struct RootView: View {
                     )
                 }
         }
+        .alert(
+            "Não foi possível concluir a saída",
+            isPresented: Binding(
+                get: { viewModel.signOutError != nil },
+                set: {
+                    if !$0 {
+                        viewModel.dismissSignOutError()
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(Self.signOutErrorMessage)
+        }
     }
+
+    private static let signOutErrorMessage: LocalizedStringKey =
+        "Você saiu, mas a credencial não foi removida deste aparelho. Ao reabrir o app, a sessão pode ser restaurada."
 
     @ViewBuilder
     private var content: some View {
