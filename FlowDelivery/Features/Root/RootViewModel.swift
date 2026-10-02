@@ -33,7 +33,6 @@ final class RootViewModel {
         self.cartStore = cartStore
         authenticationViewModel =
             AuthenticationViewModel(
-                sessionStore: sessionStore,
                 authService: authService
             )
     }
