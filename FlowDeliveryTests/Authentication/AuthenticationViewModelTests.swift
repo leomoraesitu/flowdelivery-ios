@@ -49,4 +49,15 @@ struct AuthenticationViewModelTests {
         #expect(viewModel.authenticationState == .error(.loginFailed))
         #expect(sessionStore.session == nil)
     }
+
+    @Test("a successful sign-in clears a previous error")
+    func successfulSignInClearsPreviousError() {
+        let (viewModel, _) = makeSut(credentialStore: FailFirstSaveStore())
+
+        viewModel.signInButtonTapped()
+        #expect(viewModel.authenticationState == .error(.loginFailed))
+
+        viewModel.signInButtonTapped()
+        #expect(viewModel.authenticationState == .idle)
+    }
 }
