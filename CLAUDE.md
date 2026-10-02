@@ -75,7 +75,8 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 
 ## Dívidas conhecidas
 
-- `AuthenticationViewModel`/`AuthenticationView` ainda têm um ramo de logout (`wasLoggedIn`, `.logoutFailed`, botão "Sair") **inalcançável**: o logout real vive em `RootViewModel.signOut()`. Remover em commit separado (`refactor:`), junto com seus testes, se existirem.
+- `AuthService.login()` retorna sem lançar quando `repository.login()` devolve `nil`, e `AuthenticationViewModel` volta a `.idle` sem nenhum feedback de erro. Hoje o fake nunca devolve `nil`, mas um backend real devolverá nesse caso: deveria lançar um erro de credencial inválida.
+- O botão "Entrar" não fica desabilitado durante `.loading`: um toque duplo dispara duas chamadas a `login()`.
 - O alerta de falha de logout (`RootView`) não tem UI test: exigiria um argumento de launch com store que falha ao apagar. Hoje é coberto só por testes unitários do `RootViewModel`.
 - `AppStartupViewModel` converte qualquer erro de `restoreSession()` em `.failed`; um erro real do Keychain (ex.: aparelho bloqueado) deveria cair no login.
 - Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
