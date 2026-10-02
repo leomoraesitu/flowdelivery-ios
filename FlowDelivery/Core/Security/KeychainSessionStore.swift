@@ -1,5 +1,5 @@
-import Foundation
-import Security
+@preconcurrency import Foundation
+@preconcurrency import Security
 
 enum KeychainSessionStoreError: Error {
     case encodingFailed

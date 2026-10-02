@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     let viewModel: HomeViewModel
     let appContainer: AppContainer
+    @State private var isConfirmingSignOut = false
 
     private var cartAccessibilityValue: String {
         let itemCount = appContainer.cartStore.itemCount
@@ -63,6 +64,16 @@ struct HomeView: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Button("Sair", role: .destructive) {
+                        isConfirmingSignOut = true
+                    }
+                } label: {
+                    Image(systemName: "person.crop.circle")
+                }
+                .accessibilityLabel("Conta")
+            }
             ToolbarItemGroup(
                 placement: .topBarTrailing
             ) {
@@ -87,6 +98,19 @@ struct HomeView: View {
                     Text(cartAccessibilityValue)
                 )
             }
+        }
+        .confirmationDialog(
+            "Sair da conta?",
+            isPresented: $isConfirmingSignOut,
+            titleVisibility: .visible
+        ) {
+            Button("Sair da conta", role: .destructive) {
+                appContainer.rootViewModel.signOut()
+            }
+
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Seu carrinho será esvaziado.")
         }
         .task {
             await viewModel.loadIfNeeded()

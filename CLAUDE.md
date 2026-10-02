@@ -67,6 +67,7 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 - A sessão inteira (`UserSession`: `userID` + `accessToken`) vive em **um único item** do Keychain (`KeychainSessionStore`), serializada como JSON versionado (`StoredSession`). Nunca separar token e `userID` em armazenamentos diferentes (ex.: `UserDefaults`): eles precisam ser gravados e apagados juntos. A política é `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` **explícita** — a sessão é lida só na inicialização, em foreground, e credencial não deve migrar em restauração de backup.
 - **Fail closed:** payload ilegível ou de versão desconhecida é apagado e tratado como "sem sessão". Só a decodificação é protegida: erros reais do Keychain propagam.
 - `AuthService.logout()` sempre limpa o estado em memória (`defer`), mesmo se apagar a credencial falhar, e ainda propaga o erro.
+- **Sair** é `RootViewModel.signOut()` (menu "Conta" na `HomeView` → `confirmationDialog`). Sempre esvazia o carrinho (também se a remoção da credencial falhar) e, em caso de falha, publica `signOutError`. O `alert` fica no `RootView`, **não** na Home: a Home desaparece na mesma transição que o erro ocorre. Rótulos distintos no menu ("Sair") e na confirmação ("Sair da conta") evitam ambiguidade nas queries de UI.
 - Não existe (e não deve existir) método de produção que grave bytes arbitrários no item de sessão; testes de corrupção falam direto com `SecItem*` no target de testes.
 - `save` usa `SecItemUpdate` com fallback para `SecItemAdd`: nunca existe instante em que a sessão foi apagada e a nova não foi gravada.
 - Existe teste que verifica o atributo de acessibilidade do item. **Não remover** — é o que impede que a política seja enfraquecida em silêncio.
@@ -74,7 +75,8 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 
 ## Dívidas conhecidas
 
-- **Não existe ponto de logout acessível quando autenticado.** O botão "Sair" fica em `AuthenticationView`, que o `RootView` só exibe deslogado. Como a sessão agora persiste, a credencial não pode ser removida pela UI (`AuthService.logout()` existe e é testado, mas sem entrada). Prioridade imediata.
+- `AuthenticationViewModel`/`AuthenticationView` ainda têm um ramo de logout (`wasLoggedIn`, `.logoutFailed`, botão "Sair") **inalcançável**: o logout real vive em `RootViewModel.signOut()`. Remover em commit separado (`refactor:`), junto com seus testes, se existirem.
+- O alerta de falha de logout (`RootView`) não tem UI test: exigiria um argumento de launch com store que falha ao apagar. Hoje é coberto só por testes unitários do `RootViewModel`.
 - `AppStartupViewModel` converte qualquer erro de `restoreSession()` em `.failed`; um erro real do Keychain (ex.: aparelho bloqueado) deveria cair no login.
 - Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
 - `CartItemRowView` deveria virar um elemento acessível combinado; enquanto isso há filtro de `.hitRegion` no audit do carrinho, com o motivo comentado no teste.

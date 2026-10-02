@@ -420,4 +420,35 @@ final class FlowDeliveryUITests: XCTestCase {
 
         try app.performAccessibilityAudit()
     }
+
+    @MainActor
+    func testUserCanSignOutAfterConfirming() {
+        let app = makeHomeApp()
+        openSignOutConfirmation(in: app)
+
+        let confirm = app.sheets["Sair da conta?"].buttons["Sair da conta"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: UITestTimeout.standard))
+        confirm.tap()
+
+        XCTAssertTrue(
+            app.buttons["Entrar"].waitForExistence(timeout: UITestTimeout.standard)
+        )
+    }
+
+    @MainActor
+    func testUserStaysSignedInWhenCancellingSignOut() {
+        let app = makeHomeApp()
+        openSignOutConfirmation(in: app)
+
+        let dialog = app.sheets["Sair da conta?"]
+        XCTAssertTrue(dialog.waitForExistence(timeout: UITestTimeout.standard))
+
+        dismissPopoverDialog(in: app)
+
+        XCTAssertTrue(dialog.waitForNonExistence(timeout: UITestTimeout.standard))
+        XCTAssertTrue(
+            app.staticTexts["Pizzaria Itália"].waitForExistence(timeout: UITestTimeout.standard)
+        )
+        XCTAssertFalse(app.buttons["Entrar"].exists)
+    }
 }

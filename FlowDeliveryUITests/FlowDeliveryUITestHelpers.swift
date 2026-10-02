@@ -205,6 +205,17 @@ extension XCTestCase {
             )
         ).tap()
     }
+
+    @MainActor
+    func openSignOutConfirmation(in app: XCUIApplication) {
+        let accountMenu = app.navigationBars["FlowDelivery"].buttons["Conta"]
+        XCTAssertTrue(accountMenu.waitForExistence(timeout: UITestTimeout.standard))
+        accountMenu.tap()
+
+        let signOutItem = app.buttons["Sair"]
+        XCTAssertTrue(signOutItem.waitForExistence(timeout: UITestTimeout.standard))
+        signOutItem.tap()
+    }
 }
 
 import Foundation

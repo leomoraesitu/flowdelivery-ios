@@ -2,7 +2,7 @@ import Foundation
 
 /// On-disk format of a persisted session. Separate from `UserSession` so the
 /// persistence contract can evolve (and be versioned) independently.
-struct StoredSession: Codable, Equatable {
+nonisolated struct StoredSession: Codable, Equatable, Sendable {
     static let currentVersion = 1
 
     let version: Int

@@ -49,7 +49,8 @@ final class AppContainer {
 
         rootViewModel = RootViewModel(
             sessionStore: sessionStore,
-            authService: authService
+            authService: authService,
+            cartStore: cartStore
         )
 
         homeViewModel = HomeViewModel(
