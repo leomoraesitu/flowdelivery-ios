@@ -15,7 +15,6 @@ struct AuthenticationViewModelTests {
             sessionStore: sessionStore
         )
         let viewModel = AuthenticationViewModel(
-            
             authService: authService
         )
         return (viewModel, sessionStore)
