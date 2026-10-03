@@ -5,6 +5,8 @@ Repositórios ainda são fakes — Supabase não está integrado.
 
 ## Como trabalhar neste repositório
 
+**Leia `docs/ROTEIRO.md` no início de toda sessão**: ele traz a última aula concluída, a próxima, as pendências e as decisões que não devem ser revertidas. Atualize-o ao fim de cada aula. `./Scripts/lesson-prompt.sh` gera a partir dele o prompt de abertura da próxima aula e o copia para a área de transferência.
+
 O fluxo é conduzido por `./Scripts/dev-flow.sh`, nunca por comandos git soltos:
 
 ```
@@ -22,12 +24,15 @@ Regras que não se negociam:
 - **`git add` sempre com caminhos explícitos.** Nunca `git add .` — `commit.sh` não faz stage sozinho de propósito.
 - **Conventional Commits** em inglês: `feat|fix|refactor|test|chore|docs|ci(escopo): descrição`.
 - Descrição de PR em inglês, seguindo `.github/pull_request_template.md`.
-- Hooks versionados: `git config core.hooksPath .git-hooks` (pre-commit: format + lint; pre-push: quality gate completo).
+- Hooks versionados: `git config core.hooksPath .git-hooks` (pre-commit: format + lint; pre-push: quality gate completo). **Nunca usar `--no-verify`**: se um hook falhar, corrija a causa.
+- **Branch primeiro, arquivo depois:** crie a branch com `dev-flow.sh start` antes de criar ou editar qualquer arquivo.
+- Não edite um arquivo que esteja aberto no Xcode ao mesmo tempo em que um script ou agente o altera.
 
 ## Arquitetura
 
 - **`AppContainer` é o Composition Root** (`@MainActor @Observable`). Toda dependência nasce ali e é injetada explicitamente. Views que precisam criar outra feature recebem o container como parâmetro — a decisão de **não** usar `@Environment(AppContainer.self)` é consciente.
 - As decisões de composição ficam em fábricas (`makeCredentialStore`, `makeOrderRepository`), não inline no `init` — ele tem limite de 50 linhas no SwiftLint.
+- **Autenticação em camadas:** `AuthRepository` é a fronteira do backend (`login`, `logout`, `restoreSession(_:)`); `AuthService` orquestra repositório + credencial persistida + `SessionStore`; os ViewModels falam só com o serviço. `RootViewModel` é `@MainActor` (usa `CartStore` e `SessionStore`).
 - **Estado compartilhado:** `CartStore` e `SessionStore`, instância única por sessão do app. Single source of truth; features não duplicam nem sincronizam estado manualmente.
 - **Design System:** tokens em `DesignSystem/Tokens` (`AppSpacing`, `AppTypography`, `AppColor`, `AppCornerRadius`, `AppIconSize`, `AppComponentSize`, `AppDuration`). Nenhum magic number em View.
 - **Features** em `Features/<Feature>/` com `View`, `ViewModel`, `Models/`, `Components/`. Views propagam intenção; não mutam estado compartilhado diretamente.
@@ -37,7 +42,8 @@ Regras que não se negociam:
 `./Scripts/quality.sh` = format-check + lint + test. Ele **não** chama `build.sh`: `xcodebuild test` já compila o app e os targets de teste.
 
 - SwiftLint roda com `--strict` — warning derruba o gate. `line_length` 120, `function_body_length` 50.
-- Simulador padrão `iPhone 17`; troque com `SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/...`.
+- Simulador padrão dos scripts: `iPhone 17`. O usado no desenvolvimento é `iPhone 18 Pro Max` (Xcode 27, iOS 27): `SIMULATOR_NAME="iPhone 18 Pro Max" ./Scripts/...`.
+- Se o `xcodebuild` reclamar de "multiple devices matched", há dois simuladores com o mesmo nome e SO: `xcrun simctl list devices available` e `xcrun simctl delete <UDID>` no que não é usado.
 - **Nunca reintroduzir `CODE_SIGNING_ALLOWED=NO`** nos scripts de simulador. Sem assinatura o app não recebe o entitlement `application-identifier` e toda operação de Keychain falha com `errSecMissingEntitlement (-34018)`. Builds de simulador usam assinatura ad-hoc e não exigem credenciais no CI.
 
 ## CI
@@ -48,14 +54,18 @@ Regras que não se negociam:
 
 ## Testes
 
-**Unitários** — Swift Testing (`struct` + `@Test`), com `@testable import FlowDelivery` como primeiro import.
+**Unitários** — Swift Testing (`struct`/`@Suite` + `@Test`, `#expect`), com `@testable import FlowDelivery` como primeiro import.
+
+- TDD: teste vermelho primeiro. Valide com **prova de mutação** (quebre o código de produção e confirme que o teste falha).
+- Use `#require` para pré-condições, de modo que o teste não passe vazio.
+- Test doubles ficam em `FlowDeliveryTests/TestDoubles/` (`FailingDeleteStore`, `FailingSaveStore`, `FailFirstSaveStore`, `FakeSessionCredentialStore`).
 
 Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.delete() }`: a suíte roda em paralelo e o Keychain do simulador sobrevive ao processo.
 
 **UI tests** (XCTest) — rodam **apenas** por `./Scripts/ui-test.sh`; `test.sh` os pula com `-skip-testing`.
 
 - Existe **um único `XCUIApplication()`** no target, dentro de `launchApp` (`extension XCTestCase`), que injeta `-ui-testing-in-memory-session-store`. Confira com `grep -rn "XCUIApplication()" FlowDeliveryUITests/` — mais de um resultado é bug.
-- `makeHomeApp` é o único helper que faz login. Não repetir o toque em "Entrar" nos helpers que o consomem.
+- `makeHomeApp` é o único helper que faz login. Não repetir o toque em "Entrar" nos helpers que o consomem. `openSignOutConfirmation(in:)` abre o menu "Conta" e o diálogo de saída.
 - Esperas por `UITestTimeout.standard` (15s). Timeout curto não acelera nada e gera falso-negativo sob carga.
 - Comparações com texto formatado pelo sistema usam `.normalizingSpaces`: moeda pt-BR traz espaço não separável (U+00A0), e chaves localizadas interpoladas trazem isolados bidi (U+2068/U+2069). Vale também dentro do closure de `performAccessibilityAudit`.
 - Queries ancoradas no container (`app.navigationBars[...]`, `app.sheets[...]`): labels se repetem entre toolbar e diálogo.
@@ -91,4 +101,7 @@ Este projeto é conduzido como uma aula. Ao propor mudanças:
 - Explique **por que**, não só o que fazer; passo a passo, um conceito por vez.
 - Use a documentação oficial da Apple como fonte e cite os links.
 - Antes de afirmar a causa de uma falha, **meça** — leia o log, a hierarquia de acessibilidade ou os code points. Hipótese sem evidência custa mais caro do que uma execução a mais.
-- Não execute comandos destrutivos sem pedir.
+- Não execute comandos destrutivos sem pedir; por padrão, **entregue os comandos e deixe o usuário executá-los**.
+- Responda em português. Commits, PRs e Review em inglês.
+- Cada aula segue: pré-voo (git) → conceito e decisões de design → passo a passo com TDD → commits → Definition of Done → o que NÃO fazer → pergunta de fixação.
+- Um agente rodando em ambiente remoto (VM Linux) não tem `xcodebuild`, `swiftformat` nem `swiftlint`, e não deve rodar git no repositório local (já deixou `.git/index.lock` órfão): ali, edite arquivos e deixe o gate para a máquina do usuário.
