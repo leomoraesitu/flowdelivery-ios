@@ -1,6 +1,6 @@
 # FlowDelivery iOS
 
-Native iOS implementation of FlowDelivery built with Swift, SwiftUI, MVVM and Supabase.
+Native iOS implementation of FlowDelivery built with Swift, SwiftUI, MVVM and the Observation framework.
 
 ## About
 
@@ -14,7 +14,7 @@ This repository contains the native iOS version of FlowDelivery, developed as a 
 - Observation
 - MVVM
 - Keychain Services
-- Supabase
+- Supabase (planned; repositories are currently fakes)
 - Swift Testing
 - XCTest
 
@@ -37,12 +37,17 @@ launches:
   `CODE_SIGNING_ALLOWED=NO`: every Keychain call would fail with
   `errSecMissingEntitlement (-34018)`.
 
+Signing out is available from the **Account** menu on the Home screen, behind a
+confirmation dialog. It always empties the cart; if removing the stored
+credential fails, an alert is shown from the root view (the Home screen is
+gone by then).
+
 UI tests run with an in-memory credential store (launch argument
 `-ui-testing-in-memory-session-store`) so they never touch the real Keychain.
 
 ## Quality Tools
 
-### Requirements
+### Install the tools
 
 ```bash
 brew install swiftformat
@@ -77,7 +82,12 @@ chmod +x Scripts/*.sh
 ./Scripts/publish-pr.sh "feat(scope): short description"
 ./Scripts/ready-pr.sh
 ./Scripts/finish-branch.sh
+./Scripts/lesson-prompt.sh
 ```
+
+`lesson-prompt.sh` builds the opening prompt for the next course lesson from
+`docs/ROTEIRO.md` and copies it to the clipboard (macOS `pbcopy`; use `--print`
+to only display it).
 
 ### Recommended GitFlow
 
@@ -235,8 +245,6 @@ Not automated:
 - UI tests (run manually with ./Scripts/ui-test.sh)
 ```
 
----
-
 ## Related Project
 
 The original cross-platform Flutter implementation is available at:
@@ -246,8 +254,9 @@ The original cross-platform Flutter implementation is available at:
 ## Requirements
 
 - macOS
-- Xcode
-- iOS Simulator
+- Xcode 27 or later (the project is developed with Xcode 27 and the iOS 27 SDK)
+- iOS Simulator (the scripts default to `iPhone 17`; use `SIMULATOR_NAME` to choose another)
+- SwiftFormat, SwiftLint and GitHub CLI (see [Quality Tools](#quality-tools))
 
 ### Authenticate GitHub CLI
 
@@ -283,4 +292,10 @@ The exported account is reused by `publish-pr.sh`, `ready-pr.sh` and
 
 ## Status
 
-Project foundation under development.
+Under active development, built lesson by lesson. Implemented so far: authentication
+with a persisted Keychain session, sign out, restaurant browsing, cart and checkout
+flows, all on fake repositories. Supabase integration is still to come.
+
+The lesson roadmap, current state and design decisions live in
+[`docs/ROTEIRO.md`](docs/ROTEIRO.md); conventions for contributors and AI agents are in
+[`CLAUDE.md`](CLAUDE.md).
