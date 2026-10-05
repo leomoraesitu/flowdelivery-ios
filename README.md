@@ -112,7 +112,27 @@ Use `--dry-run` to inspect the delegated command without executing it:
 ./Scripts/dev-flow.sh --dry-run start feat/short-description
 ```
 
-The low-level scripts remain available for focused maintenance and debugging.
+Notes on what each delegated command does:
+
+- `commit` validates the Conventional Commit message and the staged diff,
+  then runs the versioned pre-commit hook. It never stages files itself.
+- `publish` pushes only committed changes, runs the pre-push Quality Gate
+  and creates or reuses an open Pull Request; new Pull Requests stay in
+  draft until `ready`.
+- `sync` rebases unpublished branches onto `origin/main`; published
+  branches merge `origin/main` instead, to preserve remote history and
+  avoid force-pushes. It never pushes automatically.
+- `ready` confirms that the local branch, remote branch and Pull Request
+  reference the same commit before marking it ready for review. It does
+  not merge the Pull Request.
+- `finish` verifies that the branch HEAD belongs to a merged Pull Request
+  and that its squash commit is present on `origin/main`, then
+  fast-forwards `main` and removes the local branch. It does not merge
+  Pull Requests or delete remote branches.
+
+The low-level scripts (`start-branch.sh`, `commit.sh`, `sync-branch.sh`,
+`publish-pr.sh`, `ready-pr.sh`, `finish-branch.sh`) remain available for
+focused maintenance and debugging — `dev-flow.sh` only delegates to them.
 
 To use `flow` as a shortcut in the current shell while at the repository root:
 
@@ -120,74 +140,7 @@ To use `flow` as a shortcut in the current shell while at the repository root:
 alias flow='./Scripts/dev-flow.sh'
 ```
 
-### Development workflow
-
-To start new work from the latest `main`:
-
-```bash
-./Scripts/start-branch.sh feat/short-description
-```
-
-Stage only the intended files and create the commit through the helper:
-
-```bash
-git add <explicit-file-path>
-./Scripts/commit.sh "feat(scope): short description"
-```
-
-The command validates the Conventional Commit message, checks the staged
-diff and runs the versioned pre-commit hook. It never stages files itself.
-
-To run the complete Quality Gate manually at any time:
-
-```bash
-./Scripts/quality.sh
-```
-
-After committing the completed work, publish the branch and create a draft Pull Request:
-
-```bash
-./Scripts/publish-pr.sh "feat(scope): short description"
-```
-
-The command pushes only committed changes, runs the pre-push Quality Gate
-and creates or reuses an open Pull Request. Newly created Pull Requests
-remain in draft until they are explicitly prepared for review.
-
-If `origin/main` advances while the branch is under development, synchronize
-the current branch before publishing:
-
-```bash
-./Scripts/sync-branch.sh
-```
-
-Unpublished branches are rebased onto `origin/main`. Published branches merge
-`origin/main` to preserve their remote history and avoid force-pushes. The
-command never pushes changes automatically.
-
-After completing the Pull Request description and validation checklist,
-wait for the required checks and move it to Ready for review:
-
-```bash
-./Scripts/ready-pr.sh
-```
-
-The command confirms that the local branch, remote branch and Pull Request
-reference the same commit before marking the Pull Request as ready.
-It does not merge the Pull Request.
-
-After the Pull Request has been merged, remain on the completed local branch
-and run:
-
-```bash
-./Scripts/finish-branch.sh
-```
-
-The command verifies that the exact branch HEAD belongs to a merged Pull
-Request, confirms that its squash commit is present on `origin/main`,
-updates the local `main` with a fast-forward merge and removes the
-completed local branch. It does not merge Pull Requests or delete remote
-branches.
+### Simulators
 
 To list the available simulators:
 
@@ -221,6 +174,8 @@ simulators share the same name and OS version. Remove the unused one:
 xcrun simctl list devices available
 xcrun simctl delete <UDID>
 ```
+
+### CI coverage
 
 ```text
 Pre-commit:
