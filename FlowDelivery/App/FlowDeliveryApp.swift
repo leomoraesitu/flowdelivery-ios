@@ -17,7 +17,7 @@ struct FlowDeliveryApp: App {
 
         _startupViewModel = State(
             initialValue: AppStartupViewModel(
-                container: container
+                authService: container.authService
             )
         )
     }

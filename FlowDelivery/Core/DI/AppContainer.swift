@@ -114,10 +114,6 @@ final class AppContainer {
         )
     }
 
-    func restoreSession() throws {
-        try authService.restoreSession()
-    }
-
     func makeCartViewModel() -> CartViewModel {
         CartViewModel(
             cartStore: cartStore

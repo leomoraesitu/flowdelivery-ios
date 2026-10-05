@@ -9,19 +9,19 @@ final class AppStartupViewModel {
         case failed
     }
 
-    private let container: AppContainer
+    private let authService: AuthService
 
     private(set) var state: StartupState = .idle
 
-    init(container: AppContainer) {
-        self.container = container
+    init(authService: AuthService) {
+        self.authService = authService
     }
 
     func start() {
         state = .loading
 
         do {
-            try container.restoreSession()
+            try authService.restoreSession()
             state = .ready
         } catch {
             state = .failed
