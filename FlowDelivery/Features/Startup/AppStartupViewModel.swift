@@ -6,25 +6,28 @@ final class AppStartupViewModel {
         case idle
         case loading
         case ready
-        case failed
     }
 
-    private let container: AppContainer
+    private let authService: AuthService
 
     private(set) var state: StartupState = .idle
 
-    init(container: AppContainer) {
-        self.container = container
+    init(authService: AuthService) {
+        self.authService = authService
     }
 
     func start() {
         state = .loading
 
         do {
-            try container.restoreSession()
-            state = .ready
+            try authService.restoreSession()
         } catch {
-            state = .failed
+            // A Keychain read/delete failure (e.g. device locked) just means
+            // there is no session to restore: SessionStore stays logged out
+            // and the app falls through to the login screen, same as a clean
+            // "no stored session" outcome.
         }
+
+        state = .ready
     }
 }
