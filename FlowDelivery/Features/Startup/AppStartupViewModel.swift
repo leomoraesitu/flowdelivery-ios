@@ -6,7 +6,6 @@ final class AppStartupViewModel {
         case idle
         case loading
         case ready
-        case failed
     }
 
     private let authService: AuthService
@@ -22,9 +21,13 @@ final class AppStartupViewModel {
 
         do {
             try authService.restoreSession()
-            state = .ready
         } catch {
-            state = .failed
+            // A Keychain read/delete failure (e.g. device locked) just means
+            // there is no session to restore: SessionStore stays logged out
+            // and the app falls through to the login screen, same as a clean
+            // "no stored session" outcome.
         }
+
+        state = .ready
     }
 }
