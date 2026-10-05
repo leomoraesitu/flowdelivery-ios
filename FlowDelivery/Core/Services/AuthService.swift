@@ -1,3 +1,7 @@
+enum AuthServiceError: Error {
+    case loginRejected
+}
+
 final class AuthService {
     private let sessionStore: SessionStore
     private let repository: AuthRepository
@@ -14,7 +18,9 @@ final class AuthService {
     }
 
     func login() throws {
-        guard let session = repository.login() else { return }
+        guard let session = repository.login() else {
+            throw AuthServiceError.loginRejected
+        }
         // Persist before publishing: if saving fails, the app must not look
         // logged in for a session that will not survive a relaunch.
         try sessionCredentialStore.save(session)

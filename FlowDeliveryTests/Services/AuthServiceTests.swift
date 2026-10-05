@@ -69,6 +69,22 @@ struct AuthServiceTests {
     }
 
     @Test
+    func loginThrowsWhenRepositoryYieldsNoSession() throws {
+        let credentialStore = FakeSessionCredentialStore()
+        let (service, sessionStore) = makeService(
+            repository: RejectingAuthRepository(),
+            credentialStore: credentialStore
+        )
+
+        #expect(throws: AuthServiceError.loginRejected) {
+            try service.login()
+        }
+
+        #expect(sessionStore.session == nil)
+        #expect(try credentialStore.load() == nil)
+    }
+
+    @Test
     func logoutClearsStateAndCredential() throws {
         let credentialStore = FakeSessionCredentialStore()
         let (service, sessionStore) = makeService(credentialStore: credentialStore)

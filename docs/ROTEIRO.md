@@ -4,10 +4,10 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 179
-- Próxima: 180 — opção A: robustez do login (AuthService.login() lança em vez de
-  retornar em silêncio; "Entrar" desabilitado em .loading) ou opção B: acessibilidade
-  do CartItemRowView (remover exceções de hitRegion do audit do carrinho)
+- Última aula concluída: 180
+- Próxima: 181 — acessibilidade do CartItemRowView (remover exceções de hitRegion do
+  audit do carrinho), ou outra dívida da lista (AppStartupViewModel colapsa erros do
+  Keychain; UI suite sem gate automático)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min, manual).
 - Pendente: PR fix/restaurant-details-title (correção guardada no stash
@@ -18,6 +18,9 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - 177: sessão completa (UserSession/StoredSession) com userID estável (PR #178)
 - 178: sair da conta na Home (RootViewModel.signOut) (PR #179)
 - 179: remoção do ramo de logout inalcançável (PR #180)
+- 180: robustez do login — AuthService.login() lança AuthServiceError.loginRejected
+  em vez de retornar em silêncio; botão "Entrar" desabilitado em .loading (sem teste
+  automatizado: login síncrono hoje não desenha a janela de .loading) (PR #182)
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -27,10 +30,12 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - Rótulos distintos no menu ("Sair") e na confirmação ("Sair da conta").
 - Diálogos aparecem como popover: nos UI tests usar dismissPopoverDialog.
 - Testes devem ter pré-condições (#require) para não passar vazios; validar com mutação.
+- `AuthService.login()` sempre lança quando o repositório não devolve sessão — nunca
+  retornar em silêncio.
 
 ## Dívidas
 Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas"). Candidatas às próximas
-aulas: login robusto (180-A), acessibilidade do carrinho (180-B), `AppStartupViewModel` que
+aulas: acessibilidade do carrinho (remover hitRegion do audit), `AppStartupViewModel` que
 colapsa erros do Keychain, UI suite sem gate automático.
 
 ## Regras de execução

@@ -12,6 +12,7 @@ struct AuthenticationView: View {
                 viewModel.signInButtonTapped()
             }
             .buttonStyle(PrimaryButtonStyle())
+            .disabled(viewModel.authenticationState == .loading)
 
             if case let .error(error) = viewModel.authenticationState {
                 Text(error.message)
