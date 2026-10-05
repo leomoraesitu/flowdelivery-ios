@@ -32,7 +32,7 @@ Regras que não se negociam:
 
 - **`AppContainer` é o Composition Root** (`@MainActor @Observable`). Toda dependência nasce ali e é injetada explicitamente. Views que precisam criar outra feature recebem o container como parâmetro — a decisão de **não** usar `@Environment(AppContainer.self)` é consciente.
 - As decisões de composição ficam em fábricas (`makeCredentialStore`, `makeOrderRepository`), não inline no `init` — ele tem limite de 50 linhas no SwiftLint.
-- **Autenticação em camadas:** `AuthRepository` é a fronteira do backend (`login`, `logout`, `restoreSession(_:)`); `AuthService` orquestra repositório + credencial persistida + `SessionStore`; os ViewModels falam só com o serviço. `RootViewModel` é `@MainActor` (usa `CartStore` e `SessionStore`).
+- **Autenticação em camadas:** `AuthRepository` é a fronteira do backend (`login`, `logout`, `restoreSession(_:)`); `AuthService` orquestra repositório + credencial persistida + `SessionStore`; os ViewModels falam só com o serviço. `RootViewModel` é `@MainActor` (usa `CartStore` e `SessionStore`). `AuthService.login()` lança `AuthServiceError.loginRejected` quando o repositório não devolve sessão — nunca falha em silêncio.
 - **Estado compartilhado:** `CartStore` e `SessionStore`, instância única por sessão do app. Single source of truth; features não duplicam nem sincronizam estado manualmente.
 - **Design System:** tokens em `DesignSystem/Tokens` (`AppSpacing`, `AppTypography`, `AppColor`, `AppCornerRadius`, `AppIconSize`, `AppComponentSize`, `AppDuration`). Nenhum magic number em View.
 - **Features** em `Features/<Feature>/` com `View`, `ViewModel`, `Models/`, `Components/`. Views propagam intenção; não mutam estado compartilhado diretamente.
@@ -85,8 +85,7 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 
 ## Dívidas conhecidas
 
-- `AuthService.login()` retorna sem lançar quando `repository.login()` devolve `nil`, e `AuthenticationViewModel` volta a `.idle` sem nenhum feedback de erro. Hoje o fake nunca devolve `nil`, mas um backend real devolverá nesse caso: deveria lançar um erro de credencial inválida.
-- O botão "Entrar" não fica desabilitado durante `.loading`: um toque duplo dispara duas chamadas a `login()`.
+- O `.disabled(.loading)` do botão "Entrar" não tem teste automatizado (nem de UI, nem unitário): `AuthService.login()` é síncrono hoje, então o estado `.loading` nunca chega a ser desenhado antes de virar `.idle`/`.error` — não há janela observável para capturar. A proteção passa a valer de verdade quando `login()` virar `async` contra um backend real; aí sim um UI test faria sentido.
 - O alerta de falha de logout (`RootView`) não tem UI test: exigiria um argumento de launch com store que falha ao apagar. Hoje é coberto só por testes unitários do `RootViewModel`.
 - `AppStartupViewModel` converte qualquer erro de `restoreSession()` em `.failed`; um erro real do Keychain (ex.: aparelho bloqueado) deveria cair no login.
 - Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
