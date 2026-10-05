@@ -5,19 +5,26 @@ import Testing
 @Suite("AppStartupViewModel")
 @MainActor
 struct AppStartupViewModelTests {
-    private func makeAuthService(
+    private struct Sut {
+        let authService: AuthService
+        let sessionStore: SessionStore
+    }
+
+    private func makeSut(
         credentialStore: SessionCredentialStore = FakeSessionCredentialStore()
-    ) -> AuthService {
-        AuthService(
+    ) -> Sut {
+        let sessionStore = SessionStore()
+        let authService = AuthService(
             repository: FakeAuthRepository(),
             sessionCredentialStore: credentialStore,
-            sessionStore: SessionStore()
+            sessionStore: sessionStore
         )
+        return Sut(authService: authService, sessionStore: sessionStore)
     }
 
     @Test
     func startsIdle() {
-        let sut = AppStartupViewModel(authService: makeAuthService())
+        let sut = AppStartupViewModel(authService: makeSut().authService)
 
         #expect(sut.state == .idle)
     }
@@ -25,23 +32,25 @@ struct AppStartupViewModelTests {
     @Test
     func readyAfterRestoringAnExistingSession() {
         let stored = UserSession(userID: UUID(), accessToken: "abc")
-        let authService = makeAuthService(
+        let dependencies = makeSut(
             credentialStore: FakeSessionCredentialStore(initialSession: stored)
         )
-        let sut = AppStartupViewModel(authService: authService)
+        let sut = AppStartupViewModel(authService: dependencies.authService)
 
         sut.start()
 
         #expect(sut.state == .ready)
+        #expect(dependencies.sessionStore.session == stored)
     }
 
     @Test
     func readyEvenWhenTheKeychainFailsToLoad() {
-        let authService = makeAuthService(credentialStore: FailingLoadStore())
-        let sut = AppStartupViewModel(authService: authService)
+        let dependencies = makeSut(credentialStore: FailingLoadStore())
+        let sut = AppStartupViewModel(authService: dependencies.authService)
 
         sut.start()
 
         #expect(sut.state == .ready)
+        #expect(dependencies.sessionStore.session == nil)
     }
 }
