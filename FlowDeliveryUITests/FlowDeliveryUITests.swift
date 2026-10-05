@@ -373,14 +373,6 @@ final class FlowDeliveryUITests: XCTestCase {
             "Subtotal"
         ]
 
-        // Hit region: textos estáticos auditados individualmente, mas cujo
-        // alvo de toque real é a linha da List (altura > 44 pt).
-        // Dívida técnica: combinar a célula em um único elemento acessível.
-        let hitRegionExceptions = [
-            "Pizza Margherita",
-            "R$ 49,90"
-        ]
-
         let subtotalIdentifier = "CartItem.Subtotal"
 
         try app.performAccessibilityAudit { issue in
@@ -399,8 +391,7 @@ final class FlowDeliveryUITests: XCTestCase {
                 return label == "Subtotal"
 
             case .hitRegion:
-                return hitRegionExceptions.contains(label)
-                    || identifier == subtotalIdentifier
+                return identifier == subtotalIdentifier
 
             default:
                 return false
