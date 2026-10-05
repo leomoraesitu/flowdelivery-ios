@@ -89,7 +89,7 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 - O alerta de falha de logout (`RootView`) não tem UI test: exigiria um argumento de launch com store que falha ao apagar. Hoje é coberto só por testes unitários do `RootViewModel`.
 - `AppStartupViewModel` converte qualquer erro de `restoreSession()` em `.failed`; um erro real do Keychain (ex.: aparelho bloqueado) deveria cair no login.
 - Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
-- `CartItemRowView` deveria virar um elemento acessível combinado; enquanto isso há filtro de `.hitRegion` no audit do carrinho, com o motivo comentado no teste.
+- `CartItemRowView` ainda expõe título e preço como dois elementos de acessibilidade separados para o VoiceOver (um por stop de swipe em vez de um só). Virou melhoria de UX, não de `hitRegion`: a exceção de `hitRegion` em `testCartPassesAccessibilityAudit` foi removida na aula 181 após prova de mutação mostrar que o audit não sinaliza mais esses elementos na toolchain atual (Xcode 27/iOS 27) — o comportamento de hit-testing de `Text` dentro de `List` mudou desde que a exceção foi criada. Se um dia quiserem agrupar os dois com `.accessibilityElement(children: .combine)`, precisa de um teste próprio que afirme o label combinado, não do audit de `hitRegion`.
 - Os `#Preview` instanciam `AppContainer()` real, portanto constroem um `KeychainSessionStore` real (hoje inofensivo, pois nenhum preview autentica).
 - A suíte de UI (~13 min) não roda em nenhum gate automático.
 

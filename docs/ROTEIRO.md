@@ -4,10 +4,10 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 180
-- Próxima: 181 — acessibilidade do CartItemRowView (remover exceções de hitRegion do
-  audit do carrinho), ou outra dívida da lista (AppStartupViewModel colapsa erros do
-  Keychain; UI suite sem gate automático)
+- Última aula concluída: 181
+- Próxima: outra dívida da lista (AppStartupViewModel colapsa erros do Keychain; UI
+  suite sem gate automático; agrupar CartItemRowView num elemento combinado para
+  VoiceOver, com teste próprio — ver dívidas)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min, manual).
 - Pendente: PR fix/restaurant-details-title (correção guardada no stash
@@ -21,6 +21,12 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - 180: robustez do login — AuthService.login() lança AuthServiceError.loginRejected
   em vez de retornar em silêncio; botão "Entrar" desabilitado em .loading (sem teste
   automatizado: login síncrono hoje não desenha a janela de .loading) (PR #182)
+- 181: removidas as exceções de `hitRegion` em `testCartPassesAccessibilityAudit`.
+  Prova de mutação mostrou que `CartItemRowView` não precisa de
+  `.accessibilityElement(children: .combine)` para passar o audit nesta toolchain
+  (Xcode 27/iOS 27) — o comportamento de hit-testing de `Text` dentro de `List` mudou
+  desde que a exceção foi criada (PR #176, ago/2026). Nenhuma mudança de produção;
+  só a remoção da exceção obsoleta, com medição.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -35,8 +41,9 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 
 ## Dívidas
 Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas"). Candidatas às próximas
-aulas: acessibilidade do carrinho (remover hitRegion do audit), `AppStartupViewModel` que
-colapsa erros do Keychain, UI suite sem gate automático.
+aulas: `AppStartupViewModel` que colapsa erros do Keychain, UI suite sem gate automático,
+agrupar título+preço do `CartItemRowView` num elemento de acessibilidade combinado (melhoria de
+VoiceOver, não de hitRegion — precisa de teste próprio que afirme o label combinado).
 
 ## Regras de execução
 - O professor não executa nada sem o aluno pedir; entrega comandos e explica.
