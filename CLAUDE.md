@@ -58,7 +58,7 @@ Regras que não se negociam:
 
 - TDD: teste vermelho primeiro. Valide com **prova de mutação** (quebre o código de produção e confirme que o teste falha).
 - Use `#require` para pré-condições, de modo que o teste não passe vazio.
-- Test doubles ficam em `FlowDeliveryTests/TestDoubles/` (`FailingDeleteStore`, `FailingSaveStore`, `FailFirstSaveStore`, `FakeSessionCredentialStore`).
+- Test doubles ficam em `FlowDeliveryTests/TestDoubles/` (`FailingDeleteStore`, `FailingSaveStore`, `FailingLoadStore`, `FailFirstSaveStore`, `FakeSessionCredentialStore`).
 
 Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.delete() }`: a suíte roda em paralelo e o Keychain do simulador sobrevive ao processo.
 
@@ -87,7 +87,6 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 
 - O `.disabled(.loading)` do botão "Entrar" não tem teste automatizado (nem de UI, nem unitário): `AuthService.login()` é síncrono hoje, então o estado `.loading` nunca chega a ser desenhado antes de virar `.idle`/`.error` — não há janela observável para capturar. A proteção passa a valer de verdade quando `login()` virar `async` contra um backend real; aí sim um UI test faria sentido.
 - O alerta de falha de logout (`RootView`) não tem UI test: exigiria um argumento de launch com store que falha ao apagar. Hoje é coberto só por testes unitários do `RootViewModel`.
-- `AppStartupViewModel` converte qualquer erro de `restoreSession()` em `.failed`; um erro real do Keychain (ex.: aparelho bloqueado) deveria cair no login.
 - Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
 - `CartItemRowView` ainda expõe título e preço como dois elementos de acessibilidade separados para o VoiceOver (um por stop de swipe em vez de um só). Virou melhoria de UX, não de `hitRegion`: a exceção de `hitRegion` em `testCartPassesAccessibilityAudit` foi removida na aula 181 após prova de mutação mostrar que o audit não sinaliza mais esses elementos na toolchain atual (Xcode 27/iOS 27) — o comportamento de hit-testing de `Text` dentro de `List` mudou desde que a exceção foi criada. Se um dia quiserem agrupar os dois com `.accessibilityElement(children: .combine)`, precisa de um teste próprio que afirme o label combinado, não do audit de `hitRegion`.
 - Os `#Preview` instanciam `AppContainer()` real, portanto constroem um `KeychainSessionStore` real (hoje inofensivo, pois nenhum preview autentica).

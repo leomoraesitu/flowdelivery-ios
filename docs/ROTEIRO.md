@@ -4,10 +4,10 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 181
-- Próxima: outra dívida da lista (AppStartupViewModel colapsa erros do Keychain; UI
-  suite sem gate automático; agrupar CartItemRowView num elemento combinado para
-  VoiceOver, com teste próprio — ver dívidas)
+- Última aula concluída: 182
+- Próxima: outra dívida da lista (UI suite sem gate automático; agrupar
+  CartItemRowView num elemento combinado para VoiceOver, com teste próprio —
+  ver dívidas)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min, manual).
 - Pendente: PR fix/restaurant-details-title (correção guardada no stash
@@ -27,6 +27,13 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   (Xcode 27/iOS 27) — o comportamento de hit-testing de `Text` dentro de `List` mudou
   desde que a exceção foi criada (PR #176, ago/2026). Nenhuma mudança de produção;
   só a remoção da exceção obsoleta, com medição.
+- 182: `AppStartupViewModel` passou a depender de `AuthService` diretamente (não
+  mais do `AppContainer`), o que destravou testá-lo; erro real de Keychain em
+  `restoreSession()` (ex.: aparelho bloqueado) agora cai no login em vez de um
+  estado `.failed` sem consumidor na UI — `StartupState` perdeu esse case.
+  Prova de mutação feita e revertida. README reconciliado: removida a seção
+  "Development workflow", que duplicava o fluxo de `dev-flow.sh` com os scripts
+  de baixo nível.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -38,12 +45,15 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - Testes devem ter pré-condições (#require) para não passar vazios; validar com mutação.
 - `AuthService.login()` sempre lança quando o repositório não devolve sessão — nunca
   retornar em silêncio.
+- `AppStartupViewModel` depende de `AuthService`, nunca do `AppContainer` inteiro —
+  ViewModels falam só com o serviço. Erro real de Keychain em `restoreSession()`
+  cai no login, não num estado de falha sem consumidor na UI.
 
 ## Dívidas
 Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas"). Candidatas às próximas
-aulas: `AppStartupViewModel` que colapsa erros do Keychain, UI suite sem gate automático,
-agrupar título+preço do `CartItemRowView` num elemento de acessibilidade combinado (melhoria de
-VoiceOver, não de hitRegion — precisa de teste próprio que afirme o label combinado).
+aulas: UI suite sem gate automático, agrupar título+preço do `CartItemRowView` num elemento de
+acessibilidade combinado (melhoria de VoiceOver, não de hitRegion — precisa de teste próprio que
+afirme o label combinado).
 
 ## Regras de execução
 - O professor não executa nada sem o aluno pedir; entrega comandos e explica.
