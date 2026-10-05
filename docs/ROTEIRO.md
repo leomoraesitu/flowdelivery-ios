@@ -20,8 +20,7 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - 179: remoção do ramo de logout inalcançável (PR #180)
 - 180: robustez do login — AuthService.login() lança AuthServiceError.loginRejected
   em vez de retornar em silêncio; botão "Entrar" desabilitado em .loading (sem teste
-  automatizado: login síncrono hoje não desenha a janela de .loading) (PR #182 — a
-  confirmar no publish)
+  automatizado: login síncrono hoje não desenha a janela de .loading) (PR #182)
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
