@@ -4,14 +4,12 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 182
+- Última aula concluída: 183
 - Próxima: outra dívida da lista (UI suite sem gate automático; agrupar
   CartItemRowView num elemento combinado para VoiceOver, com teste próprio —
   ver dívidas)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min, manual).
-- Pendente: PR fix/restaurant-details-title (correção guardada no stash
-  "restaurant-details-title"; falta o UI test do título)
 
 ## Histórico
 - 176: token no Keychain
@@ -34,6 +32,13 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   Prova de mutação feita e revertida. README reconciliado: removida a seção
   "Development workflow", que duplicava o fluxo de `dev-flow.sh` com os scripts
   de baixo nível.
+- 183: `RestaurantDetailsView` passou a mostrar o nome do restaurante como título de
+  navegação (`navigationTitle` dinâmico, lido de `RestaurantDetailsState.loaded`), em vez
+  do rótulo fixo "Restaurante". Fecha a pendência guardada no stash
+  "restaurant-details-title" (o resto daquele stash já estava obsoleto, mesclado por
+  outro caminho nas aulas 178–180). UI test `testRestaurantDetailsShowsRestaurantNameAsTitle`
+  adicionado; prova de mutação feita (título fixo fez o teste falhar, confirmando que ele
+  exerce o fix) e revertida.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
