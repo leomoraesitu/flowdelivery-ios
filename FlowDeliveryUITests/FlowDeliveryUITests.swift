@@ -18,6 +18,19 @@ final class FlowDeliveryUITests: XCTestCase {
     }
 
     @MainActor
+    func testRestaurantDetailsShowsRestaurantNameAsTitle() {
+        let app = makeHomeApp()
+
+        let restaurant = app.staticTexts["Pizzaria Itália"]
+        XCTAssertTrue(restaurant.waitForExistence(timeout: UITestTimeout.standard))
+        restaurant.tap()
+
+        XCTAssertTrue(
+            app.navigationBars["Pizzaria Itália"].waitForExistence(timeout: UITestTimeout.standard)
+        )
+    }
+
+    @MainActor
     func testUserCanNavigateToOrderHistoryAfterCompletingOrder() {
         let app = makeCheckoutApp()
         confirmOrder(in: app)
