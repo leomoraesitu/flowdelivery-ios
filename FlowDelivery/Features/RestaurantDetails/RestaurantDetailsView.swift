@@ -17,7 +17,14 @@ struct RestaurantDetailsView: View {
             .task {
                 await viewModel.load()
             }
-            .navigationTitle("Restaurante")
+            .navigationTitle(navigationTitle)
+    }
+
+    private var navigationTitle: String {
+        guard case let .loaded(content) = viewModel.state else {
+            return "Restaurante"
+        }
+        return content.title
     }
 
     @ViewBuilder
