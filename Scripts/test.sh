@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
-SIMULATOR_NAME="${SIMULATOR_NAME:-iPhone 17}"
+SIMULATOR_NAME="${SIMULATOR_NAME:-iPhone 18 Pro Max}"
 
 if ! command -v xcrun >/dev/null 2>&1; then
     echo "❌ Dependência não encontrada: xcrun"

@@ -151,20 +151,20 @@ xcrun simctl list devices available
 To use another simulator for unit tests:
 
 ```bash
-SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/test.sh
+SIMULATOR_NAME="iPhone 17" ./Scripts/test.sh
 ```
 
 To run the complete quality gate with another simulator:
 
 ```bash
-SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/quality.sh
+SIMULATOR_NAME="iPhone 17" ./Scripts/quality.sh
 ```
 
 To run the UI tests (not part of any automatic gate, roughly 13 minutes):
 
 ```bash
 ./Scripts/ui-test.sh
-SIMULATOR_NAME="iPhone 17 Pro Max" ./Scripts/ui-test.sh
+SIMULATOR_NAME="iPhone 17" ./Scripts/ui-test.sh
 ```
 
 If `xcodebuild` reports that multiple devices matched the destination, two
@@ -210,7 +210,7 @@ The original cross-platform Flutter implementation is available at:
 
 - macOS
 - Xcode 27 or later (the project is developed with Xcode 27 and the iOS 27 SDK)
-- iOS Simulator (the scripts default to `iPhone 17`; use `SIMULATOR_NAME` to choose another)
+- iOS Simulator (the scripts default to `iPhone 18 Pro Max`; use `SIMULATOR_NAME` to choose another)
 - SwiftFormat, SwiftLint and GitHub CLI (see [Quality Tools](#quality-tools))
 
 ### Authenticate GitHub CLI

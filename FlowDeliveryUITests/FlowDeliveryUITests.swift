@@ -455,4 +455,19 @@ final class FlowDeliveryUITests: XCTestCase {
         )
         XCTAssertFalse(app.buttons["Entrar"].exists)
     }
+
+    @MainActor
+    func testCartItemExposesCombinedTitleAndPriceToVoiceOver() {
+        let app = makeCartApp()
+
+        let titleAndPrice = app.staticTexts["CartItem.TitleAndPrice"]
+        XCTAssertTrue(
+            titleAndPrice.waitForExistence(timeout: UITestTimeout.standard)
+        )
+
+        XCTAssertEqual(
+            titleAndPrice.label.normalizingSpaces,
+            "Pizza Margherita, R$ 49,90"
+        )
+    }
 }

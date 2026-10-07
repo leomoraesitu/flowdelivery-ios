@@ -40,16 +40,17 @@ struct CartItemRowView: View {
     }
 
     private var itemInformation: some View {
-        VStack(
-            alignment: .leading,
-            spacing: AppSpacing.small
-        ) {
-            Text(content.title)
-                .font(AppTypography.headline)
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text(content.title)
+                    .font(AppTypography.headline)
 
-            Text(content.unitPrice)
-                .font(AppTypography.body)
-                .foregroundStyle(.primary)
+                Text(content.unitPrice)
+                    .font(AppTypography.body)
+                    .foregroundStyle(.primary)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("CartItem.TitleAndPrice")
 
             CartQuantityControlView(
                 quantity: content.quantity,

@@ -42,7 +42,7 @@ Regras que não se negociam:
 `./Scripts/quality.sh` = format-check + lint + test. Ele **não** chama `build.sh`: `xcodebuild test` já compila o app e os targets de teste.
 
 - SwiftLint roda com `--strict` — warning derruba o gate. `line_length` 120, `function_body_length` 50.
-- Simulador padrão dos scripts: `iPhone 17`. O usado no desenvolvimento é `iPhone 18 Pro Max` (Xcode 27, iOS 27): `SIMULATOR_NAME="iPhone 18 Pro Max" ./Scripts/...`.
+- Simulador padrão dos scripts: `iPhone 18 Pro Max` (Xcode 27, iOS 27) — é o mesmo usado no desenvolvimento. Para outro simulador: `SIMULATOR_NAME="iPhone 17" ./Scripts/...`.
 - Se o `xcodebuild` reclamar de "multiple devices matched", há dois simuladores com o mesmo nome e SO: `xcrun simctl list devices available` e `xcrun simctl delete <UDID>` no que não é usado.
 - **Nunca reintroduzir `CODE_SIGNING_ALLOWED=NO`** nos scripts de simulador. Sem assinatura o app não recebe o entitlement `application-identifier` e toda operação de Keychain falha com `errSecMissingEntitlement (-34018)`. Builds de simulador usam assinatura ad-hoc e não exigem credenciais no CI.
 
@@ -71,6 +71,7 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 - Queries ancoradas no container (`app.navigationBars[...]`, `app.sheets[...]`): labels se repetem entre toolbar e diálogo.
 - `confirmationDialog` é apresentado como popover e **o botão `role: .cancel` não é renderizado** — o descarte é `dismissPopoverDialog(in:)`, via `PopoverDismissRegion`.
 - Depois de mexer em helpers, rodar a suíte **duas vezes seguidas**: a segunda prova que não vazou estado entre execuções.
+- `.accessibilityElement(children: .combine)` funde os labels dos filhos num elemento novo (ex.: `"Pizza Margherita, R$ 49,90"`), mas **não** esconde os filhos originais da árvore que o XCUITest consulta — só o `.ignore` faz isso. Testar "o filho não existe mais" (`XCTAssertFalse(...exists)`) nunca fica verde. Teste o elemento combinado pelo `accessibilityIdentifier` dele (ver `CartItem.TitleAndPrice` em `CartItemRowView`), nunca pela ausência dos labels antigos.
 
 ## Segurança
 
@@ -89,9 +90,9 @@ Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.
 - O alerta de falha de logout (`RootView`) não tem UI test: exigiria um argumento de launch com store que falha ao apagar. Hoje é coberto só por testes unitários do `RootViewModel`.
 - Se o backend devolver sessão renovada em `restoreSession`, ela ainda não é regravada no Keychain (o fake devolve a mesma).
 - `AppStartupViewModel.start()` trata qualquer erro de `authService.restoreSession()` como "sem sessão" (cai no login). Hoje isso só pode vir do `KeychainSessionStore` fake, então a leitura "erro real de Keychain" é sempre verdadeira. Quando `AuthRepository.restoreSession` virar uma chamada de rede de verdade, um erro de rede vai cair no mesmo `catch` silencioso, sem distinguir "sem sessão" de "falha ao validar a sessão" — não dá pra tipar esse erro antes do backend existir.
-- `CartItemRowView` ainda expõe título e preço como dois elementos de acessibilidade separados para o VoiceOver (um por stop de swipe em vez de um só). Virou melhoria de UX, não de `hitRegion`: a exceção de `hitRegion` em `testCartPassesAccessibilityAudit` foi removida na aula 181 após prova de mutação mostrar que o audit não sinaliza mais esses elementos na toolchain atual (Xcode 27/iOS 27) — o comportamento de hit-testing de `Text` dentro de `List` mudou desde que a exceção foi criada. Se um dia quiserem agrupar os dois com `.accessibilityElement(children: .combine)`, precisa de um teste próprio que afirme o label combinado, não do audit de `hitRegion`.
 - Os `#Preview` instanciam `AppContainer()` real, portanto constroem um `KeychainSessionStore` real (hoje inofensivo, pois nenhum preview autentica).
 - A suíte de UI (~13 min) não roda em nenhum gate automático.
+- `nightly-quality-gate.yml` fixa `SIMULATOR_NAME: iPhone 17`, diferente do default local dos scripts (`iPhone 18 Pro Max`). A imagem `macos-26` do GitHub Actions ainda roda Xcode 26.5 (uma versão atrás do Xcode 27 usado localmente) e seu catálogo de simuladores pré-instalados vai só até `iPhone 17 Pro Max`/`iPhone 17e` — não tem `iPhone 18 Pro Max`. Medido consultando `actions/runner-images` (readme da imagem `macos-26`) em 2026-10-07. Reconciliar quando a imagem do runner atualizar para uma versão com Xcode 27.
 
 ## Estilo das respostas
 

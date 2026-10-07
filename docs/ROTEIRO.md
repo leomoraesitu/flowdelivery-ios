@@ -4,10 +4,8 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 183
-- Próxima: outra dívida da lista (UI suite sem gate automático; agrupar
-  CartItemRowView num elemento combinado para VoiceOver, com teste próprio —
-  ver dívidas)
+- Última aula concluída: 184
+- Próxima: outra dívida da lista (UI suite sem gate automático — ver dívidas)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min, manual).
 
@@ -39,6 +37,17 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   outro caminho nas aulas 178–180). UI test `testRestaurantDetailsShowsRestaurantNameAsTitle`
   adicionado; prova de mutação feita (título fixo fez o teste falhar, confirmando que ele
   exerce o fix) e revertida.
+- 184: `CartItemRowView` agrupa título e preço unitário num único elemento de
+  acessibilidade (`.accessibilityElement(children: .combine)` + `accessibilityIdentifier
+  ("CartItem.TitleAndPrice")`), fechando a dívida de VoiceOver ouvir duas paradas de swipe
+  para uma informação só. Medição no meio do caminho: a hipótese inicial de teste
+  (`XCTAssertFalse` na ausência dos labels antigos) nunca ficaria verde — `.combine` funde
+  os labels no elemento novo mas não esconde os filhos da árvore que o XCUITest consulta
+  (isso é `.ignore`, não `.combine`); a árvore de depuração (`app.debugDescription`) mostrou
+  os `Text` originais ainda presentes como descendentes do elemento combinado. Teste corrigido
+  para afirmar o elemento combinado pelo `accessibilityIdentifier`. `testCartPassesAccessibilityAudit`
+  não precisou de ajuste: a auditoria continua endereçando os `Text` originais, que seguem
+  existindo. Prova de mutação feita e revertida.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -53,12 +62,14 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - `AppStartupViewModel` depende de `AuthService`, nunca do `AppContainer` inteiro —
   ViewModels falam só com o serviço. Erro real de Keychain em `restoreSession()`
   cai no login, não num estado de falha sem consumidor na UI.
+- `.accessibilityElement(children: .combine)` não esconde os filhos originais da árvore
+  consultada pelo XCUITest — só funde os labels num elemento novo. Testes de elementos
+  combinados afirmam o elemento novo pelo `accessibilityIdentifier`, nunca a ausência dos
+  labels antigos.
 
 ## Dívidas
-Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas"). Candidatas às próximas
-aulas: UI suite sem gate automático, agrupar título+preço do `CartItemRowView` num elemento de
-acessibilidade combinado (melhoria de VoiceOver, não de hitRegion — precisa de teste próprio que
-afirme o label combinado).
+Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas"). Candidata à próxima
+aula: UI suite sem gate automático.
 
 ## Regras de execução
 - O professor não executa nada sem o aluno pedir; entrega comandos e explica.
