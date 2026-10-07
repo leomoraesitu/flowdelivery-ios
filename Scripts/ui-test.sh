@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
-SIMULATOR_NAME="${SIMULATOR_NAME:-iPhone 17}"
+SIMULATOR_NAME="${SIMULATOR_NAME:-iPhone 18 Pro Max}"
 DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-${TMPDIR:-/tmp}/FlowDeliveryDerivedData}"
 
 mkdir -p "$DERIVED_DATA_PATH"
