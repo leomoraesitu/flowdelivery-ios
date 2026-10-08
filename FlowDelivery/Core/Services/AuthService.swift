@@ -43,6 +43,8 @@ final class AuthService {
             try sessionCredentialStore.delete()
             return
         }
+        // Persist before publishing: the backend may have renewed the session.
+        try sessionCredentialStore.save(restored)
         sessionStore.login(with: restored)
     }
 }
