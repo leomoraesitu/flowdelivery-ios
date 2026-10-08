@@ -62,9 +62,10 @@ Regras que não se negociam:
 
 Testes de Keychain usam `service` único por teste (UUID) e `defer { try? store.delete() }`: a suíte roda em paralelo e o Keychain do simulador sobrevive ao processo.
 
-**UI tests** (XCTest) — rodam **apenas** por `./Scripts/ui-test.sh`; `test.sh` os pula com `-skip-testing`.
+**UI tests** (XCTest) — rodam por `./Scripts/ui-test.sh` (local ou nightly); `test.sh` os pula com `-skip-testing`.
 
-- Existe **um único `XCUIApplication()`** no target, dentro de `launchApp` (`extension XCTestCase`), que injeta `-ui-testing-in-memory-session-store`. Confira com `grep -rn "XCUIApplication()" FlowDeliveryUITests/` — mais de um resultado é bug.
+- Existe **um único `XCUIApplication()`** no target, dentro de `launchApp` (`extension XCTestCase`), que injeta `-ui-testing-in-memory-session-store` e `UITestLaunchArgument.localization` (`-AppleLanguages (pt-BR)` / `-AppleLocale pt_BR`). Confira com `grep -rn "XCUIApplication()" FlowDeliveryUITests/` — mais de um resultado é bug. **Não remover a fixação de locale**: sem ela, moeda e layout de teclado variam com o idioma herdado pelo host no momento em que o simulador é criado (pt-BR num Mac configurado em português, `en-US` no runner do GitHub Actions) — já causou 30 falhas num nightly real antes de ser medido e corrigido.
+- Fechar o teclado do endereço de entrega (`CheckoutView`) é `dismissKeyboard(in:)`, que toca no botão "Concluído" da barra de acessório do teclado (`ToolbarItemGroup(placement: .keyboard)`, ligado ao `@FocusState` existente). **Nunca** `typeText("...\n")` nem `app.keyboards.buttons["Return"].tap()`: o `TextField` é multilinha (`axis: .vertical`), então Return insere quebra de linha em vez de dar dismiss, e tocar fora do campo não resigna o foco de forma confiável (medido em runtime de simulador mais antigo: `app.keyboards.count` continuava `1` e o campo seguia "Keyboard Focused" depois do toque).
 - `makeHomeApp` é o único helper que faz login. Não repetir o toque em "Entrar" nos helpers que o consomem. `openSignOutConfirmation(in:)` abre o menu "Conta" e o diálogo de saída.
 - Esperas por `UITestTimeout.standard` (15s). Timeout curto não acelera nada e gera falso-negativo sob carga.
 - Comparações com texto formatado pelo sistema usam `.normalizingSpaces`: moeda pt-BR traz espaço não separável (U+00A0), e chaves localizadas interpoladas trazem isolados bidi (U+2068/U+2069). Vale também dentro do closure de `performAccessibilityAudit`.
