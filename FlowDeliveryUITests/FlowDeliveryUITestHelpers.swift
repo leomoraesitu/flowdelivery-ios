@@ -119,8 +119,7 @@ extension XCTestCase {
             addressField.waitForExistence(timeout: UITestTimeout.standard)
         )
         addressField.tap()
-        addressField.typeText("Avenida Paulista, 1000")
-        app.keyboards.buttons["Return"].tap()
+        addressField.typeText("Avenida Paulista, 1000\n")
 
         let paymentPicker = app.buttons[
             "Forma de pagamento, Selecione"

@@ -352,9 +352,13 @@ final class FlowDeliveryUITests: XCTestCase {
             )
         )
 
+        // Dynamic Type: "Itens" é o header da Section de itens; em telas
+        // mais estreitas (ex.: iPhone 17) ele não reflowa nos tamanhos maiores,
+        // igual aos textos de célula já excepcionados em testCartPassesAccessibilityAudit.
         try app.performAccessibilityAudit { issue in
             issue.auditType == .dynamicType
                 && [
+                    "Itens",
                     "Pizza Margherita",
                     "2 × R$ 49,90",
                     "R$ 99,80"
