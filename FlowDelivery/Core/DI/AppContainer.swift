@@ -14,6 +14,8 @@ private enum UITestLaunchArgument {
         "-ui-testing-order-history-fixture-repository"
     static let inMemorySessionStore =
         "-ui-testing-in-memory-session-store"
+    static let failingDeleteSessionStore =
+        "-ui-testing-failing-delete-session-store"
 }
 
 @MainActor
@@ -59,13 +61,21 @@ final class AppContainer {
     }
 
     private static func makeCredentialStore() -> SessionCredentialStore {
-        if ProcessInfo.processInfo.arguments.contains(
+        let arguments = ProcessInfo.processInfo.arguments
+
+        if arguments.contains(
+            UITestLaunchArgument.failingDeleteSessionStore
+        ) {
+            return FailingDeleteSessionCredentialStore()
+        }
+
+        if arguments.contains(
             UITestLaunchArgument.inMemorySessionStore
         ) {
-            FakeSessionCredentialStore()
-        } else {
-            KeychainSessionStore()
+            return FakeSessionCredentialStore()
         }
+
+        return KeychainSessionStore()
     }
 
     private static func makeOrderRepository() -> OrderRepository {

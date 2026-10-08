@@ -3,7 +3,8 @@ import XCTest
 enum UITestLaunchArgument {
     static let inMemorySessionStore =
         "-ui-testing-in-memory-session-store"
-
+    static let failingDeleteSessionStore =
+        "-ui-testing-failing-delete-session-store"
     /// Fixa idioma e região do simulador independentemente do host (Mac local
     /// vs. runner de CI): sem isso, formatação de moeda e layout de teclado
     /// variam com o locale herdado pelo simulador na criação.
