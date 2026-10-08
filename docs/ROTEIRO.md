@@ -51,21 +51,27 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   existindo. Prova de mutação feita e revertida.
 - 185: `nightly-quality-gate.yml` passou a rodar `./Scripts/ui-test.sh` depois de `quality.sh`
   (mesmo job, `DERIVED_DATA_PATH` reaproveitado; `timeout-minutes` 30 → 45), fechando a dívida
-  "suíte de UI sem gate automático". Medição no meio do caminho: rodar a suíte localmente contra
-  `SIMULATOR_NAME="iPhone 17"` (o destino do nightly) reproduziu 12 falhas que não existem em
-  `iPhone 18 Pro Max`. Investigação (console log + `xcresulttool`) mostrou duas causas distintas,
-  nenhuma delas regressão de produção:
-  (1) 11 falhas eram `app.keyboards.buttons["Return"].tap()` (em `configureCheckout` e duplicado
-  em `CheckoutFlowUITests`) — a ação de acessibilidade "scroll to visible" que o XCUITest usa
-  antes de tocar no elemento falha nesse simulador porque o frame computado da tecla Return fica
-  fora da área visível da janela (`Computed hit point {-1, -1}`); troquei por
-  `addressField.typeText("...\n")`, que envia o Return pelo próprio input de texto e não depende
-  de localizar/tocar a tecla do teclado do sistema — mais robusto a qualquer tamanho de tela.
-  (2) 1 falha era `testOrderDetailsPassesAccessibilityAudit`: o header de Section "Itens" não
-  reflowa nos tamanhos maiores de Dynamic Type numa tela mais estreita; adicionado à mesma lista
-  de exceções documentadas já usada em `testCartPassesAccessibilityAudit`. Suíte completa (39
-  testes) rodada duas vezes seguidas em `iPhone 17`, depois confirmada sem regressão em
-  `iPhone 18 Pro Max`.
+  "suíte de UI sem gate automático" (PR #187). Dois ciclos de medição, o primeiro incompleto:
+  (1) Localmente contra `SIMULATOR_NAME="iPhone 17"` (Xcode 27, o mesmo instalado na máquina),
+  12 falhas não reproduzidas em `iPhone 18 Pro Max`: 11 eram `app.keyboards.buttons["Return"].tap()`
+  falhando a ação de acessibilidade "scroll to visible" (frame da tecla fora da janela visível
+  nesse simulador menor) e 1 era Dynamic Type no header "Itens" de `OrderDetailsView` (não
+  reflowa em tela mais estreita — adicionado à lista de exceções já usada em
+  `testCartPassesAccessibilityAudit`). Troquei o toque na tecla por `typeText("...\n")`.
+  (2) O primeiro `push` rodou o nightly de verdade no GitHub Actions (`DEVELOPER_DIR` apontando
+  para Xcode 26.5 — mais antigo que o 27 local) e **30 de 39 testes falharam**, expondo duas
+  causas que a medição local não cobria: nenhum `.xcscheme` do projeto está versionado, então
+  nada fixa idioma/região do simulador — o runner nasce em `en-US` (moeda `"R$99.80"` em vez de
+  `"R$ 99,80"`, tecla `"return"` em vez de `"retorno"`); e, mais grave, `typeText("...\n")` não
+  resigna o foco do `TextField` multilinha (`axis: .vertical`) de `CheckoutView` no runtime do
+  Xcode 26.5 — medido reproduzindo o mesmo runtime localmente via destino `iPhone 17 Pro`
+  (`app.keyboards.count` continuava `1` e o `TextField` seguia "Keyboard Focused" no
+  `app.debugDescription`, mesmo depois de tocar em outro elemento da tela). Correção: `launchApp`
+  passou a fixar `-AppleLanguages (pt-BR)` / `-AppleLocale pt_BR` nos `launchArguments`; e
+  `CheckoutView` ganhou um botão "Concluído" (`ToolbarItemGroup(placement: .keyboard)`) ligado ao
+  `@FocusState` existente, porque **tocar fora de um `TextField` focado não garante dismiss** —
+  é preciso um binding explícito. Suíte completa (39 testes) verde em `iPhone 17` (Xcode 27, duas
+  vezes seguidas), `iPhone 17 Pro` (Xcode 26.5, duas vezes seguidas) e `iPhone 18 Pro Max`.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -84,13 +90,21 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   consultada pelo XCUITest — só funde os labels num elemento novo. Testes de elementos
   combinados afirmam o elemento novo pelo `accessibilityIdentifier`, nunca a ausência dos
   labels antigos.
-- Submeter um `TextField` em UI tests usa `typeText("...\n")`, nunca
-  `app.keyboards.buttons["Return"].tap()`: esse tap depende de uma ação de acessibilidade de
-  "scroll to visible" que falha em simuladores de tela menor (medido em `iPhone 17`) porque o
-  frame da tecla fica fora da janela visível.
 - Exceções de Dynamic Type em testes de auditoria de acessibilidade (`dynamicTypeExceptions`)
   documentam texto/label que não reflowa em telas mais estreitas ou tamanhos maiores — não é
   regressão de produção a corrigir, é característica conhecida do header de Section do SwiftUI.
+- UI tests fixam idioma/região do simulador em `launchApp`
+  (`UITestLaunchArgument.localization` = `-AppleLanguages (pt-BR)` / `-AppleLocale pt_BR`):
+  sem isso, moeda e layout de teclado variam com o locale herdado pelo host no momento em que o
+  simulador é criado (pt-BR no Mac local, en-US no runner do GitHub Actions) — nunca depender do
+  locale do host.
+- Fechar o teclado de um `TextField` multilinha (`axis: .vertical`) usa o botão "Concluído" da
+  barra de acessório do teclado (`ToolbarItemGroup(placement: .keyboard)` ligado ao
+  `@FocusState`), nunca `typeText("...\n")` nem `app.keyboards.buttons["Return"].tap()`: Return
+  insere quebra de linha num campo multilinha, e tocar fora do campo **não garante** resignar o
+  foco (medido: `app.keyboards.count` permanecia `1` e o campo continuava "Keyboard Focused" após
+  o toque, no runtime do Xcode 26.5). Só um binding explícito de `@FocusState` é confiável
+  independente de runtime/tamanho de tela.
 
 ## Dívidas
 Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas").

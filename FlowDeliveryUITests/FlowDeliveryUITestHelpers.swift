@@ -3,6 +3,14 @@ import XCTest
 enum UITestLaunchArgument {
     static let inMemorySessionStore =
         "-ui-testing-in-memory-session-store"
+
+    /// Fixa idioma e região do simulador independentemente do host (Mac local
+    /// vs. runner de CI): sem isso, formatação de moeda e layout de teclado
+    /// variam com o locale herdado pelo simulador na criação.
+    static let localization = [
+        "-AppleLanguages", "(pt-BR)",
+        "-AppleLocale", "pt_BR"
+    ]
 }
 
 enum UITestTimeout {
@@ -16,9 +24,9 @@ extension XCTestCase {
     ) -> XCUIApplication {
         let app = XCUIApplication()
 
-        app.launchArguments = launchArguments + [
-            UITestLaunchArgument.inMemorySessionStore
-        ]
+        app.launchArguments = launchArguments
+            + [UITestLaunchArgument.inMemorySessionStore]
+            + UITestLaunchArgument.localization
 
         app.launch()
 
@@ -119,7 +127,8 @@ extension XCTestCase {
             addressField.waitForExistence(timeout: UITestTimeout.standard)
         )
         addressField.tap()
-        addressField.typeText("Avenida Paulista, 1000\n")
+        addressField.typeText("Avenida Paulista, 1000")
+        dismissKeyboard(in: app)
 
         let paymentPicker = app.buttons[
             "Forma de pagamento, Selecione"
@@ -182,6 +191,25 @@ extension XCTestCase {
                 "OrderHistory.Row."
             )
         )
+    }
+
+    /// Fecha o teclado tocando no botão "Concluído" da barra de acessório.
+    ///
+    /// O `TextField` de endereço é multilinha (`axis: .vertical`): Return
+    /// (via `typeText("\n")` ou tocando a tecla do teclado) insere quebra de
+    /// linha em vez de dar dismiss, e tocar fora do campo não resigna o foco
+    /// de forma confiável (medido: `app.keyboards.count` continuava `1` e o
+    /// `TextField` seguia "Keyboard Focused" mesmo após o toque). O botão
+    /// "Concluído" (`ToolbarItemPlacement.keyboard`, ligado ao
+    /// `@FocusState` em `CheckoutView`) é o único mecanismo que garante o
+    /// dismiss, independente de runtime do simulador.
+    @MainActor
+    func dismissKeyboard(in app: XCUIApplication) {
+        let doneButton = app.buttons["Concluído"]
+        XCTAssertTrue(
+            doneButton.waitForExistence(timeout: UITestTimeout.standard)
+        )
+        doneButton.tap()
     }
 
     /// Descarta um diálogo apresentado como popover.

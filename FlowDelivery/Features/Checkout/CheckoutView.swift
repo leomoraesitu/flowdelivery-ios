@@ -69,6 +69,15 @@ struct CheckoutView: View {
                             .textInputAutocapitalization(.words)
                             .lineLimit(2 ... 3)
                             .focused($isDeliveryAddressFocused)
+                            .toolbar {
+                                ToolbarItemGroup(placement: .keyboard) {
+                                    Spacer()
+
+                                    Button("Concluído") {
+                                        isDeliveryAddressFocused = false
+                                    }
+                                }
+                            }
                         } header: {
                             Text("Endereço de entrega")
                                 .foregroundStyle(.primary)
