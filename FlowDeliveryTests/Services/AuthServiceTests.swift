@@ -16,6 +16,20 @@ struct AuthServiceTests {
         }
     }
 
+    private struct RenewingAuthRepository: AuthRepository {
+        let renewed: UserSession
+
+        func login() -> UserSession? {
+            nil
+        }
+
+        func logout() {}
+
+        func restoreSession(_ session: UserSession) -> UserSession? {
+            renewed
+        }
+    }
+
     private func makeService(
         repository: AuthRepository = FakeAuthRepository(),
         credentialStore: SessionCredentialStore = FakeSessionCredentialStore()
@@ -105,5 +119,21 @@ struct AuthServiceTests {
             try service.logout()
         }
         #expect(sessionStore.session == nil)
+    }
+
+    @Test
+    func restoreSessionPersistsTheSessionReturnedByTheBackend() throws {
+        let stored = UserSession(userID: UUID(), accessToken: "stale")
+        let renewed = UserSession(userID: stored.userID, accessToken: "renewed")
+        let credentialStore = FakeSessionCredentialStore(initialSession: stored)
+        let (service, sessionStore) = makeService(
+            repository: RenewingAuthRepository(renewed: renewed),
+            credentialStore: credentialStore
+        )
+
+        try service.restoreSession()
+
+        #expect(sessionStore.session == renewed)
+        #expect(try credentialStore.load() == renewed)
     }
 }
