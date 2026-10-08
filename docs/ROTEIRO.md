@@ -4,7 +4,7 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 185
+- Última aula concluída: 186
 - Próxima: a definir (ver dívidas em `CLAUDE.md`)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min). Desde a aula 185, `ui-test.sh` também roda automaticamente no
@@ -72,6 +72,15 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   `@FocusState` existente, porque **tocar fora de um `TextField` focado não garante dismiss** —
   é preciso um binding explícito. Suíte completa (39 testes) verde em `iPhone 17` (Xcode 27, duas
   vezes seguidas), `iPhone 17 Pro` (Xcode 26.5, duas vezes seguidas) e `iPhone 18 Pro Max`.
+- 186: `AuthService.restoreSession()` passou a chamar `sessionCredentialStore.save(restored)`
+  antes de `sessionStore.login(with: restored)`, espelhando a ordem já usada em `login()`
+  ("persistir antes de publicar"). Fecha a dívida "sessão renovada pelo backend não era regravada
+  no Keychain": antes, se `AuthRepository.restoreSession` devolvesse uma sessão diferente da
+  armazenada (ex.: token renovado), o `SessionStore` em memória ficava à frente do Keychain, e um
+  cold start seguinte voltaria a carregar a versão antiga. Teste novo
+  (`restoreSessionPersistsTheSessionReturnedByTheBackend`) usa um double `RenewingAuthRepository`
+  que devolve uma sessão com `accessToken` diferente do armazenado, mantendo o `userID` estável.
+  Prova de mutação feita (comentar o `save` fez o teste falhar) e revertida. (PR a abrir)
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -105,6 +114,9 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   foco (medido: `app.keyboards.count` permanecia `1` e o campo continuava "Keyboard Focused" após
   o toque, no runtime do Xcode 26.5). Só um binding explícito de `@FocusState` é confiável
   independente de runtime/tamanho de tela.
+- `AuthService.restoreSession()` sempre persiste a sessão devolvida pelo repositório antes de
+  publicá-la no `SessionStore`, na mesma ordem de `login()`: o backend pode renovar o token, e o
+  Keychain não pode ficar atrás do estado em memória.
 
 ## Dívidas
 Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas").
