@@ -4,7 +4,7 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 186
+- Última aula concluída: 187
 - Próxima: a definir (ver dívidas em `CLAUDE.md`)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min). Desde a aula 185, `ui-test.sh` também roda automaticamente no
@@ -81,6 +81,16 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   (`restoreSessionPersistsTheSessionReturnedByTheBackend`) usa um double `RenewingAuthRepository`
   que devolve uma sessão com `accessToken` diferente do armazenado, mantendo o `userID` estável.
   Prova de mutação feita (comentar o `save` fez o teste falhar) e revertida. (PR #189)
+- 187: UI test para o alerta de falha de logout (`RootView`). Novo tipo de produção
+  `FailingDeleteSessionCredentialStore` (delega `load`/`save` a um
+  `FakeSessionCredentialStore` interno; só `delete()` falha), ativado pelo launch
+  argument `-ui-testing-failing-delete-session-store` em `AppContainer.makeCredentialStore()`,
+  com prioridade sobre `-ui-testing-in-memory-session-store` (presente em todo UI test
+  via `launchApp`). Fecha a dívida "alerta de falha de logout sem UI test" — o double
+  de testes unitários (`FailingDeleteStore`) não é alcançável pelo binário que o UI
+  test lança. Prova de mutação feita (invertendo a prioridade dos `if` em
+  `makeCredentialStore()`, o teste falha) e revertida. Suíte completa (40 testes)
+  verde em `iPhone 18 Pro Max`, duas vezes seguidas.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.

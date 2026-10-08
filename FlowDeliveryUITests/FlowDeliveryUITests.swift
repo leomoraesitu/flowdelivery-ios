@@ -474,4 +474,28 @@ final class FlowDeliveryUITests: XCTestCase {
             "Pizza Margherita, R$ 49,90"
         )
     }
+
+    @MainActor
+    func testUserSeesSignOutErrorWhenCredentialRemovalFails() {
+        let app = makeHomeApp(
+            launchArguments: [
+                UITestLaunchArgument.failingDeleteSessionStore
+            ]
+        )
+        openSignOutConfirmation(in: app)
+
+        let confirm = app.sheets["Sair da conta?"].buttons["Sair da conta"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: UITestTimeout.standard))
+        confirm.tap()
+
+        XCTAssertTrue(
+            app.buttons["Entrar"].waitForExistence(timeout: UITestTimeout.standard)
+        )
+
+        let alert = app.alerts["Não foi possível concluir a saída"]
+        XCTAssertTrue(alert.waitForExistence(timeout: UITestTimeout.standard))
+
+        alert.buttons["OK"].tap()
+        XCTAssertTrue(alert.waitForNonExistence(timeout: UITestTimeout.standard))
+    }
 }
