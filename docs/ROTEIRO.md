@@ -80,7 +80,7 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   cold start seguinte voltaria a carregar a versão antiga. Teste novo
   (`restoreSessionPersistsTheSessionReturnedByTheBackend`) usa um double `RenewingAuthRepository`
   que devolve uma sessão com `accessToken` diferente do armazenado, mantendo o `userID` estável.
-  Prova de mutação feita (comentar o `save` fez o teste falhar) e revertida. (PR a abrir)
+  Prova de mutação feita (comentar o `save` fez o teste falhar) e revertida. (PR #189)
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
