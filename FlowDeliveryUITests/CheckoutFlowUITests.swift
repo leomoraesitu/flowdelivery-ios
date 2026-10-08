@@ -294,7 +294,8 @@ extension FlowDeliveryUITests {
             addressField.waitForExistence(timeout: UITestTimeout.standard)
         )
         addressField.tap()
-        addressField.typeText("Avenida Paulista, 1000\n")
+        addressField.typeText("Avenida Paulista, 1000")
+        dismissKeyboard(in: app)
 
         let confirmButton = app.buttons["Confirmar pedido"]
         XCTAssertTrue(
@@ -341,7 +342,8 @@ extension FlowDeliveryUITests {
             "Rua, número e complemento"
         ]
         addressField.tap()
-        addressField.typeText("Avenida Paulista, 1000\n")
+        addressField.typeText("Avenida Paulista, 1000")
+        dismissKeyboard(in: app)
 
         XCTAssertTrue(
             confirmButton.wait(
