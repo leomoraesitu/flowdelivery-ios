@@ -160,7 +160,7 @@ To run the complete quality gate with another simulator:
 SIMULATOR_NAME="iPhone 17" ./Scripts/quality.sh
 ```
 
-To run the UI tests (not part of any automatic gate, roughly 13 minutes):
+To run the UI tests (roughly 13 minutes; also runs nightly, see "CI coverage" below):
 
 ```bash
 ./Scripts/ui-test.sh
@@ -195,9 +195,7 @@ GitHub Actions (Nightly Quality Gate - scheduled and manual):
 - format check
 - lint
 - unit tests
-
-Not automated:
-- UI tests (run manually with ./Scripts/ui-test.sh)
+- UI tests
 ```
 
 ## Related Project

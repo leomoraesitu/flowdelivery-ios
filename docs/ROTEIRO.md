@@ -4,10 +4,11 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 184
-- Próxima: outra dívida da lista (UI suite sem gate automático — ver dívidas)
+- Última aula concluída: 185
+- Próxima: a definir (ver dívidas em `CLAUDE.md`)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
-  `ui-test.sh` (~13 min, manual).
+  `ui-test.sh` (~13 min). Desde a aula 185, `ui-test.sh` também roda automaticamente no
+  `nightly-quality-gate.yml` (cron diário + `workflow_dispatch`), contra `iPhone 17`.
 
 ## Histórico
 - 176: token no Keychain
@@ -48,6 +49,23 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   para afirmar o elemento combinado pelo `accessibilityIdentifier`. `testCartPassesAccessibilityAudit`
   não precisou de ajuste: a auditoria continua endereçando os `Text` originais, que seguem
   existindo. Prova de mutação feita e revertida.
+- 185: `nightly-quality-gate.yml` passou a rodar `./Scripts/ui-test.sh` depois de `quality.sh`
+  (mesmo job, `DERIVED_DATA_PATH` reaproveitado; `timeout-minutes` 30 → 45), fechando a dívida
+  "suíte de UI sem gate automático". Medição no meio do caminho: rodar a suíte localmente contra
+  `SIMULATOR_NAME="iPhone 17"` (o destino do nightly) reproduziu 12 falhas que não existem em
+  `iPhone 18 Pro Max`. Investigação (console log + `xcresulttool`) mostrou duas causas distintas,
+  nenhuma delas regressão de produção:
+  (1) 11 falhas eram `app.keyboards.buttons["Return"].tap()` (em `configureCheckout` e duplicado
+  em `CheckoutFlowUITests`) — a ação de acessibilidade "scroll to visible" que o XCUITest usa
+  antes de tocar no elemento falha nesse simulador porque o frame computado da tecla Return fica
+  fora da área visível da janela (`Computed hit point {-1, -1}`); troquei por
+  `addressField.typeText("...\n")`, que envia o Return pelo próprio input de texto e não depende
+  de localizar/tocar a tecla do teclado do sistema — mais robusto a qualquer tamanho de tela.
+  (2) 1 falha era `testOrderDetailsPassesAccessibilityAudit`: o header de Section "Itens" não
+  reflowa nos tamanhos maiores de Dynamic Type numa tela mais estreita; adicionado à mesma lista
+  de exceções documentadas já usada em `testCartPassesAccessibilityAudit`. Suíte completa (39
+  testes) rodada duas vezes seguidas em `iPhone 17`, depois confirmada sem regressão em
+  `iPhone 18 Pro Max`.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -66,10 +84,16 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   consultada pelo XCUITest — só funde os labels num elemento novo. Testes de elementos
   combinados afirmam o elemento novo pelo `accessibilityIdentifier`, nunca a ausência dos
   labels antigos.
+- Submeter um `TextField` em UI tests usa `typeText("...\n")`, nunca
+  `app.keyboards.buttons["Return"].tap()`: esse tap depende de uma ação de acessibilidade de
+  "scroll to visible" que falha em simuladores de tela menor (medido em `iPhone 17`) porque o
+  frame da tecla fica fora da janela visível.
+- Exceções de Dynamic Type em testes de auditoria de acessibilidade (`dynamicTypeExceptions`)
+  documentam texto/label que não reflowa em telas mais estreitas ou tamanhos maiores — não é
+  regressão de produção a corrigir, é característica conhecida do header de Section do SwiftUI.
 
 ## Dívidas
-Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas"). Candidata à próxima
-aula: UI suite sem gate automático.
+Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas").
 
 ## Regras de execução
 - O professor não executa nada sem o aluno pedir; entrega comandos e explica.
