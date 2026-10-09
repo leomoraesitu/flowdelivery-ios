@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-private enum UITestLaunchArgument {
+private nonisolated enum UITestLaunchArgument {
     static let failingOrderRepository =
         "-ui-testing-failing-order-repository"
     static let failOnceOrderRepository =
@@ -29,11 +29,10 @@ final class AppContainer {
     let restaurantRepository: RestaurantRepository
     let orderRepository: OrderRepository
 
-    init() {
+    init(credentialStore: SessionCredentialStore = AppContainer.makeCredentialStore()) {
         let sessionStore = SessionStore()
         let cartStore = CartStore()
         let authRepository = FakeAuthRepository()
-        let credentialStore = Self.makeCredentialStore()
         let restaurantRepository = FakeRestaurantRepository()
         let orderRepository = Self.makeOrderRepository()
 
@@ -60,7 +59,7 @@ final class AppContainer {
         )
     }
 
-    private static func makeCredentialStore() -> SessionCredentialStore {
+    private nonisolated static func makeCredentialStore() -> SessionCredentialStore {
         let arguments = ProcessInfo.processInfo.arguments
 
         if arguments.contains(
