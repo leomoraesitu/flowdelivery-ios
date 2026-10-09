@@ -128,7 +128,7 @@ extension HomeViewModel.HomeError {
 }
 
 #Preview {
-    let container = AppContainer()
+    let container = AppContainer(credentialStore: FakeSessionCredentialStore())
     HomeView(
         viewModel: HomeViewModel(
             repository: FakeRestaurantRepository()
@@ -138,7 +138,7 @@ extension HomeViewModel.HomeError {
 }
 
 #Preview("Empty") {
-    let container = AppContainer()
+    let container = AppContainer(credentialStore: FakeSessionCredentialStore())
     let viewModel = HomeViewModel(
         repository: EmptyRestaurantRepository()
     )
@@ -150,7 +150,7 @@ extension HomeViewModel.HomeError {
 }
 
 #Preview("Error") {
-    let container = AppContainer()
+    let container = AppContainer(credentialStore: FakeSessionCredentialStore())
     let viewModel = HomeViewModel(
         repository: FailingRestaurantRepository()
     )
