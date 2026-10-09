@@ -4,7 +4,7 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 187
+- Última aula concluída: 188
 - Próxima: a definir (ver dívidas em `CLAUDE.md`)
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min). Desde a aula 185, `ui-test.sh` também roda automaticamente no
@@ -91,6 +91,31 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   test lança. Prova de mutação feita (invertendo a prioridade dos `if` em
   `makeCredentialStore()`, o teste falha) e revertida. Suíte completa (40 testes)
   verde em `iPhone 18 Pro Max`, duas vezes seguidas.
+- 188: `AppContainer.init` passou a receber `credentialStore: SessionCredentialStore`
+  por parâmetro (default `Self.makeCredentialStore()`), fechando a dívida
+  "`#Preview` instanciam `AppContainer()` real e tocam o Keychain real". Os três
+  `#Preview` de `HomeView` agora passam `FakeSessionCredentialStore()` explicitamente.
+  Medição no meio do caminho: o primeiro valor-default proposto (`Self.makeCredentialStore()`)
+  não compilou — dois erros reais do compilador: `Self` não pode ser referenciado numa
+  expressão de valor-default (só o nome concreto do tipo pode), e o método estático,
+  herdando `@MainActor` da classe, não pode ser chamado nesse contexto (que é sempre
+  `nonisolated`, por não existir instância ainda). Corrigido com `AppContainer.makeCredentialStore()`
+  no default e `nonisolated` no método; isso expôs mais dois erros, porque o
+  `enum UITestLaunchArgument` (só constantes `String`) também herdava `@MainActor` por
+  inferência de isolamento padrão do módulo — resolvido marcando o `enum` inteiro
+  `nonisolated`. Novo teste `AppContainerTests.initUsesTheInjectedCredentialStore()`
+  prova que o parâmetro chega até o `AuthService` interno (login grava na store injetada).
+  Prova de mutação feita substituindo a store usada internamente por uma segunda instância
+  de `FakeSessionCredentialStore` (não pelo Keychain real, para não gravar nada fora do
+  processo de teste) e revertida. `./Scripts/dev-flow.sh check` expôs mais uma coisa: o
+  default do SwiftLint (`modifier_order`) ordena `isolation` (nonisolated/isolated) antes
+  do controle de acesso, e o default do SwiftFormat (`modifierOrder`) ordena o contrário —
+  com a config anterior, `private nonisolated`/`nonisolated private` nunca satisfaria as
+  duas ferramentas ao mesmo tempo. Nenhuma configuração do projeto cobria isso porque era
+  o primeiro uso de `nonisolated` no código. Corrigido adicionando
+  `modifier_order.preferred_modifier_order` em `.swiftlint.yml`, movendo `isolation` para
+  depois de `acl` — alinhando o SwiftLint à convenção do SwiftFormat em vez do contrário.
+  Gate completo (`./Scripts/dev-flow.sh check`) verde: formatação, lint e suíte de testes.
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -127,6 +152,15 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
 - `AuthService.restoreSession()` sempre persiste a sessão devolvida pelo repositório antes de
   publicá-la no `SessionStore`, na mesma ordem de `login()`: o backend pode renovar o token, e o
   Keychain não pode ficar atrás do estado em memória.
+- `AppContainer.init` recebe `credentialStore` por parâmetro (nunca construído inline sem
+  possibilidade de injeção): `#Preview` e testes usam `FakeSessionCredentialStore()`, nunca o
+  Keychain real. Valor-default de parâmetro de `init` não pode referenciar `Self` (só o nome
+  concreto do tipo) e roda fora do isolamento de ator do tipo — por isso `makeCredentialStore()`
+  e o `enum UITestLaunchArgument` são `nonisolated`, mesmo a classe sendo `@MainActor`.
+- `.swiftlint.yml` define `modifier_order.preferred_modifier_order` com `isolation`
+  depois de `acl` (nunca o default do SwiftLint): o default do SwiftFormat ordena
+  `nonisolated` depois do controle de acesso, e as duas ferramentas rodam no mesmo
+  gate — sem esse override, `private nonisolated` nunca passa nas duas ao mesmo tempo.
 
 ## Dívidas
 Lista completa e atualizada em `CLAUDE.md` (seção "Dívidas conhecidas").
