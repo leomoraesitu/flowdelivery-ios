@@ -4,10 +4,16 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 189
+- Última aula concluída: 190
 - Próxima: a definir (ver dívidas em `CLAUDE.md`) — as três dívidas conhecidas continuam
   bloqueadas: duas por Supabase ainda não integrado, uma pela imagem `macos-26` do GitHub
-  Actions sem Xcode 27 (ver issue #14404 na dívida do CLAUDE.md).
+  Actions sem Xcode 27 (ver issue #14404 na dívida do CLAUDE.md). Candidatos levantados na
+  aula 190 e não escolhidos, ainda disponíveis para a próxima: testes unitários de
+  `HomeViewModel` e `RestaurantDetailsViewModel` (mesmo padrão loading/loaded/empty/error já
+  usado em `OrderHistoryViewModelTests`/`OrderDetailsViewModelTests`); `performAccessibilityAudit`
+  faltando em `RestaurantDetailsView` e `AuthenticationView`; `.font(.headline)`/`.title`/`.title2`
+  literais em `RestaurantRowView`, `AuthenticationView` e `MenuItemRowView` em vez de
+  `AppTypography` (`.title2` ainda não tem token equivalente).
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min). Desde a aula 185, `ui-test.sh` também roda automaticamente no
   `nightly-quality-gate.yml` (cron diário + `workflow_dispatch`), contra `iPhone 17`.
@@ -130,6 +136,20 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   instalado na imagem ainda — passa a ser o sinal concreto para a próxima reconferência, em
   vez de remedir no escuro a cada aula. Nenhum código de produção ou teste tocado; só
   documentação (`CLAUDE.md`, este arquivo).
+- 190: nenhuma das três dívidas conhecidas virou aula de novo (mesma situação de 189).
+  Em vez de remedir sem mudança, levantamento no próprio código por trabalho independente
+  delas: `CartViewModel` (`FlowDelivery/Features/Cart/CartViewModel.swift`) era o único
+  ViewModel do projeto sem nenhum teste unitário, só exercitado indiretamente via
+  `CartFlowUITests`. `CartViewModelTests.swift` (7 testes) cobre `.empty`/`.loaded(CartContent)`,
+  `incrementQuantity`, `decrementQuantity` (acima de 1 e a guarda que nunca deixa chegar a
+  zero), `removeItem` e `clearCart`. Nenhum double novo: `CartStore` não tem dependência
+  externa, então o teste instancia a classe real — `@Suite("CartViewModel") @MainActor struct`
+  com `Sut`/`makeSut()`, o mesmo padrão de `RootViewModelTests`, em vez do `private func`
+  solto mais antigo de `CheckoutViewModelTests`. Prova de mutação no teste mais importante
+  (`decrementQuantityKeepsSingleItemAtOne`): removida a guarda `items[index].quantity > 1`
+  em `CartStore.decrementQuantity`, o teste falhou (`item.quantity → 0`), guarda revertida e
+  confirmada de volta ao original (`git status` limpo nesse arquivo). Gate completo
+  (`./Scripts/dev-flow.sh check`) verde. (PR #193)
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
