@@ -20,6 +20,24 @@ disabled_rules:
   - todo
   - trailing_whitespace
 
+# SwiftLint's default puts `isolation` (nonisolated/isolated) before `acl`
+# (private/public/...); SwiftFormat's default puts it after. Moving `isolation`
+# after `acl` here matches SwiftFormat, so `private nonisolated` satisfies both.
+modifier_order:
+  preferred_modifier_order:
+    - override
+    - acl
+    - isolation
+    - setterACL
+    - dynamic
+    - mutators
+    - lazy
+    - final
+    - required
+    - convenience
+    - typeMethods
+    - owned
+
 line_length:
   warning: 120
   error: 150
