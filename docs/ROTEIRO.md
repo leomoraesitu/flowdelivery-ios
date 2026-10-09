@@ -149,7 +149,7 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   (`decrementQuantityKeepsSingleItemAtOne`): removida a guarda `items[index].quantity > 1`
   em `CartStore.decrementQuantity`, o teste falhou (`item.quantity → 0`), guarda revertida e
   confirmada de volta ao original (`git status` limpo nesse arquivo). Gate completo
-  (`./Scripts/dev-flow.sh check`) verde. (PR a confirmar após `publish`)
+  (`./Scripts/dev-flow.sh check`) verde. (PR #193)
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
