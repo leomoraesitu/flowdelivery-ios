@@ -4,8 +4,10 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 188
-- Próxima: a definir (ver dívidas em `CLAUDE.md`)
+- Última aula concluída: 189
+- Próxima: a definir (ver dívidas em `CLAUDE.md`) — as três dívidas conhecidas continuam
+  bloqueadas: duas por Supabase ainda não integrado, uma pela imagem `macos-26` do GitHub
+  Actions sem Xcode 27 (ver issue #14404 na dívida do CLAUDE.md).
 - Ambiente: Xcode 27, simulador `iPhone 18 Pro Max` (iOS 27). Gates: `quality.sh` (unitários) e
   `ui-test.sh` (~13 min). Desde a aula 185, `ui-test.sh` também roda automaticamente no
   `nightly-quality-gate.yml` (cron diário + `workflow_dispatch`), contra `iPhone 17`.
@@ -116,6 +118,18 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   `modifier_order.preferred_modifier_order` em `.swiftlint.yml`, movendo `isolation` para
   depois de `acl` — alinhando o SwiftLint à convenção do SwiftFormat em vez do contrário.
   Gate completo (`./Scripts/dev-flow.sh check`) verde: formatação, lint e suíte de testes.
+- 189: nenhuma das três dívidas conhecidas estava pronta para virar aula (as duas de
+  autenticação dependem de Supabase integrado; a do simulador dependia da imagem do runner
+  atualizar). Remedida a dívida do simulador em vez de presumi-la: consultado o README da
+  imagem `macos-26` em `actions/runner-images` via `gh api` — `Image Version 20260824.0517.1`,
+  a mesma de 2026-10-07, Xcode default ainda `26.6`, sem SDK `iphoneos27`, catálogo de
+  simuladores parando em `iPhone 17 Pro Max`/`iPhone 17e`. Sem mudança a reconciliar em
+  `nightly-quality-gate.yml`. Encontrada a issue
+  [actions/runner-images#14404](https://github.com/actions/runner-images/issues/14404)
+  ("Xcode 27 is now available as a public preview"), aberta, 23 comentários, sem Xcode 27
+  instalado na imagem ainda — passa a ser o sinal concreto para a próxima reconferência, em
+  vez de remedir no escuro a cada aula. Nenhum código de produção ou teste tocado; só
+  documentação (`CLAUDE.md`, este arquivo).
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
