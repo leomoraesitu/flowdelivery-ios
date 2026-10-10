@@ -4,13 +4,13 @@ Leia junto com `CLAUDE.md` (regras de trabalho, arquitetura, dívidas) e `README
 Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo depois).
 
 ## Estado
-- Última aula concluída: 190
+- Última aula concluída: 191
 - Próxima: a definir (ver dívidas em `CLAUDE.md`) — as três dívidas conhecidas continuam
   bloqueadas: duas por Supabase ainda não integrado, uma pela imagem `macos-26` do GitHub
   Actions sem Xcode 27 (ver issue #14404 na dívida do CLAUDE.md). Candidatos levantados na
-  aula 190 e não escolhidos, ainda disponíveis para a próxima: testes unitários de
-  `HomeViewModel` e `RestaurantDetailsViewModel` (mesmo padrão loading/loaded/empty/error já
-  usado em `OrderHistoryViewModelTests`/`OrderDetailsViewModelTests`); `performAccessibilityAudit`
+  aula 190, com `HomeViewModel` fechado na 191; ainda disponíveis para a próxima: testes
+  unitários de `RestaurantDetailsViewModel` (mesmo padrão `loading/loaded/error`, mais
+  `addToCart` interagindo com `CartStore` — merece aula própria); `performAccessibilityAudit`
   faltando em `RestaurantDetailsView` e `AuthenticationView`; `.font(.headline)`/`.title`/`.title2`
   literais em `RestaurantRowView`, `AuthenticationView` e `MenuItemRowView` em vez de
   `AppTypography` (`.title2` ainda não tem token equivalente).
@@ -150,6 +150,32 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   em `CartStore.decrementQuantity`, o teste falhou (`item.quantity → 0`), guarda revertida e
   confirmada de volta ao original (`git status` limpo nesse arquivo). Gate completo
   (`./Scripts/dev-flow.sh check`) verde. (PR #193)
+- 191: `HomeViewModelTests.swift` (5 testes) cobre `HomeViewModel` — o outro candidato
+  levantado na aula 190 — com o mesmo padrão `loading/loaded/empty/error` de
+  `OrderHistoryViewModelTests`/`OrderDetailsViewModelTests`, mais `loadIfNeeded()` só carregar
+  uma vez entre chamadas repetidas. Duas medições no meio do caminho:
+  (1) `FakeRestaurantRepository` gerava `UUID()` dentro do corpo de `fetchRestaurants()` —
+  cada chamada devolvia restaurantes com identidade diferente, o que impedia qualquer teste
+  de igualdade contra `.loaded(HomeContent(...))`. Corrigido guardando o fixture num
+  `static let` injetável via `init(restaurants:)`, mesmo padrão de `FakeOrderRepository(orders:)`;
+  os dois call sites existentes (`AppContainer`, `#Preview` de `HomeView`) continuam chamando
+  `FakeRestaurantRepository()` sem argumento, sem mudança de comportamento. Novo double
+  `CountingRestaurantRepository` (conta chamadas a `fetchRestaurants()`) cobre `loadIfNeeded()`.
+  (2) Ao usar `FakeRestaurantRepository()` como valor-default de `makeSut(repository:)` nos
+  testes, erro real do compilador: "Call to main actor-isolated initializer 'init(restaurants:)'
+  in a synchronous nonisolated context". Generaliza a restrição da aula 188 (valor-default de
+  parâmetro roda fora do isolamento do tipo) além de `init` de classe `@MainActor` explícita: o
+  módulo tem isolamento padrão de ator `@MainActor`, então um `struct` sem anotação nenhuma
+  também herda isso. Corrigido marcando `FakeRestaurantRepository` inteiro `nonisolated`
+  — seguro porque `nonisolated` só afrouxa a exigência de isolamento, nunca a aperta.
+  Prova de mutação feita em dois testes e revertida (`git diff` vazio em `HomeViewModel.swift`
+  depois): `.loaded(HomeContent(restaurants: []))` fixo quebrou só `loadDisplaysFetchedRestaurants`
+  (os outros dois estados não usam o conteúdo mapeado); remover a guarda `!hasLoaded` em
+  `loadIfNeeded()` fez `callCount` virar `2` em vez de `1`. Gate completo
+  (`./Scripts/dev-flow.sh check`) verde. README reconciliado por medição, sem mudança: lista de
+  scripts (`ls Scripts/`), simulador padrão, versão do Xcode e tabela de cobertura de CI
+  confirmadas batendo com `CLAUDE.md` e os workflows (`.github/workflows/quality-gate.yml`,
+  `nightly-quality-gate.yml`).
 
 ## Decisões que NÃO devem ser revertidas
 - Sessão = um único item de Keychain (JSON versionado); nunca separar token e userID.
@@ -191,6 +217,12 @@ Atualize este arquivo ao fim de cada aula, no mesmo PR (ou em PR `docs:` logo de
   Keychain real. Valor-default de parâmetro de `init` não pode referenciar `Self` (só o nome
   concreto do tipo) e roda fora do isolamento de ator do tipo — por isso `makeCredentialStore()`
   e o `enum UITestLaunchArgument` são `nonisolated`, mesmo a classe sendo `@MainActor`.
+- Essa restrição de isolamento não é exclusiva de `init`: o módulo tem isolamento padrão de
+  ator `@MainActor`, então qualquer tipo sem anotação explícita (incluindo `struct`) herda
+  isso, e nenhum valor-default de parâmetro — de `init` ou de função comum — pode chamar algo
+  isolado. Tipos usados só como fixture de teste (ex.: `FakeRestaurantRepository`) precisam de
+  `nonisolated` explícito para servir de valor-default; `nonisolated` sempre satisfaz uma
+  conformância de protocolo potencialmente isolada, o inverso não.
 - `.swiftlint.yml` define `modifier_order.preferred_modifier_order` com `isolation`
   depois de `acl` (nunca o default do SwiftLint): o default do SwiftFormat ordena
   `nonisolated` depois do controle de acesso, e as duas ferramentas rodam no mesmo
